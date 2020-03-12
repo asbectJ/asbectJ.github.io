@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Hexo</title>
+  
+  
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://yoursite.com/"/>
+  <updated>2020-03-12T14:07:24.602Z</updated>
+  <id>http://yoursite.com/</id>
+  
+  <author>
+    <name>John Doe</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Hello World</title>
+    <link href="http://yoursite.com/2020/03/12/hello-world/"/>
+    <id>http://yoursite.com/2020/03/12/hello-world/</id>
+    <published>2020-03-12T09:57:18.218Z</published>
+    <updated>2020-03-12T14:07:24.602Z</updated>
+    
+    <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.
+      
+    
+    </summary>
+    
+    
+      <category term="web前端" scheme="http://yoursite.com/categories/web%E5%89%8D%E7%AB%AF/"/>
+    
+    
+      <category term="jQuery" scheme="http://yoursite.com/tags/jQuery/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>利用kubeadm搭建kubernetes集群</title>
+    <link href="http://yoursite.com/2019/05/06/kubernetes/%E5%88%A9%E7%94%A8kubeadm%E6%90%AD%E5%BB%BAkubernetes%E9%9B%86%E7%BE%A4/"/>
+    <id>http://yoursite.com/2019/05/06/kubernetes/%E5%88%A9%E7%94%A8kubeadm%E6%90%AD%E5%BB%BAkubernetes%E9%9B%86%E7%BE%A4/</id>
+    <published>2019-05-06T15:14:09.000Z</published>
+    <updated>2020-03-12T14:23:11.089Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote><p>k8s的部署方式：</p><ol><li>传统方式，从github上拉取对应的二进制安装包，解压安装各个组件和节点，过程步骤复杂，特别是各组件要通信，配置各种ca证书。<a href="https://github.com/kubernetes/kubernetes" target="_blank" rel="noopener">GitHub链接</a></li><li>由于传统方式安装比较麻烦，所以我们用kubeadm（k8s官方提供的集群部署工具）安装，只需按照以下基本步骤安装即可：<ul><li>master,nodes机器上安装：kubelet、kubeadm和docker，其中node和master都要运行在kebulet和docker环境之上</li><li>Master：用kubeadm init 命令，拉取下载相关的组件镜像，并启动相关pods（静态pods，不受k8s自身管理），相关的pods组件有：etcd、api-server、controller-manager、scheduler</li><li>Nodes：用kubeadm join命令把nodes加入到k8s集群中</li><li>flannel组件，也是运行在pods的守护级进程，起到个nodes的通信作用。是一个额外的组件（adds on）。<a href="https://github.com/coreos/flannel" target="_blank" rel="noopener">GitHub链接</a></li><li><a href="https://github.com/kubernetes/kubeadm/blob/master/docs/design/design_v1.10.md" target="_blank" rel="noopener">kubeadm相关参考文档</a></li></ul></li></ol><a id="more"></a><h2 id="一、准备工作"><a href="#一、准备工作" class="headerlink" title="一、准备工作"></a>一、准备工作</h2><ol><li><p>kubernetes需要容器运行时的支持，目前官方支持的容器运行时包括：Docker、Containerd、CRI-O和frakti。本次以Docker作为容器运行环境，推荐版本为Docker CE 18.09。宿主机操作系统使用CentOs</p></li><li><p>由于Kubernetes的master和node之间会进行大量通信，安全做法是开放对应的通信端口，在安全的内网环境下可以关闭防火墙服务：</p><p><code>sudo systemctl disable firewalld</code></p><p><code>sudo systemctl stop firewalld</code></p></li><li><p>关闭swap：<code>swapoff -a</code></p></li><li><p>另外，建议在主机上禁用SELinux,让容器可以读取主机的文件系统</p><p><code>sudo setenforce 0</code></p></li><li><p>解决路由异常：`</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;net.bridge.bridge-nf-call-ip6tables &#x3D; 1</span><br><span class="line">net.bridge.bridge-nf-call-iptables &#x3D; 1</span><br><span class="line">vm.swappiness&#x3D;0&quot; &gt;&gt; &#x2F;etc&#x2F;sysctl.d&#x2F;k8s.conf&#96;</span><br><span class="line">sudo sysctl -p &#x2F;etc&#x2F;sysctl.d&#x2F;k8s.conf</span><br><span class="line">若报不存在目录的错误，则运行：sudo modprobe br_netfilter</span><br></pre></td></tr></table></figure></li></ol><h2 id="二、用kubeadm快速安装kubernetes集群"><a href="#二、用kubeadm快速安装kubernetes集群" class="headerlink" title="二、用kubeadm快速安装kubernetes集群"></a>二、用kubeadm快速安装kubernetes集群</h2><p>Kubernetes 从1.4版开始引入了命令行工具kubeadm，致力于简化集群安装的过程，并解决集群的高可用问题。</p><ul><li><p>下载yum-key.gpg和rpm-package-key.gpg</p><p>sudo wget <a href="https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg" target="_blank" rel="noopener">https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg</a></p><p>sudo wget <a href="https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg" target="_blank" rel="noopener">https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg</a></p><p>导入：</p><p>sudo rpm –import yum-key.gpg</p><p>sudo rpm –import rpm-package-key.gpg </p></li><li><p>安装docker环境,docker运行时环境的配置：<a href="https://kubernetes.io/docs/setup/production-environment/container-runtimes/" target="_blank" rel="noopener">https://kubernetes.io/docs/setup/production-environment/container-runtimes/</a></p><p><code>cd /etc/yum.repos.d/</code></p><p><code>wget &lt;https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</code></p><p><code>yum install -y docker-ce</code></p><p>最后安装18.09版本，不然后面会出现各种问题。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum list docker-ce --showduplicates|sort -r  </span><br><span class="line">yum install docker-ce-18.09.0 -y</span><br></pre></td></tr></table></figure></li><li><p>安装kubeadm和相关工具</p><ul><li><p>配置yum源，yum源配置文件/etc/yum.repos.d/kubernetes.repo：</p><p>[kubernetes]</p><p>name=Kubernetes Repo</p><p>baseurl=<a href="https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/" target="_blank" rel="noopener">https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/</a></p><p>enabled=1</p><p>gpgcheck=0</p></li><li><p>运行命令：<code>yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes</code></p></li></ul></li><li><p>启动kubelet和docker服务，并开启开机启动。但是现在启动kubelet是会失败的，可先忽略</p><p><code>systemctl enable docker &amp;&amp; systemtcl start docker</code></p><p><code>systemctl enable kubelet &amp;&amp; systemtcl start kubelet</code></p></li><li><p>使用kubeadm config print init-defaults &gt; init-config.yaml 初始化一份配置文件，并且修改文件中配置为：imageRepository: registry.cn-hangzhou.aliyuncs.com/google_containers，因为默认的镜像地址在国内是会被墙的。（注意，如果advertiseAddress的值配置有问题，到加入节点kubeadm join的时候会出现卡住的情况，这时候检查advertiseAddress配置的ip是否有问题）</p></li><li><p><code>kubeadm config images pull --config=init-config.yaml</code> 拉取下载所需镜像。</p></li></ul><h2 id="三、master节点的安装"><a href="#三、master节点的安装" class="headerlink" title="三、master节点的安装"></a>三、master节点的安装</h2><ul><li><p>至此，准备工作已经完毕。运行<code>kubeadm init --config=init-config.yaml</code> 进行初始化，如运行结果提示kubelet没启动或者启动失败，可以重启kubelet。然后运行kubeadm rest重置，再进行kubeadm init操作</p></li><li><p>安装完毕后，按照提示命令，复制配置文件到普通用户的home目录下：</p><p><code>mkdir -p $HOME/.kube  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config  sudo chown $(id -u):$(id -g) $HOME/.kube/config</code></p><p>这样就在master安装了kubernetes，但是在集群内还没有任何的node和缺乏对容器网络的配置。其中值得注意的是，在kubeadm init完成后，最后几行提示信息包含了加入其他节点的指令和所要的token。如果遗忘。可用命令<code>sudo kubeadm token create --print-join-command</code>重新打印出来。</p></li></ul><h2 id="四、安装Node"><a href="#四、安装Node" class="headerlink" title="四、安装Node"></a>四、安装Node</h2><ul><li><p>新增一个节点，系统准备所需的yun源是一样的，安装的工具可以不装kubectl。安装完毕后，启动docker和kubelet服务。</p></li><li><p>为kubeadm命令生成配置文件，文件内容如下：</p><p>其中apiServerEndpoint的值是master的服务器地址，token和tlsBootstrapToken的值是master安装最后的一行信息。</p></li><li><p>kubeadm join大致的生命流程是：1、preflight checks；2、从集群中读取配置，也就是apiServerEndpoint中配置的地址中获取；也就是在master的这个配置，可以用命令<code>kubectl -n kube-system get cm kubeadm-config -oyaml</code>查看。3、下载这个配置，然后写入到/var/lib/kubelet/config.yaml；4、激活kubelet。如果在第二部中，读取配置出现问题，有可能出现卡住的情况，这时要检查maste的apiServerEndpoint和node的是否一致。</p></li><li><p>node join完毕后，可以在master节点<code>kubectl get nodes</code>查看节点列表和状态等</p></li></ul><h2 id="五、安装网络插件-一定要指定pod-network的配置，否则会出现网络插件的pod启动或者通信失败等问题"><a href="#五、安装网络插件-一定要指定pod-network的配置，否则会出现网络插件的pod启动或者通信失败等问题" class="headerlink" title="五、安装网络插件(一定要指定pod-network的配置，否则会出现网络插件的pod启动或者通信失败等问题)"></a>五、安装网络插件(一定要指定pod-network的配置，否则会出现网络插件的pod启动或者通信失败等问题)</h2><ol><li><p>执行kubectl get nodes 你会发现master和node节点都是NoReady状态，那是因为还没安装CNI网络插件</p></li><li><p>对于CNI网络插件，可有很多选择，可参考：&lt;<a href="https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#pod-network" target="_blank" rel="noopener">https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#pod-network</a></p></li><li><p>这里，我们选择weave插件，执行命令<code>kubectl apply -f &quot;https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d &#39;\n&#39;)&quot;</code>即可完成安装。</p></li><li><p>运行命令：</p><p><code>sudo kubeadm join 10.0.2.15:6443 --token 9le8zj.k1y8fvr09b4h4pww --discovery-token-ca-cert-hash sha256:10187a814644dab00611161c3079fdeeef579b999c6c506c33ff55dd9bb032fa --ignore-preflight-errors=Swap</code></p><p>把节点nodes加入，等nodes的机器拉取完镜像后，这个节点就加入完毕了。可以用这个命令查看更多pods的扩展信息：</p><p>kubectl get pods -n kube-system -o wide</p></li><li><p>我们在master节点上运行：kubectl get nodes ，可以看到节点已经成功加入</p><p><strong>至此，我们简单的k8s集群已经部署完毕。。。</strong></p></li></ol><h2 id="六、一些有用的命令"><a href="#六、一些有用的命令" class="headerlink" title="六、一些有用的命令"></a>六、一些有用的命令</h2><ul><li>sudo netstat -ntlp | grep LISTEN   查看监听的端口</li><li>kubectl get pods -n kube-system -o wide 查看pods的更多扩展信息</li><li>kubectl get ns 获取所有的命名空间</li><li>sudo yum list kubelet –showduplicates  //查看所有yum包的可用版本</li><li>kubectl get pods –all-namespaces 查看所有命名空间下的pods</li></ul><p>参考链接：</p><ul><li><a href="https://www.cnblogs.com/pekkle/p/10545145.html" target="_blank" rel="noopener">https://www.cnblogs.com/pekkle/p/10545145.html</a></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;h2 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h2&gt;&lt;/blockquote&gt;
+&lt;p&gt;k8s的部署方式：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;传统方式，从github上拉取对应的二进制安装包，解压安装各个组件和节点，过程步骤复杂，特别是各组件要通信，配置各种ca证书。&lt;a href=&quot;https://github.com/kubernetes/kubernetes&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;GitHub链接&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;由于传统方式安装比较麻烦，所以我们用kubeadm（k8s官方提供的集群部署工具）安装，只需按照以下基本步骤安装即可：&lt;ul&gt;
+&lt;li&gt;master,nodes机器上安装：kubelet、kubeadm和docker，其中node和master都要运行在kebulet和docker环境之上&lt;/li&gt;
+&lt;li&gt;Master：用kubeadm init 命令，拉取下载相关的组件镜像，并启动相关pods（静态pods，不受k8s自身管理），相关的pods组件有：etcd、api-server、controller-manager、scheduler&lt;/li&gt;
+&lt;li&gt;Nodes：用kubeadm join命令把nodes加入到k8s集群中&lt;/li&gt;
+&lt;li&gt;flannel组件，也是运行在pods的守护级进程，起到个nodes的通信作用。是一个额外的组件（adds on）。&lt;a href=&quot;https://github.com/coreos/flannel&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;GitHub链接&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/kubernetes/kubeadm/blob/master/docs/design/design_v1.10.md&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;kubeadm相关参考文档&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+    
+    </summary>
+    
+    
+      <category term="技术" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+      <category term="运维" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/%E8%BF%90%E7%BB%B4/"/>
+    
+    
+      <category term="kubernetes" scheme="http://yoursite.com/tags/kubernetes/"/>
+    
+      <category term="tec" scheme="http://yoursite.com/tags/tec/"/>
+    
+  </entry>
+  
+</feed>
