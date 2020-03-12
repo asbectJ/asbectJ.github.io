@@ -25,6 +25,685 @@
       </tags>
   </entry>
   <entry>
+    <title>Jenkins服务搭建和部署</title>
+    <url>/2019/07/26/CI&amp;CD/jekins/</url>
+    <content><![CDATA[<blockquote>
+<p><strong>本章要点：</strong>Jenkins服务搭建，配置和构建java demo任务等</p>
+</blockquote>
+<a id="more"></a>
+
+<ol>
+<li><p>Jenkins安装和设置</p>
+<ul>
+<li><p>安装JDK，此处不详述，安装版本为1.8</p>
+</li>
+<li><p>Jenkins安装</p>
+<p><code>cd /etc/yum.repos.d/</code> </p>
+<p><code>wget http://pkg.jenkins.io/redhat/jenkins.repo</code></p>
+<p><code>rpm --import http://pkg.jenkins.io/redhat/jenkins.io.key</code></p>
+<p><code>yum install -y jenkins</code></p>
+<p>修改jenkins配置文件：</p>
+<ul>
+<li><p>查询yun下载安装的jenkins文件：rpm -ql jenkins</p>
+</li>
+<li><p>创建Jenkins主目录</p>
+<p><code>sudo mkdir /data/jenkins -p</code></p>
+<p><code>chown -R jenkins.jenkins /data/jenkins/</code></p>
+</li>
+<li><p>修改配置文件：vi /etc/sysconfig/jenkins</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">JENKINS_HOME="/var/lib/jenkins"</span><br><span class="line">JENKINS_USER="jenkins"</span><br><span class="line">JENKINS_JAVA_OPTIONS="-Djava.awt.headless=true -Xms256m -Xmx512m -XX:MaxNewSize=256m -XX:Maxize=256m"</span><br><span class="line">JENKINS_PORT="8000"</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改启动脚本，指定JAVA环境变量：vi /etc/rc.d/init.d/jenkins</p>
+<p><code>candidates=&quot;
+/etc/alternatives/java
+/usr/lib/jvm/java-1.8.0/bin/java
+/usr/lib/jvm/jre-1.8.0/bin/java
+/usr/lib/jvm/java-1.7.0/bin/java
+/usr/lib/jvm/jre-1.7.0/bin/java
+/usr/lib/jvm/java-11.0/bin/java
+/usr/lib/jvm/jre-11.0/bin/java
+/usr/lib/jvm/java-11-openjdk-amd64
+/usr/bin/jdk8/bin/java
+&quot;</code></p>
+</li>
+<li><p>启动Jenkins，systemctl start jenkins</p>
+</li>
+<li><p>访问<a href="http://192.168.33.12:8000/" target="_blank" rel="noopener">http://192.168.33.12:8000/</a>进行jenkins 的设置，一般安装推荐的插件</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>jenkins配置</p>
+<ul>
+<li><p>系统配置：系统管理–&gt;系统设置—&gt;全局属性—&gt;环境变量</p>
+<p><img src="/images/post/1564643808150.png" alt="1564643808150"></p>
+</li>
+<li><p>扩展邮件通知（略）</p>
+</li>
+<li><p>全局工具配置：系统管理–&gt;全局工具配置</p>
+<p><img src="/images/post/1567503394916.png" alt="1567503394916"></p>
+</li>
+</ul>
+</li>
+<li><p>插件管理：系统管理–&gt;全局工具配置–&gt;可选插件安装</p>
+<p><img src="/images/post/1567503511147.png" alt="1567503511147"></p>
+</li>
+<li><p>新建项目任务</p>
+<ul>
+<li><p>新建任务—&gt;输入描述、项目名称等</p>
+</li>
+<li><p>配置源码管理</p>
+<p><img src="/images/post/1567503660630.png" alt="1567503660630"></p>
+</li>
+<li><p>添加git的私钥凭证等</p>
+<p><img src="/images/post/1567503744372.png" alt="1567503744372"></p>
+</li>
+<li><p>构建项目</p>
+<p><img src="/images/post/1567503807878.png" alt="1567503807878"></p>
+</li>
+<li><p>查看控制台输出</p>
+<p><img src="/images/post/1567503860428.png" alt="1567503860428"></p>
+</li>
+</ul>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>devops</category>
+      </categories>
+      <tags>
+        <tag>devops</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ElasticSearch插件安装</title>
+    <url>/2019/06/30/es/ElasticSearch%E6%8F%92%E4%BB%B6%E5%AE%89%E8%A3%85/</url>
+    <content><![CDATA[<blockquote>
+<p><strong>本章要点：</strong>elasticsearch Head插件的安装等</p>
+</blockquote>
+<a id="more"></a>
+
+<ol>
+<li><p>Head插件</p>
+<ul>
+<li><p>是es集群的管理工具，可用它看到集群的健康情况，可用于数据的查询和浏览</p>
+</li>
+<li><p>head托管在github上（<a href="https://github.com/mobz/elasticsearch-head" target="_blank" rel="noopener">https://github.com/mobz/elasticsearch-head</a>）,因为运行elasticsSearch-head会用到grunt，grunt是需要npm包管理器，所以必须安装nodejs，参考：<a href="https://www.cnblogs.com/cerofang/p/9981698.html" target="_blank" rel="noopener">https://www.cnblogs.com/cerofang/p/9981698.html</a></p>
+<p><code>rpm -qa|grep git #查看有没安装git</code></p>
+<p><code>yum install git #安装git</code></p>
+</li>
+<li><p>下载git clone head插件到本地目录下</p>
+<p><code>cd /usr/local/</code></p>
+<p><code>git clone</code></p>
+<p><code>npm install -g grunt-cli</code></p>
+<p><code>npm install cnpm -g --registry=https://registry.npm.taobao.org #安装cnpm</code></p>
+<p><code>cd /usr/local/elasticsearch-head/</code></p>
+<p><code>cnpm install</code></p>
+<p><code>vi Gruntfile.js #修改这个文件，在connect--&gt;server--&gt;options下追加配置：hostname：&#39;*&#39;</code></p>
+<p><code>修改head默认链接地址：cd _site &amp;&amp; vi app.js 找到这个配置项目：this.base_uri = this.config.base_uri || this.prefs.get(&quot;app-base_uri&quot;) || &quot;http://192.168.33.12:9200&quot;; 修改成你es的服务器地址</code></p>
+</li>
+<li><p>配置es允许跨域访问，打开elasticsearch.yml文件，追加：</p>
+<p>http.cors.enabled: true<br>http.cors.allow-origin: ‘*’</p>
+</li>
+<li><p>打开9100端口：(head插件默认是9100端口)</p>
+<p>sudo firewall-cmd –zone=public –add-port=9100/tcp –permanent</p>
+<p>sudo firewall-cmd –reload</p>
+</li>
+<li><p>启动es</p>
+</li>
+<li><p>启动head插件：</p>
+<p><code>cd /usr/local/elasticsearch-head/node_modules/grunt/bin</code></p>
+<p><code>./grunt server</code></p>
+</li>
+<li><p>浏览器访问： <a href="http://localhost:9100" target="_blank" rel="noopener">http://localhost:9100</a></p>
+</li>
+</ul>
+</li>
+<li><p>安装kibana插件</p>
+<ul>
+<li>kibana是一个针对ES的开源分析及可视化平台，使用kibana可以查询、查看并与存储在ES索引的数据进行交互操作，使用kibana能执行高级的数据分析，并能以图表、表格和地图的形式查看数据</li>
+<li>下载kibana（要与ES的版本一致）：<a href="https://www.elastic.co/cn/downloads/kibana" target="_blank" rel="noopener">https://www.elastic.co/cn/downloads/kibana</a></li>
+</ul>
+</li>
+<li></li>
+</ol>
+]]></content>
+      <categories>
+        <category>es</category>
+      </categories>
+      <tags>
+        <tag>es</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ElasticSearch安装</title>
+    <url>/2019/06/23/es/ElasticSearch%E5%AE%89%E8%A3%85/</url>
+    <content><![CDATA[<blockquote>
+<p><strong>本章要点：</strong>elasticsearch的安装等</p>
+</blockquote>
+<a id="more"></a>
+
+<ol>
+<li><p>centos下安装</p>
+<ul>
+<li><p>官网：<a href="https://www.elastic.co/cn/" target="_blank" rel="noopener">https://www.elastic.co/cn/</a>，目前最高版本是7.1.1，更新于2019/5/29</p>
+</li>
+<li><p>安装java环境（一般java8）</p>
+</li>
+<li><p>下载es的tar包，解压</p>
+</li>
+<li><p>创建新的用户和用户组，专属于es用的（为了安全考虑，并且es默认是不给root用户权限启动的）</p>
+<p><code>sudo groupadd es</code></p>
+<p><code>sudo useradd es -g es -p 123456</code></p>
+<p><code>sudo chown -R es:es es所在目录</code></p>
+<p><code>./es目录/bin/elasticsearch (启动)</code></p>
+</li>
+<li><p>测试：curl 127.0.0.1:9200</p>
+</li>
+<li><p>实现远程访问：</p>
+<ul>
+<li><p>修改配置：config/elasticsearch.yml 中的：network.host: 192.168.33.12（本地ip）和端口 ：http.port: 9200</p>
+</li>
+<li><p>再次启动会报如下错误：</p>
+<p><code>ERROR: [3] bootstrap checks failed
+[1]: max file descriptors [4096] for elasticsearch process is too low, increase to at least [65535]
+[2]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144]
+[3]: the default discovery settings are unsuitable for production use; at least one of [discovery.seed_hosts, discovery.seed_providers, cluster.initial_master_nodes] must be configured</code></p>
+<p>解决方法：</p>
+<ul>
+<li><p>处理第一、二个错误：</p>
+<p><code>vim /etc/security/limits.conf</code> (文件末行加入以下参数)</p>
+<p>es（刚所建的linux用户） soft nofile 65536<br>es hard nofile 65536<br>es soft nproc 4096<br>es hard nproc 4096</p>
+<p> vi /etc/security/limits.d/20-nproc.conf ，追加配置：es         soft    nproc     4096</p>
+<p>sudo vi /etc/sysctl.conf  追加配置vm.max_map_count=655360，sudo sysctl -p 使其生效</p>
+</li>
+<li><p>处理第三个错误：打开config/elasticsearch.yml 中的配置：cluster.initial_master_nodes: [“node-1”, “node-2”]</p>
+</li>
+<li><p>关闭防火墙：sudo systemctl stop firewalld.service</p>
+</li>
+<li><p>重启服务器，然后再重启es，启动成功</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>es</category>
+      </categories>
+      <tags>
+        <tag>es</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ElasticSearch之倒排索引</title>
+    <url>/2019/06/23/es/ElasticSearch%E4%B9%8B%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95/</url>
+    <content><![CDATA[<blockquote>
+<p><strong>本章要点：</strong>倒排索引等</p>
+</blockquote>
+<a id="more"></a>
+
+<ol>
+<li><p>倒排索引</p>
+<ul>
+<li><p>es中的一种索引结构，适用于快速的全文索引。一个倒排索引由文档中所有不重复词的列表构成，对于其中每个分词，有一个包含它的文档列表。</p>
+<ul>
+<li><p>如有一个这样的文档集合：</p>
+<table>
+<thead>
+<tr>
+<th>文档编号</th>
+<th>文档内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>谷歌地图之父跳槽FaceBook</td>
+</tr>
+<tr>
+<td>2</td>
+<td>谷歌地图之父加盟FaceBook</td>
+</tr>
+<tr>
+<td>3</td>
+<td>谷歌地图创始人拉斯离开谷歌加盟FaceBook</td>
+</tr>
+<tr>
+<td>4</td>
+<td>谷歌之父跳槽FaceBook与Wave项目取消有关</td>
+</tr>
+<tr>
+<td>5</td>
+<td>谷歌地图之父拉斯加盟社交网站FaceBook</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>简单的倒排索引。（中文和英文等语言不同，单词之间没明确的分隔符，所以要先用分词系统将文档切分成单词序列）其中DocID为文档ID</p>
+<table>
+<thead>
+<tr>
+<th>单词ID</th>
+<th>单词</th>
+<th>倒排列表（DocID）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>谷歌</td>
+<td>1,2,3,4,5</td>
+</tr>
+<tr>
+<td>2</td>
+<td>地图</td>
+<td>1,2,3,4,5</td>
+</tr>
+<tr>
+<td>3</td>
+<td>之父</td>
+<td>1,2,4,5</td>
+</tr>
+<tr>
+<td>4</td>
+<td>跳槽</td>
+<td>1,4</td>
+</tr>
+<tr>
+<td>5</td>
+<td>FaceBook</td>
+<td>1,2,3,4,5</td>
+</tr>
+<tr>
+<td>6</td>
+<td>加盟</td>
+<td>2,3,5</td>
+</tr>
+<tr>
+<td>7</td>
+<td>创始人</td>
+<td>3</td>
+</tr>
+<tr>
+<td>8</td>
+<td>拉斯</td>
+<td>3,5</td>
+</tr>
+<tr>
+<td>9</td>
+<td>离开</td>
+<td>3</td>
+</tr>
+<tr>
+<td>10</td>
+<td>与</td>
+<td>4</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Wave</td>
+<td>4</td>
+</tr>
+<tr>
+<td>12</td>
+<td>项目</td>
+<td>4</td>
+</tr>
+<tr>
+<td>13</td>
+<td>取消</td>
+<td>4</td>
+</tr>
+<tr>
+<td>14</td>
+<td>有关</td>
+<td>4</td>
+</tr>
+<tr>
+<td>15</td>
+<td>社交</td>
+<td>5</td>
+</tr>
+<tr>
+<td>16</td>
+<td>网站</td>
+<td>5</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>上图的第三栏除了可记录文档的id(DocID)外还可以记录单词出现的频率信息（TF）,如（1；1），（2:1），还可以记录文档的位置信息，如（1,&lt;11&gt;,1）,(2,&lt;7&gt;,1)</p>
+</li>
+</ul>
+</li>
+<li><p>多用户能力的分布式全文搜索引擎</p>
+</li>
+<li><p>基于resetful web接口</p>
+</li>
+<li><p>java开发的</p>
+</li>
+<li><p>海量的数据，支持pb级别</p>
+</li>
+<li><p>实时、高扩展、可靠、稳定</p>
+</li>
+<li><p>以文档格式存储</p>
+</li>
+</ul>
+</li>
+<li><p>一些基本概念</p>
+<ul>
+<li>index：类似数据库中的database</li>
+<li>type：相当数据库中的表</li>
+<li>document（文档）：一条数据对应一篇文档，相当于数据库中的一行row。一个文档可以有多个字段（field）,mapping来描述数据类型.</li>
+<li>Query DSL：类似mysql的sql语句，只不过在es中使用的josn格式的查询语句</li>
+</ul>
+</li>
+<li><p>restful web接口</p>
+<ul>
+<li>GET/POST/PUT/DELETE  (查询/新增或更新/更新/删除)</li>
+</ul>
+</li>
+<li><p>curl基本命令</p>
+<ul>
+<li>curl <a href="http://www.baidu.com" target="_blank" rel="noopener">www.baidu.com</a> (访问网页)</li>
+<li>curl -i <a href="http://www.baicu.com" target="_blank" rel="noopener">www.baicu.com</a> 显示响应的头信息</li>
+<li>curl -o save.html <a href="http://www.baidu.com（抓取网页内容保存到save.html）" target="_blank" rel="noopener">www.baidu.com（抓取网页内容保存到save.html）</a></li>
+<li>curl -v <a href="http://www.baidu.com" target="_blank" rel="noopener">www.baidu.com</a> （显示一个http的通信过程）</li>
+<li>curl -X GET/POST/PUT/DELETE url （执行GET/POST/PUT/DELETE操作）</li>
+</ul>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>es</category>
+      </categories>
+      <tags>
+        <tag>es</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ElasticSearch简介</title>
+    <url>/2019/06/23/es/ElasticSearch%E7%AE%80%E4%BB%8B/</url>
+    <content><![CDATA[<blockquote>
+<p><strong>本章要点：</strong>集合概述、Collection集合用法等</p>
+</blockquote>
+<a id="more"></a>
+
+<ol>
+<li>概述<ul>
+<li>基于Lucene的搜索服务器</li>
+<li>多用户能力的分布式全文搜索引擎</li>
+<li>基于resetful web接口</li>
+<li>java开发的</li>
+<li>海量的数据，支持pb级别</li>
+<li>实时、高扩展、可靠、稳定</li>
+<li>以文档格式存储</li>
+</ul>
+</li>
+<li>一些基本概念<ul>
+<li>index：类似数据库中的database</li>
+<li>type：相当数据库中的表</li>
+<li>document（文档）：一条数据对应一篇文档，相当于数据库中的一行row。一个文档可以有多个字段（field）,mapping来描述数据类型.</li>
+<li>Query DSL：类似mysql的sql语句，只不过在es中使用的josn格式的查询语句</li>
+</ul>
+</li>
+<li>restful web接口<ul>
+<li>GET/POST/PUT/DELETE  (查询/新增或更新/更新/删除)</li>
+</ul>
+</li>
+<li>curl基本命令<ul>
+<li>curl <a href="http://www.baidu.com" target="_blank" rel="noopener">www.baidu.com</a> (访问网页)</li>
+<li>curl -i <a href="http://www.baicu.com" target="_blank" rel="noopener">www.baicu.com</a> 显示响应的头信息</li>
+<li>curl -o save.html <a href="http://www.baidu.com（抓取网页内容保存到save.html）" target="_blank" rel="noopener">www.baidu.com（抓取网页内容保存到save.html）</a></li>
+<li>curl -v <a href="http://www.baidu.com" target="_blank" rel="noopener">www.baidu.com</a> （显示一个http的通信过程）</li>
+<li>curl -X GET/POST/PUT/DELETE url （执行GET/POST/PUT/DELETE操作）</li>
+</ul>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>es</category>
+      </categories>
+      <tags>
+        <tag>es</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《JSP&amp;Servlet》读书笔记-第一章Web应用简介</title>
+    <url>/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E4%B8%80%E7%AB%A0Web%E5%BA%94%E7%94%A8%E7%AE%80%E4%BB%8B/</url>
+    <content><![CDATA[<blockquote>
+<p><strong>本章要点：</strong>Http请求、web简介等</p>
+</blockquote>
+<a id="more"></a>
+
+<ol>
+<li><p>URL、URN、URI</p>
+<ul>
+<li>URL：代表资源的地址信息</li>
+<li>URN：代表某个资源独一无二的名称</li>
+<li>URI：URL和URN是URI的子集</li>
+</ul>
+</li>
+<li><p>HTTP协议</p>
+<ul>
+<li>基于请求/响应模型<ul>
+<li>每次联机只做一次请求/响应，无请求就无响应</li>
+</ul>
+</li>
+<li>无状态<ul>
+<li>不会记住客户端的状态</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>GET请求</p>
+<ul>
+<li>请求方法+请求的URL+请求参数+HTTP版本+请求标头</li>
+<li>请求参数长度有限制（根据浏览器版本有所不同）</li>
+</ul>
+</li>
+<li><p>POST请求</p>
+<ul>
+<li>请求方法+请求的URL+HTTP版本+请求标头+请求的参数（在Message body中，所以长度不限制）</li>
+</ul>
+</li>
+<li><p>Web容器</p>
+<ul>
+<li><p>运行Servlet/JSP的Http服务器（如Tomcat）</p>
+</li>
+<li><p>请求/响应流程</p>
+<p><img src="/images/post/1558159257312.png" alt="1558159257312"></p>
+</li>
+<li><p>Servlet是执行在web容器中，web容器是由服务器的JVM启动，一个请求到来，web容器就会启动一个线程，多个请求就多个线程，由于有可能同个Servlet处理多个请求，相当于多线程在共享同个对象，所以得注意线程安全问题，避免A用户登录后看到B用户的数据。</p>
+</li>
+<li></li>
+</ul>
+</li>
+<li><p>JSP和Servlet</p>
+<ul>
+<li>JSP最后还是会被web容器转译为servlet的.java文件，编译为.class文件</li>
+</ul>
+</li>
+<li><p>Java EE (企业解决方案，如JSP/Servlet就是)、Java SE（初学标准，桌面工具）、Java ME（微装置、手机等解决方案）</p>
+</li>
+<li><p>Q&amp;A</p>
+<ul>
+<li>一个请求到来，web容器就会启动一个线程，多个请求就多个线程，由于有可能同个Servlet处理多个请求，相当于多线程在共享同个对象，所以得注意线程安全问题，避免A用户登录后看到B用户的数据。大概是怎样的一个情况，能举个例子？</li>
+<li>EJB是什么？</li>
+</ul>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>servlet</category>
+      </categories>
+      <tags>
+        <tag>servlet</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《JSP&amp;Servlet》读书笔记-第三章</title>
+    <url>/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E4%B8%89%E7%AB%A0%E8%AF%B7%E6%B1%82%E5%92%8C%E5%93%8D%E5%BA%94/</url>
+    <content><![CDATA[<blockquote>
+<p><strong>本章要点：</strong>从容器到Sevelet等</p>
+</blockquote>
+<a id="more"></a>
+
+<ol>
+<li><p>从容器到Sevelet</p>
+<ul>
+<li><p>浏览器–&gt;http服务器–&gt;web容器</p>
+<p><img src="/images/post/1558235409522.png" alt="1558235409522"></p>
+</li>
+<li><p>processServlet()，用于在调用doPost和doGet相同处理逻辑时</p>
+</li>
+</ul>
+</li>
+<li><p>processServlet()，用于在调用doPost和doGet相同处理逻辑时</p>
+</li>
+<li><p>Q&amp;A</p>
+<ul>
+<li>RequestDispatcher的include()和forward()的区别：forward跳转的，调用的servlet不能带有任何的响应，不然会被覆盖</li>
+<li>设置标头，缓存区？</li>
+</ul>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>servlet</category>
+      </categories>
+      <tags>
+        <tag>servlet</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《JSP&amp;Servlet》读书笔记-第二章</title>
+    <url>/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E7%BC%96%E5%86%99%E5%92%8C%E8%AE%BE%E7%BD%AEServlet/</url>
+    <content><![CDATA[<blockquote>
+<p><strong>本章要点：</strong>环境的搭建等</p>
+</blockquote>
+<a id="more"></a>
+
+<ol>
+<li><p>准备开发环境</p>
+<ul>
+<li>下载Web容器：tomcat。ps：这里的tomcat虽然提供了Http服务器的功能，但主要还是做Web容器使用，在开发中方便，我们可以使用它的Http服务器功能，但是由于功能简单不建议把它当做生产环境的Http服务器用。</li>
+<li>URN：代表某个资源独一无二的名称</li>
+<li>URI：URL和URN是URI的子集</li>
+</ul>
+</li>
+<li><p>关于HttpServelet</p>
+<ul>
+<li>HttpServlet继承GenericServlet，覆盖doGet、doPost和service等方法<ul>
+<li>每次联机只做一次请求/响应，无请求就无响应</li>
+</ul>
+</li>
+<li>@WebServlet注解<ul>
+<li>name 指定由{name}的servlet处理请求</li>
+<li>URLPatterns，指定request路由</li>
+<li>loadOnStratUp&gt;0 ,在程序初始化时，实例化servlet示例，实例顺序按数值大小升序。（默认=-1是第一次请求才实例化）</li>
+</ul>
+</li>
+<li>web.xml部署文件，会覆盖注解的定义</li>
+</ul>
+</li>
+<li><p>文件和目录</p>
+<ul>
+<li>WEB-INF：外界请求无法直接访问改目录</li>
+<li>lib：必须位于WEB-INF下，放在jar包用的</li>
+</ul>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>servlet</category>
+      </categories>
+      <tags>
+        <tag>servlet</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《JSP&amp;Servlet》读书笔记-第五章</title>
+    <url>/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E4%BA%94%E7%AB%A0ServletApi%E8%BF%9B%E9%98%B6%20/</url>
+    <content><![CDATA[<blockquote>
+<p><strong>本章要点：</strong>了解servlet生命周期、使用servletConfig和servletContext、监听器使用和过滤器开发等</p>
+</blockquote>
+<a id="more"></a>
+
+<ol>
+<li><p>隐藏域：<input type="hidden"/></p>
+<ul>
+<li><p>浏览器–&gt;http服务器–&gt;web容器</p>
+<p><img src="/images/post/1558235409522.png" alt="1558235409522"></p>
+</li>
+<li><p>processServlet()，用于在调用doPost和doGet相同处理逻辑时</p>
+</li>
+<li></li>
+</ul>
+</li>
+<li><p>cookie。例子：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//cookies测试</span></span><br><span class="line">        Cookie cookie = <span class="keyword">new</span> Cookie(<span class="string">"user"</span>, <span class="string">"cookie测试"</span>);</span><br><span class="line">        cookie.setMaxAge(<span class="number">7</span> * <span class="number">24</span> * <span class="number">3600</span>);</span><br><span class="line">        response.addCookie(cookie);</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取cookie</span></span><br><span class="line">Cookie[] cookies = request.getCookies();</span><br><span class="line"><span class="keyword">for</span> (Cookie c : cookies) &#123;</span><br><span class="line">    String cookieName = c.getName();</span><br><span class="line">    String cookieVal = c.getValue();</span><br><span class="line">    out.print(<span class="string">"cookie info "</span> + cookieName + cookieVal);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>URL重写：当服务器响应上一次请求，以超链接的方法响应给客户端</p>
+</li>
+<li><p>HttpSession</p>
+</li>
+<li><p>Q&amp;A</p>
+<ul>
+<li>Httpsession保存在了内存中，可以改变保存的位置的吗？</li>
+</ul>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>servlet</category>
+      </categories>
+      <tags>
+        <tag>servlet</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《JSP&amp;Servlet》读书笔记-第四章</title>
+    <url>/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E5%9B%9B%E7%AB%A0%E4%BC%9A%E8%AF%9D%E7%AE%A1%E7%90%86/</url>
+    <content><![CDATA[<blockquote>
+<p><strong>本章要点：</strong>介绍几个实现会话管理的基本方式：如隐藏域、cookies和url重写等</p>
+</blockquote>
+<a id="more"></a>
+
+<ol>
+<li><p>隐藏域：<input type="hidden"/></p>
+<ul>
+<li><p>浏览器–&gt;http服务器–&gt;web容器</p>
+<p><img src="/images/post/1558235409522.png" alt="1558235409522"></p>
+</li>
+<li><p>processServlet()，用于在调用doPost和doGet相同处理逻辑时</p>
+</li>
+<li></li>
+</ul>
+</li>
+<li><p>cookie。例子：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//cookies测试</span></span><br><span class="line">        Cookie cookie = <span class="keyword">new</span> Cookie(<span class="string">"user"</span>, <span class="string">"cookie测试"</span>);</span><br><span class="line">        cookie.setMaxAge(<span class="number">7</span> * <span class="number">24</span> * <span class="number">3600</span>);</span><br><span class="line">        response.addCookie(cookie);</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取cookie</span></span><br><span class="line">Cookie[] cookies = request.getCookies();</span><br><span class="line"><span class="keyword">for</span> (Cookie c : cookies) &#123;</span><br><span class="line">    String cookieName = c.getName();</span><br><span class="line">    String cookieVal = c.getValue();</span><br><span class="line">    out.print(<span class="string">"cookie info "</span> + cookieName + cookieVal);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>URL重写：当服务器响应上一次请求，以超链接的方法响应给客户端</p>
+</li>
+<li><p>HttpSession</p>
+</li>
+<li><p>Q&amp;A</p>
+<ul>
+<li>Httpsession保存在了内存中，可以改变保存的位置的吗？</li>
+</ul>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>servlet</category>
+      </categories>
+      <tags>
+        <tag>servlet</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>利用kubeadm搭建kubernetes集群</title>
     <url>/2019/05/06/kubernetes/%E5%88%A9%E7%94%A8kubeadm%E6%90%AD%E5%BB%BAkubernetes%E9%9B%86%E7%BE%A4/</url>
     <content><![CDATA[<blockquote>
@@ -154,6 +833,833 @@
       <tags>
         <tag>kubernetes</tag>
         <tag>tec</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《疯狂JAVA》读书笔记-第八章Java集合</title>
+    <url>/2019/05/06/%E7%96%AF%E7%8B%82JAVA%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%AC%AC%E5%85%AB%E7%AB%A0java%E9%9B%86%E5%90%88/</url>
+    <content><![CDATA[<blockquote>
+<p><strong>本章要点：</strong>集合概述、Collection集合用法等</p>
+</blockquote>
+<a id="more"></a>
+
+<ol>
+<li><p>集合概述</p>
+<ul>
+<li><p>集合类又称容器类，用来盛装、保存其他数据</p>
+</li>
+<li><p>数组元素可为基本类型和引用类型的值，但集合只能是引用类型的值</p>
+</li>
+<li><p>主要有两个接口类派生：collection和map</p>
+</li>
+<li><p>collection是list、set和queue的父接口</p>
+</li>
+<li><p>lambda表达式遍历</p>
+<ul>
+<li>`//使用lambda表达式遍历集合<br> Collection collection = new ArrayList();<br> collection.add(“php”);<br> collection.add(“java”);<br> collection.forEach(obj -&gt; System.out.println(“集合元素” + obj));<br> collection.forEach(obj -&gt; {<pre><code>System.out.println(&quot;集合元素&quot; + obj);
+System.out.println(&quot;集合元素&quot; + obj);</code></pre> });`</li>
+</ul>
+</li>
+<li><p>Itaerator也是java集合框架的成员，和collection不同的是，Iterator隐藏了collection类底层的各种实现细节，提供遍历collection的统一接口。在使用Iterator遍历集合时，集合的元素不能改变，只有通过iterator.remove()删除上一次next的元素才可以。</p>
+<ul>
+<li><p>`</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//使用Iterator遍历</span></span><br><span class="line">Iterator iterator = collection.iterator();</span><br><span class="line"><span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">    String c = (String) iterator.next();</span><br><span class="line">    System.out.println(<span class="string">"iterator遍历集合元素"</span> + c);</span><br><span class="line">    <span class="keyword">if</span> (<span class="string">"java"</span>.equals(c)) &#123;</span><br><span class="line">        iterator.remove();<span class="comment">//删除上一next</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//  collection.add("c++");//不可改变元素，报错</span></span><br><span class="line">&#125;</span><br><span class="line">System.out.println(collection);`</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>Predicate过滤符合filter条件的元素。函数式接口，应用例子：</p>
+<ul>
+<li><p>`</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> (Object obj : collection) &#123;</span><br><span class="line">    System.out.println(<span class="string">"predicate过滤"</span> + predicateTest(obj, ele -&gt; ((String) ele).equals(<span class="string">"java"</span>)));</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">predicateTest</span><span class="params">(Object o, Predicate p)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> p.test(o);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>`</p>
+</li>
+</ul>
+</li>
+<li><p>Set集合：无序，不可重复.EnumSet性能最好，其次HashSet</p>
+<ul>
+<li>hashSet：按hash算法存储、无序、不是线程同步的、元素可以是null，通过hashcode+equals判断相等（当集合加入一个元素时，会调用对象的hashcode（）方法，决定元素的存储位置）。</li>
+<li>LinkedHashSet:本质还是hashset，只有用链表维护了元素的插入顺序。元素依然不能 重复</li>
+<li>TreeSet：SortedSet接口的实现类型，红黑树结构存储，根据元素实际大小排序。<ul>
+<li>是通过调用元素对象的compareTo()比较的，所以元素对象必须实现compare接口,不然当集合有两个元素时，会报错。</li>
+<li>元素必须是同一类的实例对象</li>
+<li>保证equals返回true时，compareTo也返回true,否则会当成两个对象</li>
+<li>注意包含可变对象的情况</li>
+</ul>
+</li>
+<li>EnumSet：有序（枚举值排序），不允许插入null,</li>
+</ul>
+</li>
+<li><p>List集合：有序、可重复</p>
+<ul>
+<li>ArrayList：线程不安全，动态扩容数组空间（通过initialCapacity指定大小）</li>
+<li>Vector:线程安全，动态扩容数组空间（通过initialCapacity指定大小）。比较古老jdk1.0就有</li>
+<li>Arrays,ArrayList（固定长度的list）,不可删除和添加</li>
+</ul>
+</li>
+<li><p>Queue集合：先进先出</p>
+<ul>
+<li>PriorityQuue：根据元素大小排序，违反了先进先出。不允许null</li>
+<li>DQueue接口和ArrayDqueue实现。双端队列，所以可以当队列，也可当栈使用。</li>
+<li>LinkedList,是一种list集合，实现了Dqueue接口。可当栈使用。因为它内部存储是链表结构，随机访问性能较差，但是插入、删除较好。而ArrayList和ArrayDQueue是以数组结构存储，随机访问较好。</li>
+</ul>
+</li>
+<li><p>Map集合：key是set的集合（因此key不能重复，重复会覆盖），value类似list。</p>
+</li>
+<li><p>hashMap和Hashtable：和hashset一样，尽量不要使用可变对象作为key，不然访问的时候，如果对象变量了，就无法定位到map对象，也不能删除该改变key了（用了的话，就不要改变该对象）</p>
+<ul>
+<li>hashMap：线程不安全，所以效率较高。key是判断hashcode和equals相等，而vale则是判断equals相等即可。key和value都可以为null</li>
+<li>Hashtable：线程安全，比较古老。建议尽量别用，key是判断hashcode和equals相等，而vale则是判断equals相等即可,key和value都不可以为null</li>
+<li>LinkedHashMap：和LinkedHaseSet一样，用链表维护插入时的顺序，所以性能比HashMap低。</li>
+<li>SortedMap接口和TreeMap实现。和TreeSet一样，key必须是实现了comparable接口。对key比对排序。</li>
+</ul>
+</li>
+<li><p>操作集合的工具类Collections</p>
+<ul>
+<li>排序</li>
+<li>查找、替换</li>
+<li>同步控制</li>
+<li>设置不可变集合</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+      </categories>
+      <tags>
+        <tag>JAVA</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《疯狂JAVA》读书笔记-第十三章Mysql数据库和JDBC编程</title>
+    <url>/2019/05/06/%E7%96%AF%E7%8B%82JAVA%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%AC%AC%E5%8D%81%E4%B8%89%E7%AB%A0Mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8CJDBC%E7%BC%96%E7%A8%8B/</url>
+    <content><![CDATA[<blockquote>
+<p><strong>本章要点：</strong>集合概述、Collection集合用法等</p>
+</blockquote>
+<a id="more"></a>
+
+<ol>
+<li><p>集合概述</p>
+<ul>
+<li><p>集合类又称容器类，用来盛装、保存其他数据</p>
+</li>
+<li><p>数组元素可为基本类型和引用类型的值，但集合只能是引用类型的值</p>
+</li>
+<li><p>主要有两个接口类派生：collection和map</p>
+</li>
+<li><p>collection是list、set和queue的父接口</p>
+</li>
+<li><p>lambda表达式遍历</p>
+<ul>
+<li>`//使用lambda表达式遍历集合<br> Collection collection = new ArrayList();<br> collection.add(“php”);<br> collection.add(“java”);<br> collection.forEach(obj -&gt; System.out.println(“集合元素” + obj));<br> collection.forEach(obj -&gt; {<pre><code>System.out.println(&quot;集合元素&quot; + obj);
+System.out.println(&quot;集合元素&quot; + obj);</code></pre> });`</li>
+</ul>
+</li>
+<li><p>Itaerator也是java集合框架的成员，和collection不同的是，Iterator隐藏了collection类底层的各种实现细节，提供遍历collection的统一接口。在使用Iterator遍历集合时，集合的元素不能改变，只有通过iterator.remove()删除上一次next的元素才可以。</p>
+<ul>
+<li><p>`</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//使用Iterator遍历</span></span><br><span class="line">Iterator iterator = collection.iterator();</span><br><span class="line"><span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">    String c = (String) iterator.next();</span><br><span class="line">    System.out.println(<span class="string">"iterator遍历集合元素"</span> + c);</span><br><span class="line">    <span class="keyword">if</span> (<span class="string">"java"</span>.equals(c)) &#123;</span><br><span class="line">        iterator.remove();<span class="comment">//删除上一next</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//  collection.add("c++");//不可改变元素，报错</span></span><br><span class="line">&#125;</span><br><span class="line">System.out.println(collection);`</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>Predicate过滤符合filter条件的元素。函数式接口，应用例子：</p>
+<ul>
+<li><p>`</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> (Object obj : collection) &#123;</span><br><span class="line">    System.out.println(<span class="string">"predicate过滤"</span> + predicateTest(obj, ele -&gt; ((String) ele).equals(<span class="string">"java"</span>)));</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">predicateTest</span><span class="params">(Object o, Predicate p)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> p.test(o);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>`</p>
+</li>
+</ul>
+</li>
+<li><p>Set集合：无序，不可重复.EnumSet性能最好，其次HashSet</p>
+<ul>
+<li>hashSet：按hash算法存储、无序、不是线程同步的、元素可以是null，通过hashcode+equals判断相等（当集合加入一个元素时，会调用对象的hashcode（）方法，决定元素的存储位置）。</li>
+<li>LinkedHashSet:本质还是hashset，只有用链表维护了元素的插入顺序。元素依然不能 重复</li>
+<li>TreeSet：SortedSet接口的实现类型，红黑树结构存储，根据元素实际大小排序。<ul>
+<li>是通过调用元素对象的compareTo()比较的，所以元素对象必须实现compare接口,不然当集合有两个元素时，会报错。</li>
+<li>元素必须是同一类的实例对象</li>
+<li>保证equals返回true时，compareTo也返回true,否则会当成两个对象</li>
+<li>注意包含可变对象的情况</li>
+</ul>
+</li>
+<li>EnumSet：有序（枚举值排序），不允许插入null,</li>
+</ul>
+</li>
+<li><p>List集合：有序、可重复</p>
+<ul>
+<li>ArrayList：线程不安全，动态扩容数组空间（通过initialCapacity指定大小）</li>
+<li>Vector:线程安全，动态扩容数组空间（通过initialCapacity指定大小）。比较古老jdk1.0就有</li>
+<li>Arrays,ArrayList（固定长度的list）,不可删除和添加</li>
+</ul>
+</li>
+<li><p>Queue集合：先进先出</p>
+<ul>
+<li>PriorityQuue：根据元素大小排序，违反了先进先出。不允许null</li>
+<li>DQueue接口和ArrayDqueue实现。双端队列，所以可以当队列，也可当栈使用。</li>
+<li>LinkedList,是一种list集合，实现了Dqueue接口。可当栈使用。因为它内部存储是链表结构，随机访问性能较差，但是插入、删除较好。而ArrayList和ArrayDQueue是以数组结构存储，随机访问较好。</li>
+</ul>
+</li>
+<li><p>Map集合：key是set的集合（因此key不能重复，重复会覆盖），value类似list。</p>
+</li>
+<li><p>hashMap和Hashtable：和hashset一样，尽量不要使用可变对象作为key，不然访问的时候，如果对象变量了，就无法定位到map对象，也不能删除该改变key了（用了的话，就不要改变该对象）</p>
+<ul>
+<li>hashMap：线程不安全，所以效率较高。key是判断hashcode和equals相等，而vale则是判断equals相等即可。key和value都可以为null</li>
+<li>Hashtable：线程安全，比较古老。建议尽量别用，key是判断hashcode和equals相等，而vale则是判断equals相等即可,key和value都不可以为null</li>
+<li>LinkedHashMap：和LinkedHaseSet一样，用链表维护插入时的顺序，所以性能比HashMap低。</li>
+<li>SortedMap接口和TreeMap实现。和TreeSet一样，key必须是实现了comparable接口。对key比对排序。</li>
+</ul>
+</li>
+<li><p>操作集合的工具类Collections</p>
+<ul>
+<li>排序</li>
+<li>查找、替换</li>
+<li>同步控制</li>
+<li>设置不可变集合</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+      </categories>
+      <tags>
+        <tag>JAVA</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《疯狂JAVA》读书笔记-第七章Java基础类库</title>
+    <url>/2019/05/05/%E7%96%AF%E7%8B%82JAVA%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%AC%AC%E4%B8%83%E7%AB%A0java%E5%9F%BA%E7%A1%80%E7%B1%BB%E5%BA%93/</url>
+    <content><![CDATA[<blockquote>
+<p><strong>本章要点：</strong>Java 8提供了4000多个基础类，合格的Java程序员要掌握Java SE中70%以上的基础类</p>
+</blockquote>
+<a id="more"></a>
+
+<ol>
+<li>用户互动<ul>
+<li>main函数中的args是运行前给用户指定参数的。如：java Test “java test”</li>
+<li>Scanner获取用户输入。（基于正则的文本扫描器）</li>
+</ul>
+</li>
+<li>系统类（代表当前java程序的运行平台）</li>
+<li>Runtime类（java程序运行时的运行环境）</li>
+<li>常用类：<ul>
+<li>StringBuffer和StringBuidler,其中StringBuffer是线程安全的</li>
+<li>Date 和 Calendar 。Date 存在缺陷</li>
+</ul>
+</li>
+<li>正则表达式（没怎么看）</li>
+<li>国际化和格式</li>
+<li>java 8新增的时间、日期格式器（没看）</li>
+</ol>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+      </categories>
+      <tags>
+        <tag>JAVA</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《疯狂JAVA》读书笔记-第六章面向对象（下）</title>
+    <url>/2019/05/04/%E7%96%AF%E7%8B%82JAVA%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%AC%AC%E5%85%AD%E7%AB%A0%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%EF%BC%88%E4%B8%8B%EF%BC%89/</url>
+    <content><![CDATA[<blockquote>
+<p><strong>本章要点：</strong>包装类及其用法、内部类、枚举类、Lambda表达式、接口、抽象类和垃圾回收等</p>
+</blockquote>
+<a id="more"></a>
+
+<ol>
+<li><p>-128-127，在用包装类Integer a=2 ;Integer b=2; a==b;是相关等的，因为jdk1.5后，有一个自动装箱的特性，在new Inteager(2)的时候，其实都是引用了预先示例好的一个cacahe数组，范围是-128到127。当定义超出这个范围的数时，两个对象就是不等（不同的）对象了。</p>
+</li>
+<li><p>常量池：在编译时就确定下来并保存在.class文件中的常量（包括了类、方法、接口的常量和字符串常量）。</p>
+<ul>
+<li>构造器：创建对象的根本途径，每个类都有一个默认无参的构造器（隐式返回该类实例）</li>
+<li>成员变量：可用public、protected、private、static和final修饰</li>
+<li>方法：可用public、protected、private、static、final和abstract修饰，但final和abstract只能出现其一</li>
+</ul>
+</li>
+<li><p>单例类：一个类只允许创建一个实例。因为不能给自由创建对象，所以构造器方法必须private,因此又需提供一个返回该类对象的方法（因为在此之前是没对象的，所以方法必须为static，属于类方法），而且创建过的对象必须静态缓存起来，所以对象的成员变量是static修饰的。</p>
+</li>
+<li><p>final关键字（程序员显式初始化后不可更改，系统不会隐式初始化）</p>
+<ul>
+<li><p>类变量：静态代码块和初始化变量时指定</p>
+</li>
+<li><p>实例变量：普通代码块、指定变量时或者构造器中指定</p>
+</li>
+<li><p>修饰基本类型和引用变量的区别：基本类型不可重新赋值，引用变量由于是执行一个地址，所指向的对象可重新赋值，地址不可。</p>
+</li>
+<li><p>不可变类：创建该类后，该类的实例变量不可变。遵循以下规则：</p>
+<ul>
+<li>使用private和final来修饰成员变量</li>
+<li>提供构造器，传入参数方式初始化值</li>
+<li>只提供get方法，不提供set方法</li>
+</ul>
+</li>
+<li><p>抽象类</p>
+<ul>
+<li>用abstract修饰</li>
+<li>不能实例化（不能用new创建），即使不含抽象方法</li>
+<li>含抽象方法</li>
+<li>final（static）和abstract永远不能同时被使用</li>
+</ul>
+</li>
+<li><p>接口</p>
+<ul>
+<li>所有的方法都是抽象方法，java8改进接口，允许定义默认方法，提供方法的实现。</li>
+</ul>
+</li>
+<li><p>接口和抽象类区别：</p>
+<ul>
+<li>接口和抽象类都不能被实例化</li>
+<li>都可包含抽象方法，且实现接口和继承抽象类都必须实现这些抽象方法</li>
+<li>接口不可定义普通成员变量，只可定义静态常量。</li>
+<li>接口只能包含默认方法和抽象方法，而抽象类可包含普通方法</li>
+<li>接口不含有构造器，但是抽象类型可以含有构造器，但不是创建对象的，而且为了完成给子类调用完成抽象类的实例初始化工作。</li>
+<li>可以实现多个接口，抽象类只能单继承。</li>
+</ul>
+</li>
+<li><p>内部类</p>
+<ul>
+<li>非静态内部类不能用户静态成员</li>
+<li>内部类可以访问外部的私有成员，但是外部类不能访问内部类的实现细节</li>
+<li>内部类比外部类多了三个修饰：private,protected,static</li>
+<li>内部类是类成员，匿名内部类和局部内部类则不是</li>
+<li>静态内部类，属于外部类而不属于外部类的对象。</li>
+<li>静态内部类只能访问外部类的静态成员。即使是静态内部类的实例访问也不能访问外部类的非静态成员。</li>
+</ul>
+</li>
+<li><p>局部内部类：在方法里面定义的类。</p>
+</li>
+<li><p>匿名内部类：只需执行一次调用。必须实现接口或者继承一个父类，无类名，所以无构造器。不能是抽象类，因为匿名内部类必须初始化实例对象。</p>
+</li>
+<li><p>lambda表达式：</p>
+<ul>
+<li>目标类型必须是函数式接口（只包含一个抽象方法的接口）</li>
+</ul>
+</li>
+<li><p>枚举类：实例有限且固定的类</p>
+<ul>
+<li>默认继承java.lang.Enum类，不能显式继承其他类</li>
+<li>使用enum定义的非抽象类，是用final修饰的，因此不能派生子类</li>
+<li>构造器的访问级别必须是private</li>
+<li>枚举类的所有实例必须在第一行显式列出</li>
+<li>不能随便用new创建对象，一般用valueOf</li>
+</ul>
+</li>
+<li><p>对象与垃圾回收</p>
+<ul>
+<li><p>只回收堆内存中的对象，不回收物理资源</p>
+</li>
+<li><p>无法精准控制回收时机</p>
+</li>
+<li><p>回收前总会调用finalize()方法，该方法可能使对象重新引用而取消了回收</p>
+</li>
+<li><p>对象在内存中的状态</p>
+<p><img src="/images/post/1555545311668.png" alt="1555545311668"></p>
+</li>
+</ul>
+</li>
+<li><p>强制回收：System.gc()或者Runtime.getRumtime.gc()，建议系统去回收（并不是马上）</p>
+</li>
+<li><p>对象的强、软、弱、虚引用</p>
+<ul>
+<li>强引用：正常的创建对象，并赋给引用变量的情况</li>
+<li>软引用：通过SoftRefernce实现，内存足够时不会被回收，反之才回收</li>
+<li>弱引用：通过WeakReference实现，当进行垃圾回收时，总会被回收</li>
+<li>虚引用：通过PhantomReference实现，跟没引用差不多，不能单独使用，要结合引用队列</li>
+</ul>
+</li>
+<li><p>修饰符使用范围</p>
+<ul>
+<li>strictfp 让浮点更精确，可以修饰类，接口和方法</li>
+</ul>
+</li>
+<li><p>jar包相关</p>
+</li>
+</ul>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+      </categories>
+      <tags>
+        <tag>JAVA</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《疯狂JAVA》读书笔记-第五章面向对象（上）</title>
+    <url>/2019/05/03/%E7%96%AF%E7%8B%82JAVA%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%AC%AC%E4%BA%94%E7%AB%A0%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%EF%BC%88%E4%B8%8A%EF%BC%89/</url>
+    <content><![CDATA[<blockquote>
+<p><strong>本章要点：</strong>定义类、成员变量、方法、方法重载、继承、多态、static关键字、静态代码块等</p>
+</blockquote>
+<a id="more"></a>
+
+<ol>
+<li><p>类和对象，类是对象的抽象，对象是类的具体实现</p>
+</li>
+<li><p>类（可用public、final和abstract修饰）包含常见成员：构造器、成员变量和方法</p>
+<ul>
+<li>构造器：创建对象的根本途径，每个类都有一个默认无参的构造器（隐式返回该类实例）</li>
+<li>成员变量：可用public、protected、private、static和final修饰</li>
+<li>方法：可用public、protected、private、static、final和abstract修饰，但final和abstract只能出现其一</li>
+</ul>
+</li>
+<li><p>static关键字：被static修饰的方法和变量是属于类本身，称类方法和类变量，而非static的是实例方法和实例变量，<strong>静态成员不能直接访问非静态成员。</strong></p>
+</li>
+<li><p>对象、引用和指针</p>
+<p><code>Persion p = new Persion();</code></p>
+<p><code>p.name=&quot;李刚&quot;；</code></p>
+<p><code>p.age=18；</code></p>
+<p><code>Persion p2 = p；</code></p>
+</li>
+</ol>
+<p>   <img src="/images/post/1554736290688.png" alt="1554736290688"></p>
+<ol start="5">
+<li><p>方法详解</p>
+<ul>
+<li>必须在类内定义</li>
+<li>参数的传递为值传递，注意情况：当参数为引用类型时，方法内复制的对象变量和方法外的变量指向同一个堆内存变量</li>
+<li>形参参数可变：参数类型后跟三个点（…）,test(String … books)。<strong>且该参数只能是方法最后一个</strong></li>
+<li><strong>方法重载：两同一不同（同一类同名方法，不同参数列表）。与方法的返回类型和修饰无关,注意参数是可变长度参数的重载，一般不建议重载此情况，有碍代码可读性</strong></li>
+</ul>
+</li>
+<li><p>成员变量（实例变量、类变量）和局部变量（形参、方法内的局部变量和代码块定义的局部变量）</p>
+<ul>
+<li>类变量可以被所有该类的实例变量访问，且都是指向同一内存区</li>
+<li>局部变量：除形参外，必须显式初始化（赋初始值），否则报错</li>
+</ul>
+</li>
+<li><p>隐藏和封装</p>
+<ul>
+<li>访问控制符：private（类内） &gt; protected（子类） &gt; default(同一包下) &gt; public</li>
+<li>java的package，相当于命名空间，区分相同类文件。用import导入不同包的类</li>
+</ul>
+</li>
+<li><p>深入构造器</p>
+<ul>
+<li>调用构造器之前，类的实例对象已经被创建（分配了内存空间）</li>
+<li>构造器重载</li>
+</ul>
+</li>
+<li><p>类的继承</p>
+<ul>
+<li>方法重写（覆盖）：两同两小一大：方法名和参数列表相同，子类的异常要比父类的异常更小或相等，子类返回的类型要比父类更小或相等，子类的方法访问级别要比父类大或相等。</li>
+<li>父类构造器：若不显式调用，默认调用是父类的无参构造器</li>
+</ul>
+</li>
+<li><p><strong>多态：java引用变量分两类型：编译时类型和运行时类型。编译型由于声明变量时的类型决定，而运行时则由于实际赋予该变量的对象决定。当编译时和运行时类型不一致时，就称为多态。</strong></p>
+<ul>
+<li><strong>只能调用声明该变量时所用的类包含的方法，而不能调用它运行类型的方法。</strong></li>
+</ul>
+</li>
+<li><p>代码块</p>
+<ul>
+<li><strong>顶级类静态代码块–&gt;父类静态代码块–&gt;子类静态代码块（第一次创建对象时）–&gt;普通代码块–&gt;构造器</strong></li>
+<li><strong>普通初始定义变量和普通代码块是一样的，按先后顺序（静态代码块和静态变量也一样）</strong></li>
+</ul>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+      </categories>
+      <tags>
+        <tag>JAVA</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《疯狂JAVA》读书笔记-第四章流程控制与数组</title>
+    <url>/2019/05/02/%E7%96%AF%E7%8B%82JAVA%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%AC%AC%E5%9B%9B%E7%AB%A0%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6%E4%B8%8E%E6%95%B0%E7%BB%84/</url>
+    <content><![CDATA[<blockquote>
+<p><strong>本章要点：</strong>流程控制、数据定义和初始化、理解数组和多维数组实质等</p>
+</blockquote>
+<a id="more"></a>
+
+<p>1、<strong>流程控制</strong></p>
+<ul>
+<li><p>顺序结构</p>
+</li>
+<li><p>选择结构</p>
+<p>switch 允许控制的数据类型：short、char、byte和int四种整型，枚举类型和String（java7之后才支持）</p>
+</li>
+<li><p>循环结构</p>
+</li>
+</ul>
+<p>2、<strong>数组类型</strong></p>
+<ul>
+<li><p>数组也是一种类型（引用类型），建议用int[] arrayName;的方式定义，int[]为类型，arrayName为变量名称。此定义只是定义了一个变量指针，并没有为此分配任何内存空间</p>
+</li>
+<li><p>数组初始化</p>
+<ul>
+<li><p>静态初始化：<code>int[] a = new int[]{1, 2, 3};</code></p>
+</li>
+<li><p>动态初始化：<code>int[] a = new int[15]</code></p>
+<p>数组元素的类型是整型（short,long,byte和int）,元素默认值是0；</p>
+<p>数组元素的类型是字符类型（char）,元素默认值是’\u000’；</p>
+<p>数组元素的类型是布尔类型，元素默认值是false；</p>
+<p>数组元素的类型是浮点型（float,double）,元素默认值是0；</p>
+<p>数组元素的类型是引用类型（类，接口，数组）,元素默认值是null；</p>
+</li>
+</ul>
+</li>
+<li><p>数组使用</p>
+<p><code>String[] books = new String[]{&quot;java&quot;,&quot;php&quot;};</code></p>
+<p><code>for(String book : books){</code></p>
+<p><code>System.out.println(book);</code></p>
+<p><code>}</code></p>
+</li>
+</ul>
+<p>3、<strong>深入数组</strong></p>
+<ul>
+<li><p>数组引用变量（数组引用）在栈内存中，数组元素（对象）是在堆内存中，数组引用变量是访问堆内存中数组元素的根本方式。</p>
+<p><img src="/images/post/1554164164998.png" alt="1554164164998"></p>
+</li>
+<li><p>堆栈内存之分：在方法中定义的变量（局部变量），会放入栈内存，随着方法执行结束销毁；当程序建立对象，对象会建立在运行时数据区（堆内存），以反复利用（对象创建成本大）。方法结束也不会销毁，除了没任何一个引用它的时候（垃圾回收）。</p>
+</li>
+<li></li>
+</ul>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+      </categories>
+      <tags>
+        <tag>JAVA</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《疯狂JAVA》读书笔记-第三章数据类型和运算符</title>
+    <url>/2019/05/01/%E7%96%AF%E7%8B%82JAVA%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%AC%AC%E4%B8%89%E7%AB%A0%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%92%8C%E8%BF%90%E7%AE%97%E7%AC%A6/</url>
+    <content><![CDATA[<blockquote>
+<p><strong>本章要点：</strong>注释、8种基本类型、自动类型转换、强制类型转换等</p>
+</blockquote>
+<a id="more"></a>
+
+<h6 id="1、注释"><a href="#1、注释" class="headerlink" title="1、注释"></a>1、注释</h6><ul>
+<li>单行注释和多行注释</li>
+<li>文档注释</li>
+</ul>
+<h6 id="2、标识和关键字"><a href="#2、标识和关键字" class="headerlink" title="2、标识和关键字"></a>2、标识和关键字</h6><ul>
+<li>分隔符：分号（；），花括号（{}），方括号（[]）,圆括号（（）），空格和圆点（.）</li>
+<li>标识符：用以给变量，方法和类命名，有以下规则<ol>
+<li>可有字母，下划线，美元符（$），数字组成，但数字不能打头（首位）</li>
+<li>不包含空格</li>
+<li>区分大小写，ADC和adc是不同的符号</li>
+<li>字母可以是中文，日文等</li>
+<li>不能是java的关键字和保留字，但可包含关键字和保留字</li>
+<li>不能是@#等其他特殊符号</li>
+</ol>
+</li>
+</ul>
+<h6 id="3、java关键字"><a href="#3、java关键字" class="headerlink" title="3、java关键字"></a>3、java关键字</h6><h6 id="4、数据类型分类"><a href="#4、数据类型分类" class="headerlink" title="4、数据类型分类"></a>4、数据类型分类</h6><p>java是强类型语言，变量必须先定义声明后使用，定义的类型变量必须与赋值类型匹配。java支持的类型分两类：</p>
+<p>基本类型和引用类型。</p>
+<ul>
+<li><p>基本类型（8种）：boolean型和数值类型，数值类型又分整型（byte,int,short,long,char）和浮点型（float,double）</p>
+<ul>
+<li>char的赋值用单引号，String的赋值用双引号</li>
+<li>char可以赋值给整型</li>
+<li>正浮点数/0=Infinity（正无穷大），负浮点数/0=Infinity（负无穷大），整数/0报错，正无穷大都是相等的，负无穷大都是相等的</li>
+<li>其他基本类型不能转换boolean型，布尔型和字符连接运行，会转为字符型</li>
+</ul>
+</li>
+<li><p>引用类型：类、接口、数值和null类型。null不能转换成基本类型，所以不能把null赋值给基本类型变量</p>
+</li>
+<li><p>类型转换</p>
+<ul>
+<li><strong>自动转换</strong>：任何范围小的数据类型都可以向范围大的数据类型自动转换，反之报错。如int向float转，而byte不能向char转等。任何基本数据类型与字符转连接，都转转成字符串，所以如何想把基本类型数据变成字符输出，直接和空字符进行连接运算即可。</li>
+<li><strong>强制转换</strong>：范围大的数据类型向范围小的数据类型转换，也叫缩小转换。因为有可能溢出造成数据丢失。</li>
+<li><strong>表达式的自动提示：</strong>1、所有的byte、short和char类型都将向int；2、整个表达式的算术数据类型都将提高到最高等级操作数的数据类型。</li>
+</ul>
+</li>
+<li><p>直接量</p>
+<ul>
+<li>通过源代码直接给定的值，能直接指定直接量的只有三种类型：基本类型，null和字符</li>
+<li>null可以直接赋值给任何引用类型变量，包括String.</li>
+<li>sting类型的直接量不能赋给其他类型变量，boolean类型的直接量只能赋值给Boolean类型变量，不能给其他任何类型变量</li>
+<li>因为String是不可变类，当Java程序第一次使用字符串直接量是，会用常量池缓存改直接量，当后面再次使用该直接量时，会直接使用常量池中的直接量。</li>
+</ul>
+<p><strong><u>常量池：是指在程序编译期间就被确定下来的，并保存在.class文件中的一些数据。常包含类、方法和接口的常量，还有字符串直接量。</u></strong></p>
+</li>
+<li><p>运算符</p>
+<ul>
+<li><p>算术运算符：加减乘除和求余，求余：因为求余其实也是除法运算，所以如果两个操作数都是整数的话，不允许第二个操作数为0；相反如果两操作数有一个或者两个为浮点数，则允许第二操作数为0或者0.0，但是求余结果都是非数：NaN。0或者0.0求余任何非零数结果都是0。（正负看第一操作数）例子：</p>
+<p>4 % 0 = 报错</p>
+<p>5.0 % 0 = NaN</p>
+<p>5 % 0.0 = NaN</p>
+<p>0  % 0.0 = NaN</p>
+<p>0.0 % 0 = NaN</p>
+<p>0 % 5 = 0</p>
+<p>0.0 % 5 = 0.0</p>
+<p>-5 % 3 = -2</p>
+<p>5 % -3 = 2</p>
+<p>3 % -5 = 3</p>
+<p>-3 % 5 = -3</p>
+</li>
+<li><p>赋值运算符</p>
+</li>
+<li><p>比较运算符：基本类型的变量和值不能和引用类型的比较，布尔类型不能与其他类型比较，没有父子关系的引用类型变量不能比较。一些== 的情况：97 == 97.0 ，‘a’ == 97等，引用变量要指向同一对象才是相等</p>
+</li>
+<li><p>逻辑运算符</p>
+</li>
+<li><p>位运算符</p>
+</li>
+<li><p>类型相关运算符</p>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+      </categories>
+      <tags>
+        <tag>JAVA</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《疯狂JAVA》读书笔记-第二章理解面向对象</title>
+    <url>/2019/04/30/%E7%96%AF%E7%8B%82JAVA%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E7%90%86%E8%A7%A3%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/</url>
+    <content><![CDATA[<blockquote>
+<p><strong>本章要点：</strong>面向对象特征、结构化程序、UML统一建模语言</p>
+</blockquote>
+<a id="more"></a>
+
+<p>1、结构化程序三种结构：顺序、选择和循环</p>
+<p>2、面向对象基本特征：</p>
+<ul>
+<li>继承：子类继承父类，获取父类的属性和方法</li>
+<li>封装：将对象的实现细节封装起来，通过公用的方法暴露出来</li>
+<li>多态：子类对象可以直接赋值给父类变量，但是运行时表现出的是子类的特征。所以同一类型对象执行同一方法时，可以表现出不同行为特征</li>
+</ul>
+<p>3、UML统一建模语言（忽略不看）</p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+      </categories>
+      <tags>
+        <tag>JAVA</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《疯狂JAVA》读书笔记-第一章 JAVA语言概述和开发环境</title>
+    <url>/2019/04/29/spring/%E7%AC%AC%E4%B8%80%E7%AB%A0Spring%E7%AE%80%E4%BB%8B/</url>
+    <content><![CDATA[<blockquote>
+<p><strong>本章要点：</strong>Java语言简介、发展历史、优势和安装等</p>
+</blockquote>
+<a id="more"></a>
+
+<p><strong>1、Spring框架</strong></p>
+<p><img src="C:%5CUsers%5Cuser%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5C1559878617105.png" alt="1559878617105"></p>
+<ul>
+<li>其中Ioc Container是最核心和最基础的，最大作用是配置和管理Java对象的生命周期</li>
+<li>AOP、Web、Dao和Orm等模块可集成到Spring中</li>
+</ul>
+<p><strong>2、开发准备</strong></p>
+<ul>
+<li>下载jdk，目前稳定流行版本的jdk1.8</li>
+<li>解压jdk，在环境变量Path中配置java环境变量。用户变量和系统变量的区别：用户变量是当前的登录用户生效，系统变量是所有的用户。</li>
+<li>环境变量ClassPath，在早期的jdk版本需要设置这个环境变量，jdk1.5以上的版本不需要设置。改该表示JRE会搜索该路径下的JAVA类。如配置，可以配置一点（.）,表示搜索当前路径下的java类型。</li>
+</ul>
+<p><strong>3、垃圾回收机制</strong></p>
+<ul>
+<li>c/c++由程序员显示的内存回收。（容易导致内存泄漏或者回收核心的类库的内存，导致系统崩溃）</li>
+<li>java的内存分配和回收由JRE在后台自动进行（有专门负责gc的线程负责控制和检测，在CPU或者内存不足的时候自动进行回收）</li>
+<li>java堆内存，是运行时的内存空间，存放类的示例（运行时的所有对象）。java的垃圾回收机制就是释放那些没有再被引用的对象（特定的算法去发现这种对象，标志位垃圾信息）和整理内存碎片，释放更多空间。</li>
+<li>垃圾回收几个特点：1、不可预见性（可在cpu空闲时回收，可在消耗极限时回收）；2、只回收内存资源，其他资源不回收，例如磁盘、IO等无能为力；3、回收算法多种多样；</li>
+</ul>
+<p><strong>对于无用对象，一定不要再引用它，以便回收机制发现它，释放更多资源。</strong></p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+      </categories>
+      <tags>
+        <tag>JAVA</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《疯狂JAVA》读书笔记-第一章 JAVA语言概述和开发环境</title>
+    <url>/2019/04/29/%E7%96%AF%E7%8B%82JAVA%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%AC%AC%E4%B8%80%E7%AB%A0JAVA%E8%AF%AD%E8%A8%80%E6%A6%82%E8%BF%B0%E5%92%8C%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/</url>
+    <content><![CDATA[<blockquote>
+<p><strong>本章要点：</strong>Java语言简介、发展历史、优势和安装等</p>
+</blockquote>
+<a id="more"></a>
+
+<p><strong>1、高级语言</strong></p>
+<p>高级语言一般分编译型语言和解释型语言，c、c++等属于编译型语言，而python、ruby属于解释型语言。由于java的执行过程是：先编译成*.class的文件（与平台无关的字节码文件），此类文件无法直接执行，必须由java解释器（JVM）来解释执行，所以java既不是纯粹的编译型语言，又不是纯粹的解释型语言。</p>
+<p><strong>2、开发准备</strong></p>
+<ul>
+<li>下载jdk，目前稳定流行版本的jdk1.8</li>
+<li>解压jdk，在环境变量Path中配置java环境变量。用户变量和系统变量的区别：用户变量是当前的登录用户生效，系统变量是所有的用户。</li>
+<li>环境变量ClassPath，在早期的jdk版本需要设置这个环境变量，jdk1.5以上的版本不需要设置。改该表示JRE会搜索该路径下的JAVA类。如配置，可以配置一点（.）,表示搜索当前路径下的java类型。</li>
+</ul>
+<p><strong>3、垃圾回收机制</strong></p>
+<ul>
+<li>c/c++由程序员显示的内存回收。（容易导致内存泄漏或者回收核心的类库的内存，导致系统崩溃）</li>
+<li>java的内存分配和回收由JRE在后台自动进行（有专门负责gc的线程负责控制和检测，在CPU或者内存不足的时候自动进行回收）</li>
+<li>java堆内存，是运行时的内存空间，存放类的示例（运行时的所有对象）。java的垃圾回收机制就是释放那些没有再被引用的对象（特定的算法去发现这种对象，标志位垃圾信息）和整理内存碎片，释放更多空间。</li>
+<li>垃圾回收几个特点：1、不可预见性（可在cpu空闲时回收，可在消耗极限时回收）；2、只回收内存资源，其他资源不回收，例如磁盘、IO等无能为力；3、回收算法多种多样；</li>
+</ul>
+<p><strong>对于无用对象，一定不要再引用它，以便回收机制发现它，释放更多资源。</strong></p>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+      </categories>
+      <tags>
+        <tag>JAVA</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>RabbitMQ工作机制</title>
+    <url>/2019/03/05/rabbitmq/%E7%AC%AC%E4%BA%8C%E7%AB%A0RabbitMQ%E5%B7%A5%E4%BD%9C%E6%9C%BA%E5%88%B6/</url>
+    <content><![CDATA[<blockquote>
+<p><strong>本章要点：</strong>RabbitMQ工作机制、简单应用等</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="第二章-RabbitMQ工作机制"><a href="#第二章-RabbitMQ工作机制" class="headerlink" title="第二章 RabbitMQ工作机制"></a>第二章 RabbitMQ工作机制</h1><h2 id="一、工作机制"><a href="#一、工作机制" class="headerlink" title="一、工作机制"></a>一、工作机制</h2><ol>
+<li>消息通信基本概念<ul>
+<li>生产者（应用）：创建消息，并推送到消息服务器</li>
+<li>代理（rabbitmq server）：也就是RabbitMQ Server本身（Broker），不产生消息，扮演【快递】的角色</li>
+<li>消费者（应用）：消息接受方，确认消息和处理数据</li>
+</ul>
+</li>
+</ol>
+<h2 id="二、简单应用"><a href="#二、简单应用" class="headerlink" title="二、简单应用"></a>二、简单应用</h2><ol>
+<li><p>消息发送和连接</p>
+<ul>
+<li>程序和RabbitMq Server建立一个TCP连接并且进行验证（用户名和密码），验证通过后彼此间就建立了一个AMQP信道（channel）。</li>
+<li>信道是创建在TCP上的虚拟连接，所有的AMQP命令都是通过信道发送的。每个信道都有一个唯一的id，消息的创建、订阅和接收都是在信道完成。</li>
+<li>为何不直接用tcp发送命令。因为tcp的创建和销毁开销昂贵，且有限。如果一个请求只用一个TCP处理，然后命令在信道上发送，既能满足性能，又有较好的私密性。</li>
+</ul>
+</li>
+<li><p>消息生产</p>
+<p><img src="/images/post/1555855801296.png" alt="1555855801296"></p>
+</li>
+<li><p>消息持久化</p>
+<ul>
+<li>默认情况下，rabbit中的消息不进行持久化，要想消息能从磁盘中恢复，必须满足：<ul>
+<li>声明消息队列时，开启持久化参数：channel.queueDeclare(x, true, false, false, null)，参数2设置为true持久化</li>
+<li>投递时，设置参数存储到文本到磁盘：channel.basicPublish(x, x, MessageProperties.PERSISTENT_TEXT_PLAIN,x)，参数3设置为存储纯文本到磁盘</li>
+<li>消息已到达持久化的交换器上</li>
+<li>消息已到达持久化的队列</li>
+</ul>
+</li>
+<li>rabbit会将持久化消息写到日志文件，消费后标志此消息等待回收</li>
+<li>会影响性能，因为写入磁盘比写入内存更低效得多</li>
+</ul>
+</li>
+<li><p>消息确认</p>
+<ul>
+<li>消费者收到消息后必须手动或者自动确认，否则rabbit会认为该消费方还没准备好接收消息，将不会再发送更多消息。此时队列中的消息状态也会是unacked状态，会重新发送给其他订阅者。</li>
+<li>可利用这一点特性，订阅者可延时确认消息（完成业务逻辑后），避免rabbit发送过多的消息导致程序崩溃。</li>
+</ul>
+</li>
+<li><p>消息拒绝，消息确认前可有以下选择：</p>
+<ul>
+<li>断开rabbit连接，此时消息会重新发给其他订阅者</li>
+<li>使用rabbit提供的方法（channel.basicReject(long deliveryTag, boolean requeue)），拒绝消息：<ul>
+<li>参数为true,重新回到队列</li>
+<li>参数为false，分配到【死信】队列（存放被拒绝而不重新回到正常队列的消息）</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>RabbiMq</category>
+      </categories>
+      <tags>
+        <tag>RabbitMq</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>RabbitMq简介与安装</title>
+    <url>/2019/03/04/rabbitmq/%E7%AC%AC%E4%B8%80%E7%AB%A0RabbitMQ%E7%9A%84%E5%AE%89%E8%A3%85/</url>
+    <content><![CDATA[<blockquote>
+<p><strong>本章要点：</strong>RabbitMq简介、RabbitMq安装等</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="第一章-RabbitMq简介与安装"><a href="#第一章-RabbitMq简介与安装" class="headerlink" title="第一章 RabbitMq简介与安装"></a>第一章 RabbitMq简介与安装</h1><h2 id="一、RabbitMq简介"><a href="#一、RabbitMq简介" class="headerlink" title="一、RabbitMq简介"></a>一、RabbitMq简介</h2><ol>
+<li>什么是MQ<ul>
+<li>全称是Message Queue,简单说是指消息以管道方式传递</li>
+<li>使用场景：<ul>
+<li>削峰填谷：秒杀系统</li>
+<li>异步处理：日志、通知邮件发送等</li>
+<li>应用解耦等</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>RabbitMq特性<ul>
+<li>实现AMQP（高级消息队列协议）标准</li>
+<li>Erlang开发，自带高并发和高可用光环</li>
+<li>可靠性：持久化和消息确认</li>
+<li>集群部署简单</li>
+<li>社区活跃</li>
+</ul>
+</li>
+</ol>
+<h2 id="二、RabbitMq安装"><a href="#二、RabbitMq安装" class="headerlink" title="二、RabbitMq安装"></a>二、RabbitMq安装</h2><ol>
+<li><p>配置apt和pip的国内源（加速安装包）</p>
+<ul>
+<li><code>sudo vi /etc/apt/sources.list</code></li>
+<li>%d（命令模式下），清空sources.list文件</li>
+<li>清华数据源地址：<a href="https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/" target="_blank" rel="noopener">https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/</a>，找到对应linux内核的版本，复制到source.list，保存退出。</li>
+<li>更新源：sudo apt-get updte   </li>
+<li>更新软件：sudo apt-get upgrade</li>
+</ul>
+</li>
+<li><p>安装rabbitmq-server</p>
+<ul>
+<li>sudo apt-get update</li>
+<li>sudo apt-get install rabbitmq-server</li>
+</ul>
+</li>
+<li><p>服务常用命令</p>
+<ul>
+<li>启动/停止rabbit服务：sudo service rabbitmq-server start/stop</li>
+<li>后台启动：sudo service rabbitmq-server -detached</li>
+<li>查看运行状态：sudo  rabbitmqctl status</li>
+</ul>
+</li>
+<li><p>用户管理命令</p>
+<ul>
+<li>查看所有用户：rabbitmqctl list_users</li>
+<li>添加用户:rabbitmqctl add_user username password</li>
+<li>删除用户:rabbitmqctl delete_user username</li>
+<li>修改密码:rabbitmqctl change_password username newpassword</li>
+</ul>
+</li>
+<li><p>开启网页控制台</p>
+<ul>
+<li><p><code>cd /usr/lib/rabbitmq/</code></p>
+</li>
+<li><p>查看已安装插件：rabbitmq-plugins list</p>
+</li>
+<li><p>启动网页控制台插件：sudo rabbitmq-plugins enable rabbitmq_management</p>
+</li>
+<li><p>重启rabbitmq服务：</p>
+</li>
+<li><p>输入网址：<a href="http://localhost:15672/#/" target="_blank" rel="noopener">http://localhost:15672/#/</a>，使用默认账号guest登录。但是默认的guest/guest不给localhost外的ip访问登录，可新建一个user,然后赋予超级管理员角色，如：sudo rabbitmqctl set_user_tags tjj administrator登录，然后删掉guest这个角色</p>
+</li>
+<li><p>效果图：</p>
+<p><img src="/images/post/1555770105822.png" alt="1555770105822"></p>
+</li>
+</ul>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>RabbiMq</category>
+      </categories>
+      <tags>
+        <tag>RabbitMq</tag>
       </tags>
   </entry>
 </search>
