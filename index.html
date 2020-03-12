@@ -6,7 +6,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-     Hexo
+     欢迎阅读谭家俊的世界
   </title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   
@@ -22,7 +22,7 @@
 
   
 
-<link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+<link rel="alternate" href="/atom.xml" title="欢迎阅读谭家俊的世界" type="application/atom+xml">
 </head>
 
 </html>
@@ -43,7 +43,7 @@
       <img src="/images/cover1.jpg" alt="image frame" />
     </div>
     <div class="cover-inner text-center text-white">
-      <h1><a href="/">Hexo</a></h1>
+      <h1><a href="/">欢迎阅读谭家俊的世界</a></h1>
       <div id="subtitle-box">
         
         <span id="subtitle"></span>
@@ -70,7 +70,7 @@
     
     
     
-    <article id="post-hello-world" class="article article-type-post" itemscope
+    <article id="post-kubernetes/kubernetes无状态服务之搭建nginx-php环境" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -78,8 +78,8 @@
     <header class="article-header">
        
 <h2 itemprop="name">
-  <a class="article-title" href="/2020/03/12/hello-world/"
-    >Hello World</a
+  <a class="article-title" href="/2020/03/10/kubernetes/kubernetes%E6%97%A0%E7%8A%B6%E6%80%81%E6%9C%8D%E5%8A%A1%E4%B9%8B%E6%90%AD%E5%BB%BAnginx-php%E7%8E%AF%E5%A2%83/"
+    >kubernetes无状态服务之搭建nginx-php环境</a
   >
 </h2>
   
@@ -89,12 +89,12 @@
 
     
     <div class="article-meta">
-      <a href="/2020/03/12/hello-world/" class="article-date">
-  <time datetime="2020-03-12T09:57:18.218Z" itemprop="datePublished">2020-03-12</time>
+      <a href="/2020/03/10/kubernetes/kubernetes%E6%97%A0%E7%8A%B6%E6%80%81%E6%9C%8D%E5%8A%A1%E4%B9%8B%E6%90%AD%E5%BB%BAnginx-php%E7%8E%AF%E5%A2%83/" class="article-date">
+  <time datetime="2020-03-10T15:14:09.000Z" itemprop="datePublished">2020-03-10</time>
 </a>
       
   <div class="article-category">
-    <a class="article-category-link" href="/categories/web%E5%89%8D%E7%AB%AF/">web前端</a>
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a> / <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/%E8%BF%90%E7%BB%B4/">运维</a>
   </div>
 
       
@@ -113,20 +113,23 @@
       
 
       
-      <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
+      <blockquote>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote>
+<p>k8s的部署方式：</p>
+<ol>
+<li>传统方式，从github上拉取对应的二进制安装包，解压安装各个组件和节点，过程步骤复杂，特别是各组件要通信，配置各种ca证书。<a href="https://github.com/kubernetes/kubernetes" target="_blank" rel="noopener">GitHub链接</a></li>
+<li>由于传统方式安装比较麻烦，所以我们用kubeadm（k8s官方提供的集群部署工具）安装，只需按照以下基本步骤安装即可：<ul>
+<li>master,nodes机器上安装：kubelet、kubeadm和docker，其中node和master都要运行在kebulet和docker环境之上</li>
+<li>Master：用kubeadm init 命令，拉取下载相关的组件镜像，并启动相关pods（静态pods，不受k8s自身管理），相关的pods组件有：etcd、api-server、controller-manager、scheduler</li>
+<li>Nodes：用kubeadm join命令把nodes加入到k8s集群中</li>
+<li>flannel组件，也是运行在pods的守护级进程，起到个nodes的通信作用。是一个额外的组件（adds on）。<a href="https://github.com/coreos/flannel" target="_blank" rel="noopener">GitHub链接</a></li>
+<li><a href="https://github.com/kubernetes/kubeadm/blob/master/docs/design/design_v1.10.md" target="_blank" rel="noopener">kubeadm相关参考文档</a></li>
+</ul>
+</li>
+</ol>
+      
+      <a class="article-more-link" href="/2020/03/10/kubernetes/kubernetes%E6%97%A0%E7%8A%B6%E6%80%81%E6%9C%8D%E5%8A%A1%E4%B9%8B%E6%90%AD%E5%BB%BAnginx-php%E7%8E%AF%E5%A2%83/">阅读更多...</a>
+      
       
       <!-- reward -->
       
@@ -138,7 +141,171 @@
     <footer class="article-footer">
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jQuery/" rel="tag">jQuery</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/devops/" rel="tag">devops</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-docker/harbor/harbor简单安装和使用" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/03/06/docker/harbor/harbor%E7%AE%80%E5%8D%95%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8/"
+    >harbor安装和使用</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/03/06/docker/harbor/harbor%E7%AE%80%E5%8D%95%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8/" class="article-date">
+  <time datetime="2020-03-06T15:14:09.000Z" itemprop="datePublished">2020-03-06</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a> / <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/%E8%BF%90%E7%BB%B4/">运维</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <blockquote>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote>
+<ul>
+<li>安装docker和docker composer</li>
+<li>下载tar包：<a href="https://github.com/goharbor/harbor/releases" target="_blank" rel="noopener">https://github.com/goharbor/harbor/releases</a></li>
+<li>修改配置harbor.yaml中的hostname,把https的配置注释，修改admin的密码和db的密码等。若要配置https访问，参考：<a href="https://github.com/goharbor/harbor/blob/master/docs/1.10/install-config/configure-https.md" target="_blank" rel="noopener">https://github.com/goharbor/harbor/blob/master/docs/1.10/install-config/configure-https.md</a></li>
+<li>运行./install.sh</li>
+<li><a href="https://blog.csdn.net/jason9211/article/details/104464342/" target="_blank" rel="noopener">https://blog.csdn.net/jason9211/article/details/104464342/</a>
+      
+      <a class="article-more-link" href="/2020/03/06/docker/harbor/harbor%E7%AE%80%E5%8D%95%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/devops/" rel="tag">devops</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/" rel="tag">docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-docker/制作nginx-php镜像" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/03/05/docker/%E5%88%B6%E4%BD%9Cnginx-php%E9%95%9C%E5%83%8F/"
+    >制作nginx-php镜像</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/03/05/docker/%E5%88%B6%E4%BD%9Cnginx-php%E9%95%9C%E5%83%8F/" class="article-date">
+  <time datetime="2020-03-05T15:14:09.000Z" itemprop="datePublished">2020-03-05</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a> / <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/%E8%BF%90%E7%BB%B4/">运维</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <blockquote>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote>
+<ul>
+<li>安装docker和docker composer</li>
+<li>下载tar包：<a href="https://github.com/goharbor/harbor/releases" target="_blank" rel="noopener">https://github.com/goharbor/harbor/releases</a></li>
+<li>修改配置harbor.yaml中的hostname,把https的配置注释，修改admin的密码和db的密码等。若要配置https访问，参考：<a href="https://github.com/goharbor/harbor/blob/master/docs/1.10/install-config/configure-https.md" target="_blank" rel="noopener">https://github.com/goharbor/harbor/blob/master/docs/1.10/install-config/configure-https.md</a></li>
+<li>运行./install.sh</li>
+<li><a href="https://blog.csdn.net/jason9211/article/details/104464342/" target="_blank" rel="noopener">https://blog.csdn.net/jason9211/article/details/104464342/</a>
+      
+      <a class="article-more-link" href="/2020/03/05/docker/%E5%88%B6%E4%BD%9Cnginx-php%E9%95%9C%E5%83%8F/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/devops/" rel="tag">devops</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/" rel="tag">docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a></li></ul>
 
 
     </footer>
@@ -215,7 +382,7 @@
     <footer class="article-footer">
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/devops/" rel="tag">devops</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ci-cd/" rel="tag">ci&cd</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/devops/" rel="tag">devops</a></li></ul>
 
 
     </footer>
@@ -256,7 +423,7 @@
 </a>
       
   <div class="article-category">
-    <a class="article-category-link" href="/categories/es/">es</a>
+    <a class="article-category-link" href="/categories/midleware/">midleware</a>
   </div>
 
       
@@ -333,7 +500,7 @@
 </a>
       
   <div class="article-category">
-    <a class="article-category-link" href="/categories/es/">es</a>
+    <a class="article-category-link" href="/categories/midleware/">midleware</a>
   </div>
 
       
@@ -410,7 +577,7 @@
 </a>
       
   <div class="article-category">
-    <a class="article-category-link" href="/categories/es/">es</a>
+    <a class="article-category-link" href="/categories/midleware/">midleware</a>
   </div>
 
       
@@ -487,7 +654,7 @@
 </a>
       
   <div class="article-category">
-    <a class="article-category-link" href="/categories/es/">es</a>
+    <a class="article-category-link" href="/categories/midleware/">midleware</a>
   </div>
 
       
@@ -564,7 +731,7 @@
 </a>
       
   <div class="article-category">
-    <a class="article-category-link" href="/categories/servlet/">servlet</a>
+    <a class="article-category-link" href="/categories/JAVA/">JAVA</a>
   </div>
 
       
@@ -641,7 +808,7 @@
 </a>
       
   <div class="article-category">
-    <a class="article-category-link" href="/categories/servlet/">servlet</a>
+    <a class="article-category-link" href="/categories/JAVA/">JAVA</a>
   </div>
 
       
@@ -665,160 +832,6 @@
 </blockquote>
       
       <a class="article-more-link" href="/2019/05/18/JSP&Servlet/%E7%AC%AC%E4%B8%89%E7%AB%A0%E8%AF%B7%E6%B1%82%E5%92%8C%E5%93%8D%E5%BA%94/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/servlet/" rel="tag">servlet</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-JSP&amp;Servlet/第二章编写和设置Servlet" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2019/05/18/JSP&Servlet/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E7%BC%96%E5%86%99%E5%92%8C%E8%AE%BE%E7%BD%AEServlet/"
-    >《JSP&amp;Servlet》读书笔记-第二章</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2019/05/18/JSP&Servlet/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E7%BC%96%E5%86%99%E5%92%8C%E8%AE%BE%E7%BD%AEServlet/" class="article-date">
-  <time datetime="2019-05-18T06:14:09.000Z" itemprop="datePublished">2019-05-18</time>
-</a>
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/servlet/">servlet</a>
-  </div>
-
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <blockquote>
-<p><strong>本章要点：</strong>环境的搭建等</p>
-</blockquote>
-      
-      <a class="article-more-link" href="/2019/05/18/JSP&Servlet/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E7%BC%96%E5%86%99%E5%92%8C%E8%AE%BE%E7%BD%AEServlet/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/servlet/" rel="tag">servlet</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-JSP&amp;Servlet/第五章ServletApi进阶 " class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2019/05/18/JSP&Servlet/%E7%AC%AC%E4%BA%94%E7%AB%A0ServletApi%E8%BF%9B%E9%98%B6%20/"
-    >《JSP&amp;Servlet》读书笔记-第五章</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2019/05/18/JSP&Servlet/%E7%AC%AC%E4%BA%94%E7%AB%A0ServletApi%E8%BF%9B%E9%98%B6%20/" class="article-date">
-  <time datetime="2019-05-18T06:14:09.000Z" itemprop="datePublished">2019-05-18</time>
-</a>
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/servlet/">servlet</a>
-  </div>
-
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <blockquote>
-<p><strong>本章要点：</strong>了解servlet生命周期、使用servletConfig和servletContext、监听器使用和过滤器开发等</p>
-</blockquote>
-      
-      <a class="article-more-link" href="/2019/05/18/JSP&Servlet/%E7%AC%AC%E4%BA%94%E7%AB%A0ServletApi%E8%BF%9B%E9%98%B6%20/">阅读更多...</a>
       
       
       <!-- reward -->
@@ -908,7 +921,7 @@
 <nav class="navbar">
   
   <div class="logo">
-    <a href="/"><img src="/images/ayer-side.svg" alt="Hexo"></a>
+    <a href="/"><img src="/images/ayer-side.svg" alt="欢迎阅读谭家俊的世界"></a>
   </div>
   
   <ul class="nav nav-main">
@@ -922,11 +935,27 @@
     </li>
     
     <li class="nav-item">
-      <a class="nav-item-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a>
+      <a class="nav-item-link" href="/tags/swoole/">Swoole</a>
     </li>
     
     <li class="nav-item">
-      <a class="nav-item-link" href="/categories/%E9%9A%8F%E6%83%B3">随想</a>
+      <a class="nav-item-link" href="/categories/JAVA">JAVA</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/docker">Docker</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/kubernetes">Kubernetes</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/devops">Devops</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories/midleware">中间件</a>
     </li>
     
     <li class="nav-item">
@@ -939,10 +968,6 @@
     
     <li class="nav-item">
       <a class="nav-item-link" href="/tags">标签</a>
-    </li>
-    
-    <li class="nav-item">
-      <a class="nav-item-link" href="/2019/about">关于我</a>
     </li>
     
   </ul>

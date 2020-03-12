@@ -1,27 +1,181 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Hello World</title>
-    <url>/2020/03/12/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+    <title>kubernetes无状态服务之搭建nginx-php环境</title>
+    <url>/2020/03/10/kubernetes/kubernetes%E6%97%A0%E7%8A%B6%E6%80%81%E6%9C%8D%E5%8A%A1%E4%B9%8B%E6%90%AD%E5%BB%BAnginx-php%E7%8E%AF%E5%A2%83/</url>
+    <content><![CDATA[<blockquote>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote>
+<p>k8s的部署方式：</p>
+<ol>
+<li>传统方式，从github上拉取对应的二进制安装包，解压安装各个组件和节点，过程步骤复杂，特别是各组件要通信，配置各种ca证书。<a href="https://github.com/kubernetes/kubernetes" target="_blank" rel="noopener">GitHub链接</a></li>
+<li>由于传统方式安装比较麻烦，所以我们用kubeadm（k8s官方提供的集群部署工具）安装，只需按照以下基本步骤安装即可：<ul>
+<li>master,nodes机器上安装：kubelet、kubeadm和docker，其中node和master都要运行在kebulet和docker环境之上</li>
+<li>Master：用kubeadm init 命令，拉取下载相关的组件镜像，并启动相关pods（静态pods，不受k8s自身管理），相关的pods组件有：etcd、api-server、controller-manager、scheduler</li>
+<li>Nodes：用kubeadm join命令把nodes加入到k8s集群中</li>
+<li>flannel组件，也是运行在pods的守护级进程，起到个nodes的通信作用。是一个额外的组件（adds on）。<a href="https://github.com/coreos/flannel" target="_blank" rel="noopener">GitHub链接</a></li>
+<li><a href="https://github.com/kubernetes/kubeadm/blob/master/docs/design/design_v1.10.md" target="_blank" rel="noopener">kubeadm相关参考文档</a></li>
+</ul>
+</li>
+</ol>
+<a id="more"></a>
 
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<h2 id="一、准备工作"><a href="#一、准备工作" class="headerlink" title="一、准备工作"></a>一、准备工作</h2><ol>
+<li><p>kubernetes需要容器运行时的支持，目前官方支持的容器运行时包括：Docker、Containerd、CRI-O和frakti。本次以Docker作为容器运行环境，推荐版本为Docker CE 18.09。宿主机操作系统使用CentOs</p>
+</li>
+<li><p>由于Kubernetes的master和node之间会进行大量通信，安全做法是开放对应的通信端口，在安全的内网环境下可以关闭防火墙服务：</p>
+<p><code>sudo systemctl disable firewalld</code></p>
+<p><code>sudo systemctl stop firewalld</code></p>
+</li>
+<li><p>关闭swap：<code>swapoff -a</code></p>
+</li>
+<li><p>另外，建议在主机上禁用SELinux,让容器可以读取主机的文件系统</p>
+<p><code>sudo setenforce 0</code></p>
+</li>
+<li><p>解决路由异常：`</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">echo &quot;net.bridge.bridge-nf-call-ip6tables &#x3D; 1</span><br><span class="line">net.bridge.bridge-nf-call-iptables &#x3D; 1</span><br><span class="line">vm.swappiness&#x3D;0&quot; &gt;&gt; &#x2F;etc&#x2F;sysctl.d&#x2F;k8s.conf&#96;</span><br><span class="line">sudo sysctl -p &#x2F;etc&#x2F;sysctl.d&#x2F;k8s.conf</span><br><span class="line">若报不存在目录的错误，则运行：sudo modprobe br_netfilter</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+</li>
+</ol>
+<h2 id="二、用kubeadm快速安装kubernetes集群"><a href="#二、用kubeadm快速安装kubernetes集群" class="headerlink" title="二、用kubeadm快速安装kubernetes集群"></a>二、用kubeadm快速安装kubernetes集群</h2><p>Kubernetes 从1.4版开始引入了命令行工具kubeadm，致力于简化集群安装的过程，并解决集群的高可用问题。</p>
+<ul>
+<li><p>下载yum-key.gpg和rpm-package-key.gpg</p>
+<p>sudo wget <a href="https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg" target="_blank" rel="noopener">https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg</a></p>
+<p>sudo wget <a href="https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg" target="_blank" rel="noopener">https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg</a></p>
+<p>导入：</p>
+<p>sudo rpm –import yum-key.gpg</p>
+<p>sudo rpm –import rpm-package-key.gpg </p>
+</li>
+<li><p>安装docker环境,docker运行时环境的配置：<a href="https://kubernetes.io/docs/setup/production-environment/container-runtimes/" target="_blank" rel="noopener">https://kubernetes.io/docs/setup/production-environment/container-runtimes/</a></p>
+<p><code>cd /etc/yum.repos.d/</code></p>
+<p><code>wget &lt;https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</code></p>
+<p><code>yum install -y docker-ce</code></p>
+<p>最后安装18.09版本，不然后面会出现各种问题。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum list docker-ce --showduplicates|sort -r  </span><br><span class="line">yum install docker-ce-18.09.0 -y</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装kubeadm和相关工具</p>
+<ul>
+<li><p>配置yum源，yum源配置文件/etc/yum.repos.d/kubernetes.repo：</p>
+<p>[kubernetes]</p>
+<p>name=Kubernetes Repo</p>
+<p>baseurl=<a href="https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/" target="_blank" rel="noopener">https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/</a></p>
+<p>enabled=1</p>
+<p>gpgcheck=0</p>
+</li>
+<li><p>运行命令：<code>yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes</code></p>
+</li>
+</ul>
+</li>
+<li><p>启动kubelet和docker服务，并开启开机启动。但是现在启动kubelet是会失败的，可先忽略</p>
+<p><code>systemctl enable docker &amp;&amp; systemtcl start docker</code></p>
+<p><code>systemctl enable kubelet &amp;&amp; systemtcl start kubelet</code></p>
+</li>
+<li><p>使用kubeadm config print init-defaults &gt; init-config.yaml 初始化一份配置文件，并且修改文件中配置为：imageRepository: registry.cn-hangzhou.aliyuncs.com/google_containers，因为默认的镜像地址在国内是会被墙的。（注意，如果advertiseAddress的值配置有问题，到加入节点kubeadm join的时候会出现卡住的情况，这时候检查advertiseAddress配置的ip是否有问题）</p>
+</li>
+<li><p><code>kubeadm config images pull --config=init-config.yaml</code> 拉取下载所需镜像。</p>
+</li>
+</ul>
+<h2 id="三、master节点的安装"><a href="#三、master节点的安装" class="headerlink" title="三、master节点的安装"></a>三、master节点的安装</h2><ul>
+<li><p>至此，准备工作已经完毕。运行<code>kubeadm init --config=init-config.yaml</code> 进行初始化，如运行结果提示kubelet没启动或者启动失败，可以重启kubelet。然后运行kubeadm rest重置，再进行kubeadm init操作</p>
+</li>
+<li><p>安装完毕后，按照提示命令，复制配置文件到普通用户的home目录下：</p>
+<p><code>mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config</code></p>
+<p>这样就在master安装了kubernetes，但是在集群内还没有任何的node和缺乏对容器网络的配置。其中值得注意的是，在kubeadm init完成后，最后几行提示信息包含了加入其他节点的指令和所要的token。如果遗忘。可用命令<code>sudo kubeadm token create --print-join-command</code>重新打印出来。</p>
+</li>
+</ul>
+<h2 id="四、安装Node"><a href="#四、安装Node" class="headerlink" title="四、安装Node"></a>四、安装Node</h2><ul>
+<li><p>新增一个节点，系统准备所需的yun源是一样的，安装的工具可以不装kubectl。安装完毕后，启动docker和kubelet服务。</p>
+</li>
+<li><p>为kubeadm命令生成配置文件，文件内容如下：</p>
+<p>其中apiServerEndpoint的值是master的服务器地址，token和tlsBootstrapToken的值是master安装最后的一行信息。</p>
+</li>
+<li><p>kubeadm join大致的生命流程是：1、preflight checks；2、从集群中读取配置，也就是apiServerEndpoint中配置的地址中获取；也就是在master的这个配置，可以用命令<code>kubectl -n kube-system get cm kubeadm-config -oyaml</code>查看。3、下载这个配置，然后写入到/var/lib/kubelet/config.yaml；4、激活kubelet。如果在第二部中，读取配置出现问题，有可能出现卡住的情况，这时要检查maste的apiServerEndpoint和node的是否一致。</p>
+</li>
+<li><p>node join完毕后，可以在master节点<code>kubectl get nodes</code>查看节点列表和状态等</p>
+</li>
+</ul>
+<h2 id="五、安装网络插件-一定要指定pod-network的配置，否则会出现网络插件的pod启动或者通信失败等问题"><a href="#五、安装网络插件-一定要指定pod-network的配置，否则会出现网络插件的pod启动或者通信失败等问题" class="headerlink" title="五、安装网络插件(一定要指定pod-network的配置，否则会出现网络插件的pod启动或者通信失败等问题)"></a>五、安装网络插件(一定要指定pod-network的配置，否则会出现网络插件的pod启动或者通信失败等问题)</h2><ol>
+<li><p>执行kubectl get nodes 你会发现master和node节点都是NoReady状态，那是因为还没安装CNI网络插件</p>
+</li>
+<li><p>对于CNI网络插件，可有很多选择，可参考：&lt;<a href="https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#pod-network" target="_blank" rel="noopener">https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#pod-network</a></p>
+</li>
+<li><p>这里，我们选择weave插件，执行命令<code>kubectl apply -f &quot;https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d &#39;\n&#39;)&quot;</code>即可完成安装。</p>
+</li>
+<li><p>运行命令：</p>
+<p><code>sudo kubeadm join 10.0.2.15:6443 --token 9le8zj.k1y8fvr09b4h4pww --discovery-token-ca-cert-hash sha256:10187a814644dab00611161c3079fdeeef579b999c6c506c33ff55dd9bb032fa --ignore-preflight-errors=Swap</code></p>
+<p>把节点nodes加入，等nodes的机器拉取完镜像后，这个节点就加入完毕了。可以用这个命令查看更多pods的扩展信息：</p>
+<p>kubectl get pods -n kube-system -o wide</p>
+</li>
+<li><p>我们在master节点上运行：kubectl get nodes ，可以看到节点已经成功加入</p>
+<p><strong>至此，我们简单的k8s集群已经部署完毕。。。</strong></p>
+</li>
+</ol>
+<h2 id="六、一些有用的命令"><a href="#六、一些有用的命令" class="headerlink" title="六、一些有用的命令"></a>六、一些有用的命令</h2><ul>
+<li>sudo netstat -ntlp | grep LISTEN   查看监听的端口</li>
+<li>kubectl get pods -n kube-system -o wide 查看pods的更多扩展信息</li>
+<li>kubectl get ns 获取所有的命名空间</li>
+<li>sudo yum list kubelet –showduplicates  //查看所有yum包的可用版本</li>
+<li>kubectl get pods –all-namespaces 查看所有命名空间下的pods</li>
+</ul>
+<p>参考链接：</p>
+<ul>
+<li><a href="https://www.cnblogs.com/pekkle/p/10545145.html" target="_blank" rel="noopener">https://www.cnblogs.com/pekkle/p/10545145.html</a></li>
+</ul>
 ]]></content>
       <categories>
-        <category>web前端</category>
+        <category>技术</category>
+        <category>运维</category>
       </categories>
       <tags>
-        <tag>jQuery</tag>
+        <tag>devops</tag>
+        <tag>kubernetes</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>harbor安装和使用</title>
+    <url>/2020/03/06/docker/harbor/harbor%E7%AE%80%E5%8D%95%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<blockquote>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote>
+<ul>
+<li>安装docker和docker composer</li>
+<li>下载tar包：<a href="https://github.com/goharbor/harbor/releases" target="_blank" rel="noopener">https://github.com/goharbor/harbor/releases</a></li>
+<li>修改配置harbor.yaml中的hostname,把https的配置注释，修改admin的密码和db的密码等。若要配置https访问，参考：<a href="https://github.com/goharbor/harbor/blob/master/docs/1.10/install-config/configure-https.md" target="_blank" rel="noopener">https://github.com/goharbor/harbor/blob/master/docs/1.10/install-config/configure-https.md</a></li>
+<li>运行./install.sh</li>
+<li><a href="https://blog.csdn.net/jason9211/article/details/104464342/" target="_blank" rel="noopener">https://blog.csdn.net/jason9211/article/details/104464342/</a><a id="more"></a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>技术</category>
+        <category>运维</category>
+      </categories>
+      <tags>
+        <tag>devops</tag>
+        <tag>kubernetes</tag>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>制作nginx-php镜像</title>
+    <url>/2020/03/05/docker/%E5%88%B6%E4%BD%9Cnginx-php%E9%95%9C%E5%83%8F/</url>
+    <content><![CDATA[<blockquote>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote>
+<ul>
+<li>安装docker和docker composer</li>
+<li>下载tar包：<a href="https://github.com/goharbor/harbor/releases" target="_blank" rel="noopener">https://github.com/goharbor/harbor/releases</a></li>
+<li>修改配置harbor.yaml中的hostname,把https的配置注释，修改admin的密码和db的密码等。若要配置https访问，参考：<a href="https://github.com/goharbor/harbor/blob/master/docs/1.10/install-config/configure-https.md" target="_blank" rel="noopener">https://github.com/goharbor/harbor/blob/master/docs/1.10/install-config/configure-https.md</a></li>
+<li>运行./install.sh</li>
+<li><a href="https://blog.csdn.net/jason9211/article/details/104464342/" target="_blank" rel="noopener">https://blog.csdn.net/jason9211/article/details/104464342/</a><a id="more"></a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>技术</category>
+        <category>运维</category>
+      </categories>
+      <tags>
+        <tag>devops</tag>
+        <tag>kubernetes</tag>
+        <tag>docker</tag>
       </tags>
   </entry>
   <entry>
@@ -114,6 +268,7 @@
       </categories>
       <tags>
         <tag>devops</tag>
+        <tag>ci&amp;cd</tag>
       </tags>
   </entry>
   <entry>
@@ -170,7 +325,7 @@
 </ol>
 ]]></content>
       <categories>
-        <category>es</category>
+        <category>midleware</category>
       </categories>
       <tags>
         <tag>es</tag>
@@ -233,7 +388,7 @@
 </ol>
 ]]></content>
       <categories>
-        <category>es</category>
+        <category>midleware</category>
       </categories>
       <tags>
         <tag>es</tag>
@@ -416,7 +571,7 @@
 </ol>
 ]]></content>
       <categories>
-        <category>es</category>
+        <category>midleware</category>
       </categories>
       <tags>
         <tag>es</tag>
@@ -463,7 +618,7 @@
 </ol>
 ]]></content>
       <categories>
-        <category>es</category>
+        <category>midleware</category>
       </categories>
       <tags>
         <tag>es</tag>
@@ -536,7 +691,7 @@
 </ol>
 ]]></content>
       <categories>
-        <category>servlet</category>
+        <category>JAVA</category>
       </categories>
       <tags>
         <tag>servlet</tag>
@@ -571,7 +726,87 @@
 </ol>
 ]]></content>
       <categories>
-        <category>servlet</category>
+        <category>JAVA</category>
+      </categories>
+      <tags>
+        <tag>servlet</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《JSP&amp;Servlet》读书笔记-第五章</title>
+    <url>/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E4%BA%94%E7%AB%A0ServletApi%E8%BF%9B%E9%98%B6%20/</url>
+    <content><![CDATA[<blockquote>
+<p><strong>本章要点：</strong>了解servlet生命周期、使用servletConfig和servletContext、监听器使用和过滤器开发等</p>
+</blockquote>
+<a id="more"></a>
+
+<ol>
+<li><p>隐藏域：<input type="hidden"/></p>
+<ul>
+<li><p>浏览器–&gt;http服务器–&gt;web容器</p>
+<p><img src="/images/post/1558235409522.png" alt="1558235409522"></p>
+</li>
+<li><p>processServlet()，用于在调用doPost和doGet相同处理逻辑时</p>
+</li>
+<li></li>
+</ul>
+</li>
+<li><p>cookie。例子：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//cookies测试</span></span><br><span class="line">        Cookie cookie = <span class="keyword">new</span> Cookie(<span class="string">"user"</span>, <span class="string">"cookie测试"</span>);</span><br><span class="line">        cookie.setMaxAge(<span class="number">7</span> * <span class="number">24</span> * <span class="number">3600</span>);</span><br><span class="line">        response.addCookie(cookie);</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取cookie</span></span><br><span class="line">Cookie[] cookies = request.getCookies();</span><br><span class="line"><span class="keyword">for</span> (Cookie c : cookies) &#123;</span><br><span class="line">    String cookieName = c.getName();</span><br><span class="line">    String cookieVal = c.getValue();</span><br><span class="line">    out.print(<span class="string">"cookie info "</span> + cookieName + cookieVal);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>URL重写：当服务器响应上一次请求，以超链接的方法响应给客户端</p>
+</li>
+<li><p>HttpSession</p>
+</li>
+<li><p>Q&amp;A</p>
+<ul>
+<li>Httpsession保存在了内存中，可以改变保存的位置的吗？</li>
+</ul>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>JAVA</category>
+      </categories>
+      <tags>
+        <tag>servlet</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>《JSP&amp;Servlet》读书笔记-第四章</title>
+    <url>/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E5%9B%9B%E7%AB%A0%E4%BC%9A%E8%AF%9D%E7%AE%A1%E7%90%86/</url>
+    <content><![CDATA[<blockquote>
+<p><strong>本章要点：</strong>介绍几个实现会话管理的基本方式：如隐藏域、cookies和url重写等</p>
+</blockquote>
+<a id="more"></a>
+
+<ol>
+<li><p>隐藏域：<input type="hidden"/></p>
+<ul>
+<li><p>浏览器–&gt;http服务器–&gt;web容器</p>
+<p><img src="/images/post/1558235409522.png" alt="1558235409522"></p>
+</li>
+<li><p>processServlet()，用于在调用doPost和doGet相同处理逻辑时</p>
+</li>
+<li></li>
+</ul>
+</li>
+<li><p>cookie。例子：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//cookies测试</span></span><br><span class="line">        Cookie cookie = <span class="keyword">new</span> Cookie(<span class="string">"user"</span>, <span class="string">"cookie测试"</span>);</span><br><span class="line">        cookie.setMaxAge(<span class="number">7</span> * <span class="number">24</span> * <span class="number">3600</span>);</span><br><span class="line">        response.addCookie(cookie);</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取cookie</span></span><br><span class="line">Cookie[] cookies = request.getCookies();</span><br><span class="line"><span class="keyword">for</span> (Cookie c : cookies) &#123;</span><br><span class="line">    String cookieName = c.getName();</span><br><span class="line">    String cookieVal = c.getValue();</span><br><span class="line">    out.print(<span class="string">"cookie info "</span> + cookieName + cookieVal);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>URL重写：当服务器响应上一次请求，以超链接的方法响应给客户端</p>
+</li>
+<li><p>HttpSession</p>
+</li>
+<li><p>Q&amp;A</p>
+<ul>
+<li>Httpsession保存在了内存中，可以改变保存的位置的吗？</li>
+</ul>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>JAVA</category>
       </categories>
       <tags>
         <tag>servlet</tag>
@@ -617,87 +852,7 @@
 </ol>
 ]]></content>
       <categories>
-        <category>servlet</category>
-      </categories>
-      <tags>
-        <tag>servlet</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>《JSP&amp;Servlet》读书笔记-第五章</title>
-    <url>/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E4%BA%94%E7%AB%A0ServletApi%E8%BF%9B%E9%98%B6%20/</url>
-    <content><![CDATA[<blockquote>
-<p><strong>本章要点：</strong>了解servlet生命周期、使用servletConfig和servletContext、监听器使用和过滤器开发等</p>
-</blockquote>
-<a id="more"></a>
-
-<ol>
-<li><p>隐藏域：<input type="hidden"/></p>
-<ul>
-<li><p>浏览器–&gt;http服务器–&gt;web容器</p>
-<p><img src="/images/post/1558235409522.png" alt="1558235409522"></p>
-</li>
-<li><p>processServlet()，用于在调用doPost和doGet相同处理逻辑时</p>
-</li>
-<li></li>
-</ul>
-</li>
-<li><p>cookie。例子：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//cookies测试</span></span><br><span class="line">        Cookie cookie = <span class="keyword">new</span> Cookie(<span class="string">"user"</span>, <span class="string">"cookie测试"</span>);</span><br><span class="line">        cookie.setMaxAge(<span class="number">7</span> * <span class="number">24</span> * <span class="number">3600</span>);</span><br><span class="line">        response.addCookie(cookie);</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取cookie</span></span><br><span class="line">Cookie[] cookies = request.getCookies();</span><br><span class="line"><span class="keyword">for</span> (Cookie c : cookies) &#123;</span><br><span class="line">    String cookieName = c.getName();</span><br><span class="line">    String cookieVal = c.getValue();</span><br><span class="line">    out.print(<span class="string">"cookie info "</span> + cookieName + cookieVal);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>URL重写：当服务器响应上一次请求，以超链接的方法响应给客户端</p>
-</li>
-<li><p>HttpSession</p>
-</li>
-<li><p>Q&amp;A</p>
-<ul>
-<li>Httpsession保存在了内存中，可以改变保存的位置的吗？</li>
-</ul>
-</li>
-</ol>
-]]></content>
-      <categories>
-        <category>servlet</category>
-      </categories>
-      <tags>
-        <tag>servlet</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>《JSP&amp;Servlet》读书笔记-第四章</title>
-    <url>/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E5%9B%9B%E7%AB%A0%E4%BC%9A%E8%AF%9D%E7%AE%A1%E7%90%86/</url>
-    <content><![CDATA[<blockquote>
-<p><strong>本章要点：</strong>介绍几个实现会话管理的基本方式：如隐藏域、cookies和url重写等</p>
-</blockquote>
-<a id="more"></a>
-
-<ol>
-<li><p>隐藏域：<input type="hidden"/></p>
-<ul>
-<li><p>浏览器–&gt;http服务器–&gt;web容器</p>
-<p><img src="/images/post/1558235409522.png" alt="1558235409522"></p>
-</li>
-<li><p>processServlet()，用于在调用doPost和doGet相同处理逻辑时</p>
-</li>
-<li></li>
-</ul>
-</li>
-<li><p>cookie。例子：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//cookies测试</span></span><br><span class="line">        Cookie cookie = <span class="keyword">new</span> Cookie(<span class="string">"user"</span>, <span class="string">"cookie测试"</span>);</span><br><span class="line">        cookie.setMaxAge(<span class="number">7</span> * <span class="number">24</span> * <span class="number">3600</span>);</span><br><span class="line">        response.addCookie(cookie);</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取cookie</span></span><br><span class="line">Cookie[] cookies = request.getCookies();</span><br><span class="line"><span class="keyword">for</span> (Cookie c : cookies) &#123;</span><br><span class="line">    String cookieName = c.getName();</span><br><span class="line">    String cookieVal = c.getValue();</span><br><span class="line">    out.print(<span class="string">"cookie info "</span> + cookieName + cookieVal);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>URL重写：当服务器响应上一次请求，以超链接的方法响应给客户端</p>
-</li>
-<li><p>HttpSession</p>
-</li>
-<li><p>Q&amp;A</p>
-<ul>
-<li>Httpsession保存在了内存中，可以改变保存的位置的吗？</li>
-</ul>
-</li>
-</ol>
-]]></content>
-      <categories>
-        <category>servlet</category>
+        <category>JAVA</category>
       </categories>
       <tags>
         <tag>servlet</tag>
@@ -831,8 +986,8 @@
         <category>运维</category>
       </categories>
       <tags>
+        <tag>devops</tag>
         <tag>kubernetes</tag>
-        <tag>tec</tag>
       </tags>
   </entry>
   <entry>
@@ -1446,42 +1601,6 @@ System.out.println(&quot;集合元素&quot; + obj);</code></pre> });`</li>
   </entry>
   <entry>
     <title>《疯狂JAVA》读书笔记-第一章 JAVA语言概述和开发环境</title>
-    <url>/2019/04/29/spring/%E7%AC%AC%E4%B8%80%E7%AB%A0Spring%E7%AE%80%E4%BB%8B/</url>
-    <content><![CDATA[<blockquote>
-<p><strong>本章要点：</strong>Java语言简介、发展历史、优势和安装等</p>
-</blockquote>
-<a id="more"></a>
-
-<p><strong>1、Spring框架</strong></p>
-<p><img src="C:%5CUsers%5Cuser%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5C1559878617105.png" alt="1559878617105"></p>
-<ul>
-<li>其中Ioc Container是最核心和最基础的，最大作用是配置和管理Java对象的生命周期</li>
-<li>AOP、Web、Dao和Orm等模块可集成到Spring中</li>
-</ul>
-<p><strong>2、开发准备</strong></p>
-<ul>
-<li>下载jdk，目前稳定流行版本的jdk1.8</li>
-<li>解压jdk，在环境变量Path中配置java环境变量。用户变量和系统变量的区别：用户变量是当前的登录用户生效，系统变量是所有的用户。</li>
-<li>环境变量ClassPath，在早期的jdk版本需要设置这个环境变量，jdk1.5以上的版本不需要设置。改该表示JRE会搜索该路径下的JAVA类。如配置，可以配置一点（.）,表示搜索当前路径下的java类型。</li>
-</ul>
-<p><strong>3、垃圾回收机制</strong></p>
-<ul>
-<li>c/c++由程序员显示的内存回收。（容易导致内存泄漏或者回收核心的类库的内存，导致系统崩溃）</li>
-<li>java的内存分配和回收由JRE在后台自动进行（有专门负责gc的线程负责控制和检测，在CPU或者内存不足的时候自动进行回收）</li>
-<li>java堆内存，是运行时的内存空间，存放类的示例（运行时的所有对象）。java的垃圾回收机制就是释放那些没有再被引用的对象（特定的算法去发现这种对象，标志位垃圾信息）和整理内存碎片，释放更多空间。</li>
-<li>垃圾回收几个特点：1、不可预见性（可在cpu空闲时回收，可在消耗极限时回收）；2、只回收内存资源，其他资源不回收，例如磁盘、IO等无能为力；3、回收算法多种多样；</li>
-</ul>
-<p><strong>对于无用对象，一定不要再引用它，以便回收机制发现它，释放更多资源。</strong></p>
-]]></content>
-      <categories>
-        <category>JAVA</category>
-      </categories>
-      <tags>
-        <tag>JAVA</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>《疯狂JAVA》读书笔记-第一章 JAVA语言概述和开发环境</title>
     <url>/2019/04/29/%E7%96%AF%E7%8B%82JAVA%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%AC%AC%E4%B8%80%E7%AB%A0JAVA%E8%AF%AD%E8%A8%80%E6%A6%82%E8%BF%B0%E5%92%8C%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/</url>
     <content><![CDATA[<blockquote>
 <p><strong>本章要点：</strong>Java语言简介、发展历史、优势和安装等</p>
@@ -1571,7 +1690,7 @@ System.out.println(&quot;集合元素&quot; + obj);</code></pre> });`</li>
 </ol>
 ]]></content>
       <categories>
-        <category>RabbiMq</category>
+        <category>midleware</category>
       </categories>
       <tags>
         <tag>RabbitMq</tag>
@@ -1656,7 +1775,7 @@ System.out.println(&quot;集合元素&quot; + obj);</code></pre> });`</li>
 </ol>
 ]]></content>
       <categories>
-        <category>RabbiMq</category>
+        <category>midleware</category>
       </categories>
       <tags>
         <tag>RabbitMq</tag>

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>Hexo</title>
+  <title>欢迎阅读谭家俊的世界</title>
   
   
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-03-12T14:07:24.602Z</updated>
+  <updated>2020-03-12T15:33:23.277Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -17,287 +17,11 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>Hello World</title>
-    <link href="http://yoursite.com/2020/03/12/hello-world/"/>
-    <id>http://yoursite.com/2020/03/12/hello-world/</id>
-    <published>2020-03-12T09:57:18.218Z</published>
-    <updated>2020-03-12T14:07:24.602Z</updated>
-    
-    <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.
-      
-    
-    </summary>
-    
-    
-      <category term="web前端" scheme="http://yoursite.com/categories/web%E5%89%8D%E7%AB%AF/"/>
-    
-    
-      <category term="jQuery" scheme="http://yoursite.com/tags/jQuery/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Jenkins服务搭建和部署</title>
-    <link href="http://yoursite.com/2019/07/26/CI&amp;CD/jekins/"/>
-    <id>http://yoursite.com/2019/07/26/CI&amp;CD/jekins/</id>
-    <published>2019-07-26T03:14:09.000Z</published>
-    <updated>2019-09-03T09:49:14.218Z</updated>
-    
-    <content type="html"><![CDATA[<blockquote><p><strong>本章要点：</strong>Jenkins服务搭建，配置和构建java demo任务等</p></blockquote><a id="more"></a><ol><li><p>Jenkins安装和设置</p><ul><li><p>安装JDK，此处不详述，安装版本为1.8</p></li><li><p>Jenkins安装</p><p><code>cd /etc/yum.repos.d/</code> </p><p><code>wget http://pkg.jenkins.io/redhat/jenkins.repo</code></p><p><code>rpm --import http://pkg.jenkins.io/redhat/jenkins.io.key</code></p><p><code>yum install -y jenkins</code></p><p>修改jenkins配置文件：</p><ul><li><p>查询yun下载安装的jenkins文件：rpm -ql jenkins</p></li><li><p>创建Jenkins主目录</p><p><code>sudo mkdir /data/jenkins -p</code></p><p><code>chown -R jenkins.jenkins /data/jenkins/</code></p></li><li><p>修改配置文件：vi /etc/sysconfig/jenkins</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">JENKINS_HOME="/var/lib/jenkins"</span><br><span class="line">JENKINS_USER="jenkins"</span><br><span class="line">JENKINS_JAVA_OPTIONS="-Djava.awt.headless=true -Xms256m -Xmx512m -XX:MaxNewSize=256m -XX:Maxize=256m"</span><br><span class="line">JENKINS_PORT="8000"</span><br></pre></td></tr></table></figure></li><li><p>修改启动脚本，指定JAVA环境变量：vi /etc/rc.d/init.d/jenkins</p><p><code>candidates=&quot;/etc/alternatives/java/usr/lib/jvm/java-1.8.0/bin/java/usr/lib/jvm/jre-1.8.0/bin/java/usr/lib/jvm/java-1.7.0/bin/java/usr/lib/jvm/jre-1.7.0/bin/java/usr/lib/jvm/java-11.0/bin/java/usr/lib/jvm/jre-11.0/bin/java/usr/lib/jvm/java-11-openjdk-amd64/usr/bin/jdk8/bin/java&quot;</code></p></li><li><p>启动Jenkins，systemctl start jenkins</p></li><li><p>访问<a href="http://192.168.33.12:8000/" target="_blank" rel="noopener">http://192.168.33.12:8000/</a>进行jenkins 的设置，一般安装推荐的插件</p></li></ul></li></ul></li><li><p>jenkins配置</p><ul><li><p>系统配置：系统管理–&gt;系统设置—&gt;全局属性—&gt;环境变量</p><p><img src="/images/post/1564643808150.png" alt="1564643808150"></p></li><li><p>扩展邮件通知（略）</p></li><li><p>全局工具配置：系统管理–&gt;全局工具配置</p><p><img src="/images/post/1567503394916.png" alt="1567503394916"></p></li></ul></li><li><p>插件管理：系统管理–&gt;全局工具配置–&gt;可选插件安装</p><p><img src="/images/post/1567503511147.png" alt="1567503511147"></p></li><li><p>新建项目任务</p><ul><li><p>新建任务—&gt;输入描述、项目名称等</p></li><li><p>配置源码管理</p><p><img src="/images/post/1567503660630.png" alt="1567503660630"></p></li><li><p>添加git的私钥凭证等</p><p><img src="/images/post/1567503744372.png" alt="1567503744372"></p></li><li><p>构建项目</p><p><img src="/images/post/1567503807878.png" alt="1567503807878"></p></li><li><p>查看控制台输出</p><p><img src="/images/post/1567503860428.png" alt="1567503860428"></p></li></ul></li></ol>]]></content>
-    
-    <summary type="html">
-    
-      &lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;本章要点：&lt;/strong&gt;Jenkins服务搭建，配置和构建java demo任务等&lt;/p&gt;
-&lt;/blockquote&gt;
-    
-    </summary>
-    
-    
-      <category term="devops" scheme="http://yoursite.com/categories/devops/"/>
-    
-    
-      <category term="devops" scheme="http://yoursite.com/tags/devops/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>ElasticSearch插件安装</title>
-    <link href="http://yoursite.com/2019/06/30/es/ElasticSearch%E6%8F%92%E4%BB%B6%E5%AE%89%E8%A3%85/"/>
-    <id>http://yoursite.com/2019/06/30/es/ElasticSearch%E6%8F%92%E4%BB%B6%E5%AE%89%E8%A3%85/</id>
-    <published>2019-06-30T02:14:09.000Z</published>
-    <updated>2019-09-03T08:33:23.306Z</updated>
-    
-    <content type="html"><![CDATA[<blockquote><p><strong>本章要点：</strong>elasticsearch Head插件的安装等</p></blockquote><a id="more"></a><ol><li><p>Head插件</p><ul><li><p>是es集群的管理工具，可用它看到集群的健康情况，可用于数据的查询和浏览</p></li><li><p>head托管在github上（<a href="https://github.com/mobz/elasticsearch-head" target="_blank" rel="noopener">https://github.com/mobz/elasticsearch-head</a>）,因为运行elasticsSearch-head会用到grunt，grunt是需要npm包管理器，所以必须安装nodejs，参考：<a href="https://www.cnblogs.com/cerofang/p/9981698.html" target="_blank" rel="noopener">https://www.cnblogs.com/cerofang/p/9981698.html</a></p><p><code>rpm -qa|grep git #查看有没安装git</code></p><p><code>yum install git #安装git</code></p></li><li><p>下载git clone head插件到本地目录下</p><p><code>cd /usr/local/</code></p><p><code>git clone</code></p><p><code>npm install -g grunt-cli</code></p><p><code>npm install cnpm -g --registry=https://registry.npm.taobao.org #安装cnpm</code></p><p><code>cd /usr/local/elasticsearch-head/</code></p><p><code>cnpm install</code></p><p><code>vi Gruntfile.js #修改这个文件，在connect--&gt;server--&gt;options下追加配置：hostname：&#39;*&#39;</code></p><p><code>修改head默认链接地址：cd _site &amp;&amp; vi app.js 找到这个配置项目：this.base_uri = this.config.base_uri || this.prefs.get(&quot;app-base_uri&quot;) || &quot;http://192.168.33.12:9200&quot;; 修改成你es的服务器地址</code></p></li><li><p>配置es允许跨域访问，打开elasticsearch.yml文件，追加：</p><p>http.cors.enabled: true<br>http.cors.allow-origin: ‘*’</p></li><li><p>打开9100端口：(head插件默认是9100端口)</p><p>sudo firewall-cmd –zone=public –add-port=9100/tcp –permanent</p><p>sudo firewall-cmd –reload</p></li><li><p>启动es</p></li><li><p>启动head插件：</p><p><code>cd /usr/local/elasticsearch-head/node_modules/grunt/bin</code></p><p><code>./grunt server</code></p></li><li><p>浏览器访问： <a href="http://localhost:9100" target="_blank" rel="noopener">http://localhost:9100</a></p></li></ul></li><li><p>安装kibana插件</p><ul><li>kibana是一个针对ES的开源分析及可视化平台，使用kibana可以查询、查看并与存储在ES索引的数据进行交互操作，使用kibana能执行高级的数据分析，并能以图表、表格和地图的形式查看数据</li><li>下载kibana（要与ES的版本一致）：<a href="https://www.elastic.co/cn/downloads/kibana" target="_blank" rel="noopener">https://www.elastic.co/cn/downloads/kibana</a></li></ul></li><li></li></ol>]]></content>
-    
-    <summary type="html">
-    
-      &lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;本章要点：&lt;/strong&gt;elasticsearch Head插件的安装等&lt;/p&gt;
-&lt;/blockquote&gt;
-    
-    </summary>
-    
-    
-      <category term="es" scheme="http://yoursite.com/categories/es/"/>
-    
-    
-      <category term="es" scheme="http://yoursite.com/tags/es/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>ElasticSearch安装</title>
-    <link href="http://yoursite.com/2019/06/23/es/ElasticSearch%E5%AE%89%E8%A3%85/"/>
-    <id>http://yoursite.com/2019/06/23/es/ElasticSearch%E5%AE%89%E8%A3%85/</id>
-    <published>2019-06-23T02:14:09.000Z</published>
-    <updated>2019-09-03T08:33:35.196Z</updated>
-    
-    <content type="html"><![CDATA[<blockquote><p><strong>本章要点：</strong>elasticsearch的安装等</p></blockquote><a id="more"></a><ol><li><p>centos下安装</p><ul><li><p>官网：<a href="https://www.elastic.co/cn/" target="_blank" rel="noopener">https://www.elastic.co/cn/</a>，目前最高版本是7.1.1，更新于2019/5/29</p></li><li><p>安装java环境（一般java8）</p></li><li><p>下载es的tar包，解压</p></li><li><p>创建新的用户和用户组，专属于es用的（为了安全考虑，并且es默认是不给root用户权限启动的）</p><p><code>sudo groupadd es</code></p><p><code>sudo useradd es -g es -p 123456</code></p><p><code>sudo chown -R es:es es所在目录</code></p><p><code>./es目录/bin/elasticsearch (启动)</code></p></li><li><p>测试：curl 127.0.0.1:9200</p></li><li><p>实现远程访问：</p><ul><li><p>修改配置：config/elasticsearch.yml 中的：network.host: 192.168.33.12（本地ip）和端口 ：http.port: 9200</p></li><li><p>再次启动会报如下错误：</p><p><code>ERROR: [3] bootstrap checks failed[1]: max file descriptors [4096] for elasticsearch process is too low, increase to at least [65535][2]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144][3]: the default discovery settings are unsuitable for production use; at least one of [discovery.seed_hosts, discovery.seed_providers, cluster.initial_master_nodes] must be configured</code></p><p>解决方法：</p><ul><li><p>处理第一、二个错误：</p><p><code>vim /etc/security/limits.conf</code> (文件末行加入以下参数)</p><p>es（刚所建的linux用户） soft nofile 65536<br>es hard nofile 65536<br>es soft nproc 4096<br>es hard nproc 4096</p><p> vi /etc/security/limits.d/20-nproc.conf ，追加配置：es         soft    nproc     4096</p><p>sudo vi /etc/sysctl.conf  追加配置vm.max_map_count=655360，sudo sysctl -p 使其生效</p></li><li><p>处理第三个错误：打开config/elasticsearch.yml 中的配置：cluster.initial_master_nodes: [“node-1”, “node-2”]</p></li><li><p>关闭防火墙：sudo systemctl stop firewalld.service</p></li><li><p>重启服务器，然后再重启es，启动成功</p></li></ul></li></ul></li></ul></li></ol>]]></content>
-    
-    <summary type="html">
-    
-      &lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;本章要点：&lt;/strong&gt;elasticsearch的安装等&lt;/p&gt;
-&lt;/blockquote&gt;
-    
-    </summary>
-    
-    
-      <category term="es" scheme="http://yoursite.com/categories/es/"/>
-    
-    
-      <category term="es" scheme="http://yoursite.com/tags/es/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>ElasticSearch之倒排索引</title>
-    <link href="http://yoursite.com/2019/06/23/es/ElasticSearch%E4%B9%8B%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95/"/>
-    <id>http://yoursite.com/2019/06/23/es/ElasticSearch%E4%B9%8B%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95/</id>
-    <published>2019-06-23T02:14:09.000Z</published>
-    <updated>2019-07-06T13:50:34.970Z</updated>
-    
-    <content type="html"><![CDATA[<blockquote><p><strong>本章要点：</strong>倒排索引等</p></blockquote><a id="more"></a><ol><li><p>倒排索引</p><ul><li><p>es中的一种索引结构，适用于快速的全文索引。一个倒排索引由文档中所有不重复词的列表构成，对于其中每个分词，有一个包含它的文档列表。</p><ul><li><p>如有一个这样的文档集合：</p><table><thead><tr><th>文档编号</th><th>文档内容</th></tr></thead><tbody><tr><td>1</td><td>谷歌地图之父跳槽FaceBook</td></tr><tr><td>2</td><td>谷歌地图之父加盟FaceBook</td></tr><tr><td>3</td><td>谷歌地图创始人拉斯离开谷歌加盟FaceBook</td></tr><tr><td>4</td><td>谷歌之父跳槽FaceBook与Wave项目取消有关</td></tr><tr><td>5</td><td>谷歌地图之父拉斯加盟社交网站FaceBook</td></tr></tbody></table></li><li><p>简单的倒排索引。（中文和英文等语言不同，单词之间没明确的分隔符，所以要先用分词系统将文档切分成单词序列）其中DocID为文档ID</p><table><thead><tr><th>单词ID</th><th>单词</th><th>倒排列表（DocID）</th></tr></thead><tbody><tr><td>1</td><td>谷歌</td><td>1,2,3,4,5</td></tr><tr><td>2</td><td>地图</td><td>1,2,3,4,5</td></tr><tr><td>3</td><td>之父</td><td>1,2,4,5</td></tr><tr><td>4</td><td>跳槽</td><td>1,4</td></tr><tr><td>5</td><td>FaceBook</td><td>1,2,3,4,5</td></tr><tr><td>6</td><td>加盟</td><td>2,3,5</td></tr><tr><td>7</td><td>创始人</td><td>3</td></tr><tr><td>8</td><td>拉斯</td><td>3,5</td></tr><tr><td>9</td><td>离开</td><td>3</td></tr><tr><td>10</td><td>与</td><td>4</td></tr><tr><td>11</td><td>Wave</td><td>4</td></tr><tr><td>12</td><td>项目</td><td>4</td></tr><tr><td>13</td><td>取消</td><td>4</td></tr><tr><td>14</td><td>有关</td><td>4</td></tr><tr><td>15</td><td>社交</td><td>5</td></tr><tr><td>16</td><td>网站</td><td>5</td></tr></tbody></table></li><li><p>上图的第三栏除了可记录文档的id(DocID)外还可以记录单词出现的频率信息（TF）,如（1；1），（2:1），还可以记录文档的位置信息，如（1,&lt;11&gt;,1）,(2,&lt;7&gt;,1)</p></li></ul></li><li><p>多用户能力的分布式全文搜索引擎</p></li><li><p>基于resetful web接口</p></li><li><p>java开发的</p></li><li><p>海量的数据，支持pb级别</p></li><li><p>实时、高扩展、可靠、稳定</p></li><li><p>以文档格式存储</p></li></ul></li><li><p>一些基本概念</p><ul><li>index：类似数据库中的database</li><li>type：相当数据库中的表</li><li>document（文档）：一条数据对应一篇文档，相当于数据库中的一行row。一个文档可以有多个字段（field）,mapping来描述数据类型.</li><li>Query DSL：类似mysql的sql语句，只不过在es中使用的josn格式的查询语句</li></ul></li><li><p>restful web接口</p><ul><li>GET/POST/PUT/DELETE  (查询/新增或更新/更新/删除)</li></ul></li><li><p>curl基本命令</p><ul><li>curl <a href="http://www.baidu.com" target="_blank" rel="noopener">www.baidu.com</a> (访问网页)</li><li>curl -i <a href="http://www.baicu.com" target="_blank" rel="noopener">www.baicu.com</a> 显示响应的头信息</li><li>curl -o save.html <a href="http://www.baidu.com（抓取网页内容保存到save.html）" target="_blank" rel="noopener">www.baidu.com（抓取网页内容保存到save.html）</a></li><li>curl -v <a href="http://www.baidu.com" target="_blank" rel="noopener">www.baidu.com</a> （显示一个http的通信过程）</li><li>curl -X GET/POST/PUT/DELETE url （执行GET/POST/PUT/DELETE操作）</li></ul></li></ol>]]></content>
-    
-    <summary type="html">
-    
-      &lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;本章要点：&lt;/strong&gt;倒排索引等&lt;/p&gt;
-&lt;/blockquote&gt;
-    
-    </summary>
-    
-    
-      <category term="es" scheme="http://yoursite.com/categories/es/"/>
-    
-    
-      <category term="es" scheme="http://yoursite.com/tags/es/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>ElasticSearch简介</title>
-    <link href="http://yoursite.com/2019/06/23/es/ElasticSearch%E7%AE%80%E4%BB%8B/"/>
-    <id>http://yoursite.com/2019/06/23/es/ElasticSearch%E7%AE%80%E4%BB%8B/</id>
-    <published>2019-06-23T02:14:09.000Z</published>
-    <updated>2019-06-23T02:45:38.642Z</updated>
-    
-    <content type="html"><![CDATA[<blockquote><p><strong>本章要点：</strong>集合概述、Collection集合用法等</p></blockquote><a id="more"></a><ol><li>概述<ul><li>基于Lucene的搜索服务器</li><li>多用户能力的分布式全文搜索引擎</li><li>基于resetful web接口</li><li>java开发的</li><li>海量的数据，支持pb级别</li><li>实时、高扩展、可靠、稳定</li><li>以文档格式存储</li></ul></li><li>一些基本概念<ul><li>index：类似数据库中的database</li><li>type：相当数据库中的表</li><li>document（文档）：一条数据对应一篇文档，相当于数据库中的一行row。一个文档可以有多个字段（field）,mapping来描述数据类型.</li><li>Query DSL：类似mysql的sql语句，只不过在es中使用的josn格式的查询语句</li></ul></li><li>restful web接口<ul><li>GET/POST/PUT/DELETE  (查询/新增或更新/更新/删除)</li></ul></li><li>curl基本命令<ul><li>curl <a href="http://www.baidu.com" target="_blank" rel="noopener">www.baidu.com</a> (访问网页)</li><li>curl -i <a href="http://www.baicu.com" target="_blank" rel="noopener">www.baicu.com</a> 显示响应的头信息</li><li>curl -o save.html <a href="http://www.baidu.com（抓取网页内容保存到save.html）" target="_blank" rel="noopener">www.baidu.com（抓取网页内容保存到save.html）</a></li><li>curl -v <a href="http://www.baidu.com" target="_blank" rel="noopener">www.baidu.com</a> （显示一个http的通信过程）</li><li>curl -X GET/POST/PUT/DELETE url （执行GET/POST/PUT/DELETE操作）</li></ul></li></ol>]]></content>
-    
-    <summary type="html">
-    
-      &lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;本章要点：&lt;/strong&gt;集合概述、Collection集合用法等&lt;/p&gt;
-&lt;/blockquote&gt;
-    
-    </summary>
-    
-    
-      <category term="es" scheme="http://yoursite.com/categories/es/"/>
-    
-    
-      <category term="es" scheme="http://yoursite.com/tags/es/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>《JSP&amp;Servlet》读书笔记-第一章Web应用简介</title>
-    <link href="http://yoursite.com/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E4%B8%80%E7%AB%A0Web%E5%BA%94%E7%94%A8%E7%AE%80%E4%BB%8B/"/>
-    <id>http://yoursite.com/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E4%B8%80%E7%AB%A0Web%E5%BA%94%E7%94%A8%E7%AE%80%E4%BB%8B/</id>
-    <published>2019-05-18T06:14:09.000Z</published>
-    <updated>2019-06-07T02:02:28.837Z</updated>
-    
-    <content type="html"><![CDATA[<blockquote><p><strong>本章要点：</strong>Http请求、web简介等</p></blockquote><a id="more"></a><ol><li><p>URL、URN、URI</p><ul><li>URL：代表资源的地址信息</li><li>URN：代表某个资源独一无二的名称</li><li>URI：URL和URN是URI的子集</li></ul></li><li><p>HTTP协议</p><ul><li>基于请求/响应模型<ul><li>每次联机只做一次请求/响应，无请求就无响应</li></ul></li><li>无状态<ul><li>不会记住客户端的状态</li></ul></li></ul></li><li><p>GET请求</p><ul><li>请求方法+请求的URL+请求参数+HTTP版本+请求标头</li><li>请求参数长度有限制（根据浏览器版本有所不同）</li></ul></li><li><p>POST请求</p><ul><li>请求方法+请求的URL+HTTP版本+请求标头+请求的参数（在Message body中，所以长度不限制）</li></ul></li><li><p>Web容器</p><ul><li><p>运行Servlet/JSP的Http服务器（如Tomcat）</p></li><li><p>请求/响应流程</p><p><img src="/images/post/1558159257312.png" alt="1558159257312"></p></li><li><p>Servlet是执行在web容器中，web容器是由服务器的JVM启动，一个请求到来，web容器就会启动一个线程，多个请求就多个线程，由于有可能同个Servlet处理多个请求，相当于多线程在共享同个对象，所以得注意线程安全问题，避免A用户登录后看到B用户的数据。</p></li><li></li></ul></li><li><p>JSP和Servlet</p><ul><li>JSP最后还是会被web容器转译为servlet的.java文件，编译为.class文件</li></ul></li><li><p>Java EE (企业解决方案，如JSP/Servlet就是)、Java SE（初学标准，桌面工具）、Java ME（微装置、手机等解决方案）</p></li><li><p>Q&amp;A</p><ul><li>一个请求到来，web容器就会启动一个线程，多个请求就多个线程，由于有可能同个Servlet处理多个请求，相当于多线程在共享同个对象，所以得注意线程安全问题，避免A用户登录后看到B用户的数据。大概是怎样的一个情况，能举个例子？</li><li>EJB是什么？</li></ul></li></ol>]]></content>
-    
-    <summary type="html">
-    
-      &lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;本章要点：&lt;/strong&gt;Http请求、web简介等&lt;/p&gt;
-&lt;/blockquote&gt;
-    
-    </summary>
-    
-    
-      <category term="servlet" scheme="http://yoursite.com/categories/servlet/"/>
-    
-    
-      <category term="servlet" scheme="http://yoursite.com/tags/servlet/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>《JSP&amp;Servlet》读书笔记-第三章</title>
-    <link href="http://yoursite.com/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E4%B8%89%E7%AB%A0%E8%AF%B7%E6%B1%82%E5%92%8C%E5%93%8D%E5%BA%94/"/>
-    <id>http://yoursite.com/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E4%B8%89%E7%AB%A0%E8%AF%B7%E6%B1%82%E5%92%8C%E5%93%8D%E5%BA%94/</id>
-    <published>2019-05-18T06:14:09.000Z</published>
-    <updated>2019-06-07T02:05:55.896Z</updated>
-    
-    <content type="html"><![CDATA[<blockquote><p><strong>本章要点：</strong>从容器到Sevelet等</p></blockquote><a id="more"></a><ol><li><p>从容器到Sevelet</p><ul><li><p>浏览器–&gt;http服务器–&gt;web容器</p><p><img src="/images/post/1558235409522.png" alt="1558235409522"></p></li><li><p>processServlet()，用于在调用doPost和doGet相同处理逻辑时</p></li></ul></li><li><p>processServlet()，用于在调用doPost和doGet相同处理逻辑时</p></li><li><p>Q&amp;A</p><ul><li>RequestDispatcher的include()和forward()的区别：forward跳转的，调用的servlet不能带有任何的响应，不然会被覆盖</li><li>设置标头，缓存区？</li></ul></li></ol>]]></content>
-    
-    <summary type="html">
-    
-      &lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;本章要点：&lt;/strong&gt;从容器到Sevelet等&lt;/p&gt;
-&lt;/blockquote&gt;
-    
-    </summary>
-    
-    
-      <category term="servlet" scheme="http://yoursite.com/categories/servlet/"/>
-    
-    
-      <category term="servlet" scheme="http://yoursite.com/tags/servlet/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>《JSP&amp;Servlet》读书笔记-第二章</title>
-    <link href="http://yoursite.com/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E7%BC%96%E5%86%99%E5%92%8C%E8%AE%BE%E7%BD%AEServlet/"/>
-    <id>http://yoursite.com/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E7%BC%96%E5%86%99%E5%92%8C%E8%AE%BE%E7%BD%AEServlet/</id>
-    <published>2019-05-18T06:14:09.000Z</published>
-    <updated>2019-06-07T01:56:33.122Z</updated>
-    
-    <content type="html"><![CDATA[<blockquote><p><strong>本章要点：</strong>环境的搭建等</p></blockquote><a id="more"></a><ol><li><p>准备开发环境</p><ul><li>下载Web容器：tomcat。ps：这里的tomcat虽然提供了Http服务器的功能，但主要还是做Web容器使用，在开发中方便，我们可以使用它的Http服务器功能，但是由于功能简单不建议把它当做生产环境的Http服务器用。</li><li>URN：代表某个资源独一无二的名称</li><li>URI：URL和URN是URI的子集</li></ul></li><li><p>关于HttpServelet</p><ul><li>HttpServlet继承GenericServlet，覆盖doGet、doPost和service等方法<ul><li>每次联机只做一次请求/响应，无请求就无响应</li></ul></li><li>@WebServlet注解<ul><li>name 指定由{name}的servlet处理请求</li><li>URLPatterns，指定request路由</li><li>loadOnStratUp&gt;0 ,在程序初始化时，实例化servlet示例，实例顺序按数值大小升序。（默认=-1是第一次请求才实例化）</li></ul></li><li>web.xml部署文件，会覆盖注解的定义</li></ul></li><li><p>文件和目录</p><ul><li>WEB-INF：外界请求无法直接访问改目录</li><li>lib：必须位于WEB-INF下，放在jar包用的</li></ul></li></ol>]]></content>
-    
-    <summary type="html">
-    
-      &lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;本章要点：&lt;/strong&gt;环境的搭建等&lt;/p&gt;
-&lt;/blockquote&gt;
-    
-    </summary>
-    
-    
-      <category term="servlet" scheme="http://yoursite.com/categories/servlet/"/>
-    
-    
-      <category term="servlet" scheme="http://yoursite.com/tags/servlet/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>《JSP&amp;Servlet》读书笔记-第五章</title>
-    <link href="http://yoursite.com/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E4%BA%94%E7%AB%A0ServletApi%E8%BF%9B%E9%98%B6%20/"/>
-    <id>http://yoursite.com/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E4%BA%94%E7%AB%A0ServletApi%E8%BF%9B%E9%98%B6%20/</id>
-    <published>2019-05-18T06:14:09.000Z</published>
-    <updated>2019-06-07T02:05:40.138Z</updated>
-    
-    <content type="html"><![CDATA[<blockquote><p><strong>本章要点：</strong>了解servlet生命周期、使用servletConfig和servletContext、监听器使用和过滤器开发等</p></blockquote><a id="more"></a><ol><li><p>隐藏域：<input type="hidden"/></p><ul><li><p>浏览器–&gt;http服务器–&gt;web容器</p><p><img src="/images/post/1558235409522.png" alt="1558235409522"></p></li><li><p>processServlet()，用于在调用doPost和doGet相同处理逻辑时</p></li><li></li></ul></li><li><p>cookie。例子：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//cookies测试</span></span><br><span class="line">        Cookie cookie = <span class="keyword">new</span> Cookie(<span class="string">"user"</span>, <span class="string">"cookie测试"</span>);</span><br><span class="line">        cookie.setMaxAge(<span class="number">7</span> * <span class="number">24</span> * <span class="number">3600</span>);</span><br><span class="line">        response.addCookie(cookie);</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取cookie</span></span><br><span class="line">Cookie[] cookies = request.getCookies();</span><br><span class="line"><span class="keyword">for</span> (Cookie c : cookies) &#123;</span><br><span class="line">    String cookieName = c.getName();</span><br><span class="line">    String cookieVal = c.getValue();</span><br><span class="line">    out.print(<span class="string">"cookie info "</span> + cookieName + cookieVal);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li><li><p>URL重写：当服务器响应上一次请求，以超链接的方法响应给客户端</p></li><li><p>HttpSession</p></li><li><p>Q&amp;A</p><ul><li>Httpsession保存在了内存中，可以改变保存的位置的吗？</li></ul></li></ol>]]></content>
-    
-    <summary type="html">
-    
-      &lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;本章要点：&lt;/strong&gt;了解servlet生命周期、使用servletConfig和servletContext、监听器使用和过滤器开发等&lt;/p&gt;
-&lt;/blockquote&gt;
-    
-    </summary>
-    
-    
-      <category term="servlet" scheme="http://yoursite.com/categories/servlet/"/>
-    
-    
-      <category term="servlet" scheme="http://yoursite.com/tags/servlet/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>《JSP&amp;Servlet》读书笔记-第四章</title>
-    <link href="http://yoursite.com/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E5%9B%9B%E7%AB%A0%E4%BC%9A%E8%AF%9D%E7%AE%A1%E7%90%86/"/>
-    <id>http://yoursite.com/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E5%9B%9B%E7%AB%A0%E4%BC%9A%E8%AF%9D%E7%AE%A1%E7%90%86/</id>
-    <published>2019-05-18T06:14:09.000Z</published>
-    <updated>2019-06-07T02:04:58.259Z</updated>
-    
-    <content type="html"><![CDATA[<blockquote><p><strong>本章要点：</strong>介绍几个实现会话管理的基本方式：如隐藏域、cookies和url重写等</p></blockquote><a id="more"></a><ol><li><p>隐藏域：<input type="hidden"/></p><ul><li><p>浏览器–&gt;http服务器–&gt;web容器</p><p><img src="/images/post/1558235409522.png" alt="1558235409522"></p></li><li><p>processServlet()，用于在调用doPost和doGet相同处理逻辑时</p></li><li></li></ul></li><li><p>cookie。例子：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//cookies测试</span></span><br><span class="line">        Cookie cookie = <span class="keyword">new</span> Cookie(<span class="string">"user"</span>, <span class="string">"cookie测试"</span>);</span><br><span class="line">        cookie.setMaxAge(<span class="number">7</span> * <span class="number">24</span> * <span class="number">3600</span>);</span><br><span class="line">        response.addCookie(cookie);</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取cookie</span></span><br><span class="line">Cookie[] cookies = request.getCookies();</span><br><span class="line"><span class="keyword">for</span> (Cookie c : cookies) &#123;</span><br><span class="line">    String cookieName = c.getName();</span><br><span class="line">    String cookieVal = c.getValue();</span><br><span class="line">    out.print(<span class="string">"cookie info "</span> + cookieName + cookieVal);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li><li><p>URL重写：当服务器响应上一次请求，以超链接的方法响应给客户端</p></li><li><p>HttpSession</p></li><li><p>Q&amp;A</p><ul><li>Httpsession保存在了内存中，可以改变保存的位置的吗？</li></ul></li></ol>]]></content>
-    
-    <summary type="html">
-    
-      &lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;本章要点：&lt;/strong&gt;介绍几个实现会话管理的基本方式：如隐藏域、cookies和url重写等&lt;/p&gt;
-&lt;/blockquote&gt;
-    
-    </summary>
-    
-    
-      <category term="servlet" scheme="http://yoursite.com/categories/servlet/"/>
-    
-    
-      <category term="servlet" scheme="http://yoursite.com/tags/servlet/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>利用kubeadm搭建kubernetes集群</title>
-    <link href="http://yoursite.com/2019/05/06/kubernetes/%E5%88%A9%E7%94%A8kubeadm%E6%90%AD%E5%BB%BAkubernetes%E9%9B%86%E7%BE%A4/"/>
-    <id>http://yoursite.com/2019/05/06/kubernetes/%E5%88%A9%E7%94%A8kubeadm%E6%90%AD%E5%BB%BAkubernetes%E9%9B%86%E7%BE%A4/</id>
-    <published>2019-05-06T15:14:09.000Z</published>
-    <updated>2020-03-12T14:23:11.089Z</updated>
+    <title>kubernetes无状态服务之搭建nginx-php环境</title>
+    <link href="http://yoursite.com/2020/03/10/kubernetes/kubernetes%E6%97%A0%E7%8A%B6%E6%80%81%E6%9C%8D%E5%8A%A1%E4%B9%8B%E6%90%AD%E5%BB%BAnginx-php%E7%8E%AF%E5%A2%83/"/>
+    <id>http://yoursite.com/2020/03/10/kubernetes/kubernetes%E6%97%A0%E7%8A%B6%E6%80%81%E6%9C%8D%E5%8A%A1%E4%B9%8B%E6%90%AD%E5%BB%BAnginx-php%E7%8E%AF%E5%A2%83/</id>
+    <published>2020-03-10T15:14:09.000Z</published>
+    <updated>2020-03-12T15:33:23.277Z</updated>
     
     <content type="html"><![CDATA[<blockquote><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote><p>k8s的部署方式：</p><ol><li>传统方式，从github上拉取对应的二进制安装包，解压安装各个组件和节点，过程步骤复杂，特别是各组件要通信，配置各种ca证书。<a href="https://github.com/kubernetes/kubernetes" target="_blank" rel="noopener">GitHub链接</a></li><li>由于传统方式安装比较麻烦，所以我们用kubeadm（k8s官方提供的集群部署工具）安装，只需按照以下基本步骤安装即可：<ul><li>master,nodes机器上安装：kubelet、kubeadm和docker，其中node和master都要运行在kebulet和docker环境之上</li><li>Master：用kubeadm init 命令，拉取下载相关的组件镜像，并启动相关pods（静态pods，不受k8s自身管理），相关的pods组件有：etcd、api-server、controller-manager、scheduler</li><li>Nodes：用kubeadm join命令把nodes加入到k8s集群中</li><li>flannel组件，也是运行在pods的守护级进程，起到个nodes的通信作用。是一个额外的组件（adds on）。<a href="https://github.com/coreos/flannel" target="_blank" rel="noopener">GitHub链接</a></li><li><a href="https://github.com/kubernetes/kubeadm/blob/master/docs/design/design_v1.10.md" target="_blank" rel="noopener">kubeadm相关参考文档</a></li></ul></li></ol><a id="more"></a><h2 id="一、准备工作"><a href="#一、准备工作" class="headerlink" title="一、准备工作"></a>一、准备工作</h2><ol><li><p>kubernetes需要容器运行时的支持，目前官方支持的容器运行时包括：Docker、Containerd、CRI-O和frakti。本次以Docker作为容器运行环境，推荐版本为Docker CE 18.09。宿主机操作系统使用CentOs</p></li><li><p>由于Kubernetes的master和node之间会进行大量通信，安全做法是开放对应的通信端口，在安全的内网环境下可以关闭防火墙服务：</p><p><code>sudo systemctl disable firewalld</code></p><p><code>sudo systemctl stop firewalld</code></p></li><li><p>关闭swap：<code>swapoff -a</code></p></li><li><p>另外，建议在主机上禁用SELinux,让容器可以读取主机的文件系统</p><p><code>sudo setenforce 0</code></p></li><li><p>解决路由异常：`</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;net.bridge.bridge-nf-call-ip6tables &#x3D; 1</span><br><span class="line">net.bridge.bridge-nf-call-iptables &#x3D; 1</span><br><span class="line">vm.swappiness&#x3D;0&quot; &gt;&gt; &#x2F;etc&#x2F;sysctl.d&#x2F;k8s.conf&#96;</span><br><span class="line">sudo sysctl -p &#x2F;etc&#x2F;sysctl.d&#x2F;k8s.conf</span><br><span class="line">若报不存在目录的错误，则运行：sudo modprobe br_netfilter</span><br></pre></td></tr></table></figure></li></ol><h2 id="二、用kubeadm快速安装kubernetes集群"><a href="#二、用kubeadm快速安装kubernetes集群" class="headerlink" title="二、用kubeadm快速安装kubernetes集群"></a>二、用kubeadm快速安装kubernetes集群</h2><p>Kubernetes 从1.4版开始引入了命令行工具kubeadm，致力于简化集群安装的过程，并解决集群的高可用问题。</p><ul><li><p>下载yum-key.gpg和rpm-package-key.gpg</p><p>sudo wget <a href="https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg" target="_blank" rel="noopener">https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg</a></p><p>sudo wget <a href="https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg" target="_blank" rel="noopener">https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg</a></p><p>导入：</p><p>sudo rpm –import yum-key.gpg</p><p>sudo rpm –import rpm-package-key.gpg </p></li><li><p>安装docker环境,docker运行时环境的配置：<a href="https://kubernetes.io/docs/setup/production-environment/container-runtimes/" target="_blank" rel="noopener">https://kubernetes.io/docs/setup/production-environment/container-runtimes/</a></p><p><code>cd /etc/yum.repos.d/</code></p><p><code>wget &lt;https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</code></p><p><code>yum install -y docker-ce</code></p><p>最后安装18.09版本，不然后面会出现各种问题。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum list docker-ce --showduplicates|sort -r  </span><br><span class="line">yum install docker-ce-18.09.0 -y</span><br></pre></td></tr></table></figure></li><li><p>安装kubeadm和相关工具</p><ul><li><p>配置yum源，yum源配置文件/etc/yum.repos.d/kubernetes.repo：</p><p>[kubernetes]</p><p>name=Kubernetes Repo</p><p>baseurl=<a href="https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/" target="_blank" rel="noopener">https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/</a></p><p>enabled=1</p><p>gpgcheck=0</p></li><li><p>运行命令：<code>yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes</code></p></li></ul></li><li><p>启动kubelet和docker服务，并开启开机启动。但是现在启动kubelet是会失败的，可先忽略</p><p><code>systemctl enable docker &amp;&amp; systemtcl start docker</code></p><p><code>systemctl enable kubelet &amp;&amp; systemtcl start kubelet</code></p></li><li><p>使用kubeadm config print init-defaults &gt; init-config.yaml 初始化一份配置文件，并且修改文件中配置为：imageRepository: registry.cn-hangzhou.aliyuncs.com/google_containers，因为默认的镜像地址在国内是会被墙的。（注意，如果advertiseAddress的值配置有问题，到加入节点kubeadm join的时候会出现卡住的情况，这时候检查advertiseAddress配置的ip是否有问题）</p></li><li><p><code>kubeadm config images pull --config=init-config.yaml</code> 拉取下载所需镜像。</p></li></ul><h2 id="三、master节点的安装"><a href="#三、master节点的安装" class="headerlink" title="三、master节点的安装"></a>三、master节点的安装</h2><ul><li><p>至此，准备工作已经完毕。运行<code>kubeadm init --config=init-config.yaml</code> 进行初始化，如运行结果提示kubelet没启动或者启动失败，可以重启kubelet。然后运行kubeadm rest重置，再进行kubeadm init操作</p></li><li><p>安装完毕后，按照提示命令，复制配置文件到普通用户的home目录下：</p><p><code>mkdir -p $HOME/.kube  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config  sudo chown $(id -u):$(id -g) $HOME/.kube/config</code></p><p>这样就在master安装了kubernetes，但是在集群内还没有任何的node和缺乏对容器网络的配置。其中值得注意的是，在kubeadm init完成后，最后几行提示信息包含了加入其他节点的指令和所要的token。如果遗忘。可用命令<code>sudo kubeadm token create --print-join-command</code>重新打印出来。</p></li></ul><h2 id="四、安装Node"><a href="#四、安装Node" class="headerlink" title="四、安装Node"></a>四、安装Node</h2><ul><li><p>新增一个节点，系统准备所需的yun源是一样的，安装的工具可以不装kubectl。安装完毕后，启动docker和kubelet服务。</p></li><li><p>为kubeadm命令生成配置文件，文件内容如下：</p><p>其中apiServerEndpoint的值是master的服务器地址，token和tlsBootstrapToken的值是master安装最后的一行信息。</p></li><li><p>kubeadm join大致的生命流程是：1、preflight checks；2、从集群中读取配置，也就是apiServerEndpoint中配置的地址中获取；也就是在master的这个配置，可以用命令<code>kubectl -n kube-system get cm kubeadm-config -oyaml</code>查看。3、下载这个配置，然后写入到/var/lib/kubelet/config.yaml；4、激活kubelet。如果在第二部中，读取配置出现问题，有可能出现卡住的情况，这时要检查maste的apiServerEndpoint和node的是否一致。</p></li><li><p>node join完毕后，可以在master节点<code>kubectl get nodes</code>查看节点列表和状态等</p></li></ul><h2 id="五、安装网络插件-一定要指定pod-network的配置，否则会出现网络插件的pod启动或者通信失败等问题"><a href="#五、安装网络插件-一定要指定pod-network的配置，否则会出现网络插件的pod启动或者通信失败等问题" class="headerlink" title="五、安装网络插件(一定要指定pod-network的配置，否则会出现网络插件的pod启动或者通信失败等问题)"></a>五、安装网络插件(一定要指定pod-network的配置，否则会出现网络插件的pod启动或者通信失败等问题)</h2><ol><li><p>执行kubectl get nodes 你会发现master和node节点都是NoReady状态，那是因为还没安装CNI网络插件</p></li><li><p>对于CNI网络插件，可有很多选择，可参考：&lt;<a href="https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#pod-network" target="_blank" rel="noopener">https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#pod-network</a></p></li><li><p>这里，我们选择weave插件，执行命令<code>kubectl apply -f &quot;https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d &#39;\n&#39;)&quot;</code>即可完成安装。</p></li><li><p>运行命令：</p><p><code>sudo kubeadm join 10.0.2.15:6443 --token 9le8zj.k1y8fvr09b4h4pww --discovery-token-ca-cert-hash sha256:10187a814644dab00611161c3079fdeeef579b999c6c506c33ff55dd9bb032fa --ignore-preflight-errors=Swap</code></p><p>把节点nodes加入，等nodes的机器拉取完镜像后，这个节点就加入完毕了。可以用这个命令查看更多pods的扩展信息：</p><p>kubectl get pods -n kube-system -o wide</p></li><li><p>我们在master节点上运行：kubectl get nodes ，可以看到节点已经成功加入</p><p><strong>至此，我们简单的k8s集群已经部署完毕。。。</strong></p></li></ol><h2 id="六、一些有用的命令"><a href="#六、一些有用的命令" class="headerlink" title="六、一些有用的命令"></a>六、一些有用的命令</h2><ul><li>sudo netstat -ntlp | grep LISTEN   查看监听的端口</li><li>kubectl get pods -n kube-system -o wide 查看pods的更多扩展信息</li><li>kubectl get ns 获取所有的命名空间</li><li>sudo yum list kubelet –showduplicates  //查看所有yum包的可用版本</li><li>kubectl get pods –all-namespaces 查看所有命名空间下的pods</li></ul><p>参考链接：</p><ul><li><a href="https://www.cnblogs.com/pekkle/p/10545145.html" target="_blank" rel="noopener">https://www.cnblogs.com/pekkle/p/10545145.html</a></li></ul>]]></content>
     
@@ -326,9 +50,373 @@
       <category term="运维" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/%E8%BF%90%E7%BB%B4/"/>
     
     
+      <category term="devops" scheme="http://yoursite.com/tags/devops/"/>
+    
       <category term="kubernetes" scheme="http://yoursite.com/tags/kubernetes/"/>
     
-      <category term="tec" scheme="http://yoursite.com/tags/tec/"/>
+  </entry>
+  
+  <entry>
+    <title>harbor安装和使用</title>
+    <link href="http://yoursite.com/2020/03/06/docker/harbor/harbor%E7%AE%80%E5%8D%95%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8/"/>
+    <id>http://yoursite.com/2020/03/06/docker/harbor/harbor%E7%AE%80%E5%8D%95%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8/</id>
+    <published>2020-03-06T15:14:09.000Z</published>
+    <updated>2020-03-12T15:29:06.351Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote><ul><li>安装docker和docker composer</li><li>下载tar包：<a href="https://github.com/goharbor/harbor/releases" target="_blank" rel="noopener">https://github.com/goharbor/harbor/releases</a></li><li>修改配置harbor.yaml中的hostname,把https的配置注释，修改admin的密码和db的密码等。若要配置https访问，参考：<a href="https://github.com/goharbor/harbor/blob/master/docs/1.10/install-config/configure-https.md" target="_blank" rel="noopener">https://github.com/goharbor/harbor/blob/master/docs/1.10/install-config/configure-https.md</a></li><li>运行./install.sh</li><li><a href="https://blog.csdn.net/jason9211/article/details/104464342/" target="_blank" rel="noopener">https://blog.csdn.net/jason9211/article/details/104464342/</a><a id="more"></a></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;h2 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h2&gt;&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;安装docker和docker composer&lt;/li&gt;
+&lt;li&gt;下载tar包：&lt;a href=&quot;https://github.com/goharbor/harbor/releases&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;https://github.com/goharbor/harbor/releases&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;修改配置harbor.yaml中的hostname,把https的配置注释，修改admin的密码和db的密码等。若要配置https访问，参考：&lt;a href=&quot;https://github.com/goharbor/harbor/blob/master/docs/1.10/install-config/configure-https.md&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;https://github.com/goharbor/harbor/blob/master/docs/1.10/install-config/configure-https.md&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;运行./install.sh&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://blog.csdn.net/jason9211/article/details/104464342/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;https://blog.csdn.net/jason9211/article/details/104464342/&lt;/a&gt;
+    
+    </summary>
+    
+    
+      <category term="技术" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+      <category term="运维" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/%E8%BF%90%E7%BB%B4/"/>
+    
+    
+      <category term="devops" scheme="http://yoursite.com/tags/devops/"/>
+    
+      <category term="kubernetes" scheme="http://yoursite.com/tags/kubernetes/"/>
+    
+      <category term="docker" scheme="http://yoursite.com/tags/docker/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>制作nginx-php镜像</title>
+    <link href="http://yoursite.com/2020/03/05/docker/%E5%88%B6%E4%BD%9Cnginx-php%E9%95%9C%E5%83%8F/"/>
+    <id>http://yoursite.com/2020/03/05/docker/%E5%88%B6%E4%BD%9Cnginx-php%E9%95%9C%E5%83%8F/</id>
+    <published>2020-03-05T15:14:09.000Z</published>
+    <updated>2020-03-12T15:31:05.414Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote><ul><li>安装docker和docker composer</li><li>下载tar包：<a href="https://github.com/goharbor/harbor/releases" target="_blank" rel="noopener">https://github.com/goharbor/harbor/releases</a></li><li>修改配置harbor.yaml中的hostname,把https的配置注释，修改admin的密码和db的密码等。若要配置https访问，参考：<a href="https://github.com/goharbor/harbor/blob/master/docs/1.10/install-config/configure-https.md" target="_blank" rel="noopener">https://github.com/goharbor/harbor/blob/master/docs/1.10/install-config/configure-https.md</a></li><li>运行./install.sh</li><li><a href="https://blog.csdn.net/jason9211/article/details/104464342/" target="_blank" rel="noopener">https://blog.csdn.net/jason9211/article/details/104464342/</a><a id="more"></a></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;h2 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h2&gt;&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;安装docker和docker composer&lt;/li&gt;
+&lt;li&gt;下载tar包：&lt;a href=&quot;https://github.com/goharbor/harbor/releases&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;https://github.com/goharbor/harbor/releases&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;修改配置harbor.yaml中的hostname,把https的配置注释，修改admin的密码和db的密码等。若要配置https访问，参考：&lt;a href=&quot;https://github.com/goharbor/harbor/blob/master/docs/1.10/install-config/configure-https.md&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;https://github.com/goharbor/harbor/blob/master/docs/1.10/install-config/configure-https.md&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;运行./install.sh&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://blog.csdn.net/jason9211/article/details/104464342/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;https://blog.csdn.net/jason9211/article/details/104464342/&lt;/a&gt;
+    
+    </summary>
+    
+    
+      <category term="技术" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+      <category term="运维" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/%E8%BF%90%E7%BB%B4/"/>
+    
+    
+      <category term="devops" scheme="http://yoursite.com/tags/devops/"/>
+    
+      <category term="kubernetes" scheme="http://yoursite.com/tags/kubernetes/"/>
+    
+      <category term="docker" scheme="http://yoursite.com/tags/docker/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Jenkins服务搭建和部署</title>
+    <link href="http://yoursite.com/2019/07/26/CI&amp;CD/jekins/"/>
+    <id>http://yoursite.com/2019/07/26/CI&amp;CD/jekins/</id>
+    <published>2019-07-26T03:14:09.000Z</published>
+    <updated>2020-03-12T15:12:34.114Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p><strong>本章要点：</strong>Jenkins服务搭建，配置和构建java demo任务等</p></blockquote><a id="more"></a><ol><li><p>Jenkins安装和设置</p><ul><li><p>安装JDK，此处不详述，安装版本为1.8</p></li><li><p>Jenkins安装</p><p><code>cd /etc/yum.repos.d/</code> </p><p><code>wget http://pkg.jenkins.io/redhat/jenkins.repo</code></p><p><code>rpm --import http://pkg.jenkins.io/redhat/jenkins.io.key</code></p><p><code>yum install -y jenkins</code></p><p>修改jenkins配置文件：</p><ul><li><p>查询yun下载安装的jenkins文件：rpm -ql jenkins</p></li><li><p>创建Jenkins主目录</p><p><code>sudo mkdir /data/jenkins -p</code></p><p><code>chown -R jenkins.jenkins /data/jenkins/</code></p></li><li><p>修改配置文件：vi /etc/sysconfig/jenkins</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">JENKINS_HOME="/var/lib/jenkins"</span><br><span class="line">JENKINS_USER="jenkins"</span><br><span class="line">JENKINS_JAVA_OPTIONS="-Djava.awt.headless=true -Xms256m -Xmx512m -XX:MaxNewSize=256m -XX:Maxize=256m"</span><br><span class="line">JENKINS_PORT="8000"</span><br></pre></td></tr></table></figure></li><li><p>修改启动脚本，指定JAVA环境变量：vi /etc/rc.d/init.d/jenkins</p><p><code>candidates=&quot;/etc/alternatives/java/usr/lib/jvm/java-1.8.0/bin/java/usr/lib/jvm/jre-1.8.0/bin/java/usr/lib/jvm/java-1.7.0/bin/java/usr/lib/jvm/jre-1.7.0/bin/java/usr/lib/jvm/java-11.0/bin/java/usr/lib/jvm/jre-11.0/bin/java/usr/lib/jvm/java-11-openjdk-amd64/usr/bin/jdk8/bin/java&quot;</code></p></li><li><p>启动Jenkins，systemctl start jenkins</p></li><li><p>访问<a href="http://192.168.33.12:8000/" target="_blank" rel="noopener">http://192.168.33.12:8000/</a>进行jenkins 的设置，一般安装推荐的插件</p></li></ul></li></ul></li><li><p>jenkins配置</p><ul><li><p>系统配置：系统管理–&gt;系统设置—&gt;全局属性—&gt;环境变量</p><p><img src="/images/post/1564643808150.png" alt="1564643808150"></p></li><li><p>扩展邮件通知（略）</p></li><li><p>全局工具配置：系统管理–&gt;全局工具配置</p><p><img src="/images/post/1567503394916.png" alt="1567503394916"></p></li></ul></li><li><p>插件管理：系统管理–&gt;全局工具配置–&gt;可选插件安装</p><p><img src="/images/post/1567503511147.png" alt="1567503511147"></p></li><li><p>新建项目任务</p><ul><li><p>新建任务—&gt;输入描述、项目名称等</p></li><li><p>配置源码管理</p><p><img src="/images/post/1567503660630.png" alt="1567503660630"></p></li><li><p>添加git的私钥凭证等</p><p><img src="/images/post/1567503744372.png" alt="1567503744372"></p></li><li><p>构建项目</p><p><img src="/images/post/1567503807878.png" alt="1567503807878"></p></li><li><p>查看控制台输出</p><p><img src="/images/post/1567503860428.png" alt="1567503860428"></p></li></ul></li></ol>]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;本章要点：&lt;/strong&gt;Jenkins服务搭建，配置和构建java demo任务等&lt;/p&gt;
+&lt;/blockquote&gt;
+    
+    </summary>
+    
+    
+      <category term="devops" scheme="http://yoursite.com/categories/devops/"/>
+    
+    
+      <category term="devops" scheme="http://yoursite.com/tags/devops/"/>
+    
+      <category term="ci&amp;cd" scheme="http://yoursite.com/tags/ci-cd/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>ElasticSearch插件安装</title>
+    <link href="http://yoursite.com/2019/06/30/es/ElasticSearch%E6%8F%92%E4%BB%B6%E5%AE%89%E8%A3%85/"/>
+    <id>http://yoursite.com/2019/06/30/es/ElasticSearch%E6%8F%92%E4%BB%B6%E5%AE%89%E8%A3%85/</id>
+    <published>2019-06-30T02:14:09.000Z</published>
+    <updated>2020-03-12T15:19:11.003Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p><strong>本章要点：</strong>elasticsearch Head插件的安装等</p></blockquote><a id="more"></a><ol><li><p>Head插件</p><ul><li><p>是es集群的管理工具，可用它看到集群的健康情况，可用于数据的查询和浏览</p></li><li><p>head托管在github上（<a href="https://github.com/mobz/elasticsearch-head" target="_blank" rel="noopener">https://github.com/mobz/elasticsearch-head</a>）,因为运行elasticsSearch-head会用到grunt，grunt是需要npm包管理器，所以必须安装nodejs，参考：<a href="https://www.cnblogs.com/cerofang/p/9981698.html" target="_blank" rel="noopener">https://www.cnblogs.com/cerofang/p/9981698.html</a></p><p><code>rpm -qa|grep git #查看有没安装git</code></p><p><code>yum install git #安装git</code></p></li><li><p>下载git clone head插件到本地目录下</p><p><code>cd /usr/local/</code></p><p><code>git clone</code></p><p><code>npm install -g grunt-cli</code></p><p><code>npm install cnpm -g --registry=https://registry.npm.taobao.org #安装cnpm</code></p><p><code>cd /usr/local/elasticsearch-head/</code></p><p><code>cnpm install</code></p><p><code>vi Gruntfile.js #修改这个文件，在connect--&gt;server--&gt;options下追加配置：hostname：&#39;*&#39;</code></p><p><code>修改head默认链接地址：cd _site &amp;&amp; vi app.js 找到这个配置项目：this.base_uri = this.config.base_uri || this.prefs.get(&quot;app-base_uri&quot;) || &quot;http://192.168.33.12:9200&quot;; 修改成你es的服务器地址</code></p></li><li><p>配置es允许跨域访问，打开elasticsearch.yml文件，追加：</p><p>http.cors.enabled: true<br>http.cors.allow-origin: ‘*’</p></li><li><p>打开9100端口：(head插件默认是9100端口)</p><p>sudo firewall-cmd –zone=public –add-port=9100/tcp –permanent</p><p>sudo firewall-cmd –reload</p></li><li><p>启动es</p></li><li><p>启动head插件：</p><p><code>cd /usr/local/elasticsearch-head/node_modules/grunt/bin</code></p><p><code>./grunt server</code></p></li><li><p>浏览器访问： <a href="http://localhost:9100" target="_blank" rel="noopener">http://localhost:9100</a></p></li></ul></li><li><p>安装kibana插件</p><ul><li>kibana是一个针对ES的开源分析及可视化平台，使用kibana可以查询、查看并与存储在ES索引的数据进行交互操作，使用kibana能执行高级的数据分析，并能以图表、表格和地图的形式查看数据</li><li>下载kibana（要与ES的版本一致）：<a href="https://www.elastic.co/cn/downloads/kibana" target="_blank" rel="noopener">https://www.elastic.co/cn/downloads/kibana</a></li></ul></li><li></li></ol>]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;本章要点：&lt;/strong&gt;elasticsearch Head插件的安装等&lt;/p&gt;
+&lt;/blockquote&gt;
+    
+    </summary>
+    
+    
+      <category term="midleware" scheme="http://yoursite.com/categories/midleware/"/>
+    
+    
+      <category term="es" scheme="http://yoursite.com/tags/es/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>ElasticSearch安装</title>
+    <link href="http://yoursite.com/2019/06/23/es/ElasticSearch%E5%AE%89%E8%A3%85/"/>
+    <id>http://yoursite.com/2019/06/23/es/ElasticSearch%E5%AE%89%E8%A3%85/</id>
+    <published>2019-06-23T02:14:09.000Z</published>
+    <updated>2020-03-12T15:18:39.802Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p><strong>本章要点：</strong>elasticsearch的安装等</p></blockquote><a id="more"></a><ol><li><p>centos下安装</p><ul><li><p>官网：<a href="https://www.elastic.co/cn/" target="_blank" rel="noopener">https://www.elastic.co/cn/</a>，目前最高版本是7.1.1，更新于2019/5/29</p></li><li><p>安装java环境（一般java8）</p></li><li><p>下载es的tar包，解压</p></li><li><p>创建新的用户和用户组，专属于es用的（为了安全考虑，并且es默认是不给root用户权限启动的）</p><p><code>sudo groupadd es</code></p><p><code>sudo useradd es -g es -p 123456</code></p><p><code>sudo chown -R es:es es所在目录</code></p><p><code>./es目录/bin/elasticsearch (启动)</code></p></li><li><p>测试：curl 127.0.0.1:9200</p></li><li><p>实现远程访问：</p><ul><li><p>修改配置：config/elasticsearch.yml 中的：network.host: 192.168.33.12（本地ip）和端口 ：http.port: 9200</p></li><li><p>再次启动会报如下错误：</p><p><code>ERROR: [3] bootstrap checks failed[1]: max file descriptors [4096] for elasticsearch process is too low, increase to at least [65535][2]: max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144][3]: the default discovery settings are unsuitable for production use; at least one of [discovery.seed_hosts, discovery.seed_providers, cluster.initial_master_nodes] must be configured</code></p><p>解决方法：</p><ul><li><p>处理第一、二个错误：</p><p><code>vim /etc/security/limits.conf</code> (文件末行加入以下参数)</p><p>es（刚所建的linux用户） soft nofile 65536<br>es hard nofile 65536<br>es soft nproc 4096<br>es hard nproc 4096</p><p> vi /etc/security/limits.d/20-nproc.conf ，追加配置：es         soft    nproc     4096</p><p>sudo vi /etc/sysctl.conf  追加配置vm.max_map_count=655360，sudo sysctl -p 使其生效</p></li><li><p>处理第三个错误：打开config/elasticsearch.yml 中的配置：cluster.initial_master_nodes: [“node-1”, “node-2”]</p></li><li><p>关闭防火墙：sudo systemctl stop firewalld.service</p></li><li><p>重启服务器，然后再重启es，启动成功</p></li></ul></li></ul></li></ul></li></ol>]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;本章要点：&lt;/strong&gt;elasticsearch的安装等&lt;/p&gt;
+&lt;/blockquote&gt;
+    
+    </summary>
+    
+    
+      <category term="midleware" scheme="http://yoursite.com/categories/midleware/"/>
+    
+    
+      <category term="es" scheme="http://yoursite.com/tags/es/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>ElasticSearch之倒排索引</title>
+    <link href="http://yoursite.com/2019/06/23/es/ElasticSearch%E4%B9%8B%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95/"/>
+    <id>http://yoursite.com/2019/06/23/es/ElasticSearch%E4%B9%8B%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95/</id>
+    <published>2019-06-23T02:14:09.000Z</published>
+    <updated>2020-03-12T15:19:26.702Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p><strong>本章要点：</strong>倒排索引等</p></blockquote><a id="more"></a><ol><li><p>倒排索引</p><ul><li><p>es中的一种索引结构，适用于快速的全文索引。一个倒排索引由文档中所有不重复词的列表构成，对于其中每个分词，有一个包含它的文档列表。</p><ul><li><p>如有一个这样的文档集合：</p><table><thead><tr><th>文档编号</th><th>文档内容</th></tr></thead><tbody><tr><td>1</td><td>谷歌地图之父跳槽FaceBook</td></tr><tr><td>2</td><td>谷歌地图之父加盟FaceBook</td></tr><tr><td>3</td><td>谷歌地图创始人拉斯离开谷歌加盟FaceBook</td></tr><tr><td>4</td><td>谷歌之父跳槽FaceBook与Wave项目取消有关</td></tr><tr><td>5</td><td>谷歌地图之父拉斯加盟社交网站FaceBook</td></tr></tbody></table></li><li><p>简单的倒排索引。（中文和英文等语言不同，单词之间没明确的分隔符，所以要先用分词系统将文档切分成单词序列）其中DocID为文档ID</p><table><thead><tr><th>单词ID</th><th>单词</th><th>倒排列表（DocID）</th></tr></thead><tbody><tr><td>1</td><td>谷歌</td><td>1,2,3,4,5</td></tr><tr><td>2</td><td>地图</td><td>1,2,3,4,5</td></tr><tr><td>3</td><td>之父</td><td>1,2,4,5</td></tr><tr><td>4</td><td>跳槽</td><td>1,4</td></tr><tr><td>5</td><td>FaceBook</td><td>1,2,3,4,5</td></tr><tr><td>6</td><td>加盟</td><td>2,3,5</td></tr><tr><td>7</td><td>创始人</td><td>3</td></tr><tr><td>8</td><td>拉斯</td><td>3,5</td></tr><tr><td>9</td><td>离开</td><td>3</td></tr><tr><td>10</td><td>与</td><td>4</td></tr><tr><td>11</td><td>Wave</td><td>4</td></tr><tr><td>12</td><td>项目</td><td>4</td></tr><tr><td>13</td><td>取消</td><td>4</td></tr><tr><td>14</td><td>有关</td><td>4</td></tr><tr><td>15</td><td>社交</td><td>5</td></tr><tr><td>16</td><td>网站</td><td>5</td></tr></tbody></table></li><li><p>上图的第三栏除了可记录文档的id(DocID)外还可以记录单词出现的频率信息（TF）,如（1；1），（2:1），还可以记录文档的位置信息，如（1,&lt;11&gt;,1）,(2,&lt;7&gt;,1)</p></li></ul></li><li><p>多用户能力的分布式全文搜索引擎</p></li><li><p>基于resetful web接口</p></li><li><p>java开发的</p></li><li><p>海量的数据，支持pb级别</p></li><li><p>实时、高扩展、可靠、稳定</p></li><li><p>以文档格式存储</p></li></ul></li><li><p>一些基本概念</p><ul><li>index：类似数据库中的database</li><li>type：相当数据库中的表</li><li>document（文档）：一条数据对应一篇文档，相当于数据库中的一行row。一个文档可以有多个字段（field）,mapping来描述数据类型.</li><li>Query DSL：类似mysql的sql语句，只不过在es中使用的josn格式的查询语句</li></ul></li><li><p>restful web接口</p><ul><li>GET/POST/PUT/DELETE  (查询/新增或更新/更新/删除)</li></ul></li><li><p>curl基本命令</p><ul><li>curl <a href="http://www.baidu.com" target="_blank" rel="noopener">www.baidu.com</a> (访问网页)</li><li>curl -i <a href="http://www.baicu.com" target="_blank" rel="noopener">www.baicu.com</a> 显示响应的头信息</li><li>curl -o save.html <a href="http://www.baidu.com（抓取网页内容保存到save.html）" target="_blank" rel="noopener">www.baidu.com（抓取网页内容保存到save.html）</a></li><li>curl -v <a href="http://www.baidu.com" target="_blank" rel="noopener">www.baidu.com</a> （显示一个http的通信过程）</li><li>curl -X GET/POST/PUT/DELETE url （执行GET/POST/PUT/DELETE操作）</li></ul></li></ol>]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;本章要点：&lt;/strong&gt;倒排索引等&lt;/p&gt;
+&lt;/blockquote&gt;
+    
+    </summary>
+    
+    
+      <category term="midleware" scheme="http://yoursite.com/categories/midleware/"/>
+    
+    
+      <category term="es" scheme="http://yoursite.com/tags/es/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>ElasticSearch简介</title>
+    <link href="http://yoursite.com/2019/06/23/es/ElasticSearch%E7%AE%80%E4%BB%8B/"/>
+    <id>http://yoursite.com/2019/06/23/es/ElasticSearch%E7%AE%80%E4%BB%8B/</id>
+    <published>2019-06-23T02:14:09.000Z</published>
+    <updated>2020-03-12T15:19:18.611Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p><strong>本章要点：</strong>集合概述、Collection集合用法等</p></blockquote><a id="more"></a><ol><li>概述<ul><li>基于Lucene的搜索服务器</li><li>多用户能力的分布式全文搜索引擎</li><li>基于resetful web接口</li><li>java开发的</li><li>海量的数据，支持pb级别</li><li>实时、高扩展、可靠、稳定</li><li>以文档格式存储</li></ul></li><li>一些基本概念<ul><li>index：类似数据库中的database</li><li>type：相当数据库中的表</li><li>document（文档）：一条数据对应一篇文档，相当于数据库中的一行row。一个文档可以有多个字段（field）,mapping来描述数据类型.</li><li>Query DSL：类似mysql的sql语句，只不过在es中使用的josn格式的查询语句</li></ul></li><li>restful web接口<ul><li>GET/POST/PUT/DELETE  (查询/新增或更新/更新/删除)</li></ul></li><li>curl基本命令<ul><li>curl <a href="http://www.baidu.com" target="_blank" rel="noopener">www.baidu.com</a> (访问网页)</li><li>curl -i <a href="http://www.baicu.com" target="_blank" rel="noopener">www.baicu.com</a> 显示响应的头信息</li><li>curl -o save.html <a href="http://www.baidu.com（抓取网页内容保存到save.html）" target="_blank" rel="noopener">www.baidu.com（抓取网页内容保存到save.html）</a></li><li>curl -v <a href="http://www.baidu.com" target="_blank" rel="noopener">www.baidu.com</a> （显示一个http的通信过程）</li><li>curl -X GET/POST/PUT/DELETE url （执行GET/POST/PUT/DELETE操作）</li></ul></li></ol>]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;本章要点：&lt;/strong&gt;集合概述、Collection集合用法等&lt;/p&gt;
+&lt;/blockquote&gt;
+    
+    </summary>
+    
+    
+      <category term="midleware" scheme="http://yoursite.com/categories/midleware/"/>
+    
+    
+      <category term="es" scheme="http://yoursite.com/tags/es/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>《JSP&amp;Servlet》读书笔记-第一章Web应用简介</title>
+    <link href="http://yoursite.com/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E4%B8%80%E7%AB%A0Web%E5%BA%94%E7%94%A8%E7%AE%80%E4%BB%8B/"/>
+    <id>http://yoursite.com/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E4%B8%80%E7%AB%A0Web%E5%BA%94%E7%94%A8%E7%AE%80%E4%BB%8B/</id>
+    <published>2019-05-18T06:14:09.000Z</published>
+    <updated>2020-03-12T15:14:42.415Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p><strong>本章要点：</strong>Http请求、web简介等</p></blockquote><a id="more"></a><ol><li><p>URL、URN、URI</p><ul><li>URL：代表资源的地址信息</li><li>URN：代表某个资源独一无二的名称</li><li>URI：URL和URN是URI的子集</li></ul></li><li><p>HTTP协议</p><ul><li>基于请求/响应模型<ul><li>每次联机只做一次请求/响应，无请求就无响应</li></ul></li><li>无状态<ul><li>不会记住客户端的状态</li></ul></li></ul></li><li><p>GET请求</p><ul><li>请求方法+请求的URL+请求参数+HTTP版本+请求标头</li><li>请求参数长度有限制（根据浏览器版本有所不同）</li></ul></li><li><p>POST请求</p><ul><li>请求方法+请求的URL+HTTP版本+请求标头+请求的参数（在Message body中，所以长度不限制）</li></ul></li><li><p>Web容器</p><ul><li><p>运行Servlet/JSP的Http服务器（如Tomcat）</p></li><li><p>请求/响应流程</p><p><img src="/images/post/1558159257312.png" alt="1558159257312"></p></li><li><p>Servlet是执行在web容器中，web容器是由服务器的JVM启动，一个请求到来，web容器就会启动一个线程，多个请求就多个线程，由于有可能同个Servlet处理多个请求，相当于多线程在共享同个对象，所以得注意线程安全问题，避免A用户登录后看到B用户的数据。</p></li><li></li></ul></li><li><p>JSP和Servlet</p><ul><li>JSP最后还是会被web容器转译为servlet的.java文件，编译为.class文件</li></ul></li><li><p>Java EE (企业解决方案，如JSP/Servlet就是)、Java SE（初学标准，桌面工具）、Java ME（微装置、手机等解决方案）</p></li><li><p>Q&amp;A</p><ul><li>一个请求到来，web容器就会启动一个线程，多个请求就多个线程，由于有可能同个Servlet处理多个请求，相当于多线程在共享同个对象，所以得注意线程安全问题，避免A用户登录后看到B用户的数据。大概是怎样的一个情况，能举个例子？</li><li>EJB是什么？</li></ul></li></ol>]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;本章要点：&lt;/strong&gt;Http请求、web简介等&lt;/p&gt;
+&lt;/blockquote&gt;
+    
+    </summary>
+    
+    
+      <category term="JAVA" scheme="http://yoursite.com/categories/JAVA/"/>
+    
+    
+      <category term="servlet" scheme="http://yoursite.com/tags/servlet/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>《JSP&amp;Servlet》读书笔记-第三章</title>
+    <link href="http://yoursite.com/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E4%B8%89%E7%AB%A0%E8%AF%B7%E6%B1%82%E5%92%8C%E5%93%8D%E5%BA%94/"/>
+    <id>http://yoursite.com/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E4%B8%89%E7%AB%A0%E8%AF%B7%E6%B1%82%E5%92%8C%E5%93%8D%E5%BA%94/</id>
+    <published>2019-05-18T06:14:09.000Z</published>
+    <updated>2020-03-12T15:15:12.905Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p><strong>本章要点：</strong>从容器到Sevelet等</p></blockquote><a id="more"></a><ol><li><p>从容器到Sevelet</p><ul><li><p>浏览器–&gt;http服务器–&gt;web容器</p><p><img src="/images/post/1558235409522.png" alt="1558235409522"></p></li><li><p>processServlet()，用于在调用doPost和doGet相同处理逻辑时</p></li></ul></li><li><p>processServlet()，用于在调用doPost和doGet相同处理逻辑时</p></li><li><p>Q&amp;A</p><ul><li>RequestDispatcher的include()和forward()的区别：forward跳转的，调用的servlet不能带有任何的响应，不然会被覆盖</li><li>设置标头，缓存区？</li></ul></li></ol>]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;本章要点：&lt;/strong&gt;从容器到Sevelet等&lt;/p&gt;
+&lt;/blockquote&gt;
+    
+    </summary>
+    
+    
+      <category term="JAVA" scheme="http://yoursite.com/categories/JAVA/"/>
+    
+    
+      <category term="servlet" scheme="http://yoursite.com/tags/servlet/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>《JSP&amp;Servlet》读书笔记-第五章</title>
+    <link href="http://yoursite.com/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E4%BA%94%E7%AB%A0ServletApi%E8%BF%9B%E9%98%B6%20/"/>
+    <id>http://yoursite.com/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E4%BA%94%E7%AB%A0ServletApi%E8%BF%9B%E9%98%B6%20/</id>
+    <published>2019-05-18T06:14:09.000Z</published>
+    <updated>2020-03-12T15:15:29.226Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p><strong>本章要点：</strong>了解servlet生命周期、使用servletConfig和servletContext、监听器使用和过滤器开发等</p></blockquote><a id="more"></a><ol><li><p>隐藏域：<input type="hidden"/></p><ul><li><p>浏览器–&gt;http服务器–&gt;web容器</p><p><img src="/images/post/1558235409522.png" alt="1558235409522"></p></li><li><p>processServlet()，用于在调用doPost和doGet相同处理逻辑时</p></li><li></li></ul></li><li><p>cookie。例子：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//cookies测试</span></span><br><span class="line">        Cookie cookie = <span class="keyword">new</span> Cookie(<span class="string">"user"</span>, <span class="string">"cookie测试"</span>);</span><br><span class="line">        cookie.setMaxAge(<span class="number">7</span> * <span class="number">24</span> * <span class="number">3600</span>);</span><br><span class="line">        response.addCookie(cookie);</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取cookie</span></span><br><span class="line">Cookie[] cookies = request.getCookies();</span><br><span class="line"><span class="keyword">for</span> (Cookie c : cookies) &#123;</span><br><span class="line">    String cookieName = c.getName();</span><br><span class="line">    String cookieVal = c.getValue();</span><br><span class="line">    out.print(<span class="string">"cookie info "</span> + cookieName + cookieVal);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li><li><p>URL重写：当服务器响应上一次请求，以超链接的方法响应给客户端</p></li><li><p>HttpSession</p></li><li><p>Q&amp;A</p><ul><li>Httpsession保存在了内存中，可以改变保存的位置的吗？</li></ul></li></ol>]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;本章要点：&lt;/strong&gt;了解servlet生命周期、使用servletConfig和servletContext、监听器使用和过滤器开发等&lt;/p&gt;
+&lt;/blockquote&gt;
+    
+    </summary>
+    
+    
+      <category term="JAVA" scheme="http://yoursite.com/categories/JAVA/"/>
+    
+    
+      <category term="servlet" scheme="http://yoursite.com/tags/servlet/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>《JSP&amp;Servlet》读书笔记-第四章</title>
+    <link href="http://yoursite.com/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E5%9B%9B%E7%AB%A0%E4%BC%9A%E8%AF%9D%E7%AE%A1%E7%90%86/"/>
+    <id>http://yoursite.com/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E5%9B%9B%E7%AB%A0%E4%BC%9A%E8%AF%9D%E7%AE%A1%E7%90%86/</id>
+    <published>2019-05-18T06:14:09.000Z</published>
+    <updated>2020-03-12T15:15:20.651Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p><strong>本章要点：</strong>介绍几个实现会话管理的基本方式：如隐藏域、cookies和url重写等</p></blockquote><a id="more"></a><ol><li><p>隐藏域：<input type="hidden"/></p><ul><li><p>浏览器–&gt;http服务器–&gt;web容器</p><p><img src="/images/post/1558235409522.png" alt="1558235409522"></p></li><li><p>processServlet()，用于在调用doPost和doGet相同处理逻辑时</p></li><li></li></ul></li><li><p>cookie。例子：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//cookies测试</span></span><br><span class="line">        Cookie cookie = <span class="keyword">new</span> Cookie(<span class="string">"user"</span>, <span class="string">"cookie测试"</span>);</span><br><span class="line">        cookie.setMaxAge(<span class="number">7</span> * <span class="number">24</span> * <span class="number">3600</span>);</span><br><span class="line">        response.addCookie(cookie);</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取cookie</span></span><br><span class="line">Cookie[] cookies = request.getCookies();</span><br><span class="line"><span class="keyword">for</span> (Cookie c : cookies) &#123;</span><br><span class="line">    String cookieName = c.getName();</span><br><span class="line">    String cookieVal = c.getValue();</span><br><span class="line">    out.print(<span class="string">"cookie info "</span> + cookieName + cookieVal);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li><li><p>URL重写：当服务器响应上一次请求，以超链接的方法响应给客户端</p></li><li><p>HttpSession</p></li><li><p>Q&amp;A</p><ul><li>Httpsession保存在了内存中，可以改变保存的位置的吗？</li></ul></li></ol>]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;本章要点：&lt;/strong&gt;介绍几个实现会话管理的基本方式：如隐藏域、cookies和url重写等&lt;/p&gt;
+&lt;/blockquote&gt;
+    
+    </summary>
+    
+    
+      <category term="JAVA" scheme="http://yoursite.com/categories/JAVA/"/>
+    
+    
+      <category term="servlet" scheme="http://yoursite.com/tags/servlet/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>《JSP&amp;Servlet》读书笔记-第二章</title>
+    <link href="http://yoursite.com/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E7%BC%96%E5%86%99%E5%92%8C%E8%AE%BE%E7%BD%AEServlet/"/>
+    <id>http://yoursite.com/2019/05/18/JSP&amp;Servlet/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E7%BC%96%E5%86%99%E5%92%8C%E8%AE%BE%E7%BD%AEServlet/</id>
+    <published>2019-05-18T06:14:09.000Z</published>
+    <updated>2020-03-12T15:15:03.704Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p><strong>本章要点：</strong>环境的搭建等</p></blockquote><a id="more"></a><ol><li><p>准备开发环境</p><ul><li>下载Web容器：tomcat。ps：这里的tomcat虽然提供了Http服务器的功能，但主要还是做Web容器使用，在开发中方便，我们可以使用它的Http服务器功能，但是由于功能简单不建议把它当做生产环境的Http服务器用。</li><li>URN：代表某个资源独一无二的名称</li><li>URI：URL和URN是URI的子集</li></ul></li><li><p>关于HttpServelet</p><ul><li>HttpServlet继承GenericServlet，覆盖doGet、doPost和service等方法<ul><li>每次联机只做一次请求/响应，无请求就无响应</li></ul></li><li>@WebServlet注解<ul><li>name 指定由{name}的servlet处理请求</li><li>URLPatterns，指定request路由</li><li>loadOnStratUp&gt;0 ,在程序初始化时，实例化servlet示例，实例顺序按数值大小升序。（默认=-1是第一次请求才实例化）</li></ul></li><li>web.xml部署文件，会覆盖注解的定义</li></ul></li><li><p>文件和目录</p><ul><li>WEB-INF：外界请求无法直接访问改目录</li><li>lib：必须位于WEB-INF下，放在jar包用的</li></ul></li></ol>]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;本章要点：&lt;/strong&gt;环境的搭建等&lt;/p&gt;
+&lt;/blockquote&gt;
+    
+    </summary>
+    
+    
+      <category term="JAVA" scheme="http://yoursite.com/categories/JAVA/"/>
+    
+    
+      <category term="servlet" scheme="http://yoursite.com/tags/servlet/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>利用kubeadm搭建kubernetes集群</title>
+    <link href="http://yoursite.com/2019/05/06/kubernetes/%E5%88%A9%E7%94%A8kubeadm%E6%90%AD%E5%BB%BAkubernetes%E9%9B%86%E7%BE%A4/"/>
+    <id>http://yoursite.com/2019/05/06/kubernetes/%E5%88%A9%E7%94%A8kubeadm%E6%90%AD%E5%BB%BAkubernetes%E9%9B%86%E7%BE%A4/</id>
+    <published>2019-05-06T15:14:09.000Z</published>
+    <updated>2020-03-12T15:20:42.676Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote><p>k8s的部署方式：</p><ol><li>传统方式，从github上拉取对应的二进制安装包，解压安装各个组件和节点，过程步骤复杂，特别是各组件要通信，配置各种ca证书。<a href="https://github.com/kubernetes/kubernetes" target="_blank" rel="noopener">GitHub链接</a></li><li>由于传统方式安装比较麻烦，所以我们用kubeadm（k8s官方提供的集群部署工具）安装，只需按照以下基本步骤安装即可：<ul><li>master,nodes机器上安装：kubelet、kubeadm和docker，其中node和master都要运行在kebulet和docker环境之上</li><li>Master：用kubeadm init 命令，拉取下载相关的组件镜像，并启动相关pods（静态pods，不受k8s自身管理），相关的pods组件有：etcd、api-server、controller-manager、scheduler</li><li>Nodes：用kubeadm join命令把nodes加入到k8s集群中</li><li>flannel组件，也是运行在pods的守护级进程，起到个nodes的通信作用。是一个额外的组件（adds on）。<a href="https://github.com/coreos/flannel" target="_blank" rel="noopener">GitHub链接</a></li><li><a href="https://github.com/kubernetes/kubeadm/blob/master/docs/design/design_v1.10.md" target="_blank" rel="noopener">kubeadm相关参考文档</a></li></ul></li></ol><a id="more"></a><h2 id="一、准备工作"><a href="#一、准备工作" class="headerlink" title="一、准备工作"></a>一、准备工作</h2><ol><li><p>kubernetes需要容器运行时的支持，目前官方支持的容器运行时包括：Docker、Containerd、CRI-O和frakti。本次以Docker作为容器运行环境，推荐版本为Docker CE 18.09。宿主机操作系统使用CentOs</p></li><li><p>由于Kubernetes的master和node之间会进行大量通信，安全做法是开放对应的通信端口，在安全的内网环境下可以关闭防火墙服务：</p><p><code>sudo systemctl disable firewalld</code></p><p><code>sudo systemctl stop firewalld</code></p></li><li><p>关闭swap：<code>swapoff -a</code></p></li><li><p>另外，建议在主机上禁用SELinux,让容器可以读取主机的文件系统</p><p><code>sudo setenforce 0</code></p></li><li><p>解决路由异常：`</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;net.bridge.bridge-nf-call-ip6tables &#x3D; 1</span><br><span class="line">net.bridge.bridge-nf-call-iptables &#x3D; 1</span><br><span class="line">vm.swappiness&#x3D;0&quot; &gt;&gt; &#x2F;etc&#x2F;sysctl.d&#x2F;k8s.conf&#96;</span><br><span class="line">sudo sysctl -p &#x2F;etc&#x2F;sysctl.d&#x2F;k8s.conf</span><br><span class="line">若报不存在目录的错误，则运行：sudo modprobe br_netfilter</span><br></pre></td></tr></table></figure></li></ol><h2 id="二、用kubeadm快速安装kubernetes集群"><a href="#二、用kubeadm快速安装kubernetes集群" class="headerlink" title="二、用kubeadm快速安装kubernetes集群"></a>二、用kubeadm快速安装kubernetes集群</h2><p>Kubernetes 从1.4版开始引入了命令行工具kubeadm，致力于简化集群安装的过程，并解决集群的高可用问题。</p><ul><li><p>下载yum-key.gpg和rpm-package-key.gpg</p><p>sudo wget <a href="https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg" target="_blank" rel="noopener">https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg</a></p><p>sudo wget <a href="https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg" target="_blank" rel="noopener">https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg</a></p><p>导入：</p><p>sudo rpm –import yum-key.gpg</p><p>sudo rpm –import rpm-package-key.gpg </p></li><li><p>安装docker环境,docker运行时环境的配置：<a href="https://kubernetes.io/docs/setup/production-environment/container-runtimes/" target="_blank" rel="noopener">https://kubernetes.io/docs/setup/production-environment/container-runtimes/</a></p><p><code>cd /etc/yum.repos.d/</code></p><p><code>wget &lt;https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</code></p><p><code>yum install -y docker-ce</code></p><p>最后安装18.09版本，不然后面会出现各种问题。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum list docker-ce --showduplicates|sort -r  </span><br><span class="line">yum install docker-ce-18.09.0 -y</span><br></pre></td></tr></table></figure></li><li><p>安装kubeadm和相关工具</p><ul><li><p>配置yum源，yum源配置文件/etc/yum.repos.d/kubernetes.repo：</p><p>[kubernetes]</p><p>name=Kubernetes Repo</p><p>baseurl=<a href="https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/" target="_blank" rel="noopener">https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/</a></p><p>enabled=1</p><p>gpgcheck=0</p></li><li><p>运行命令：<code>yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes</code></p></li></ul></li><li><p>启动kubelet和docker服务，并开启开机启动。但是现在启动kubelet是会失败的，可先忽略</p><p><code>systemctl enable docker &amp;&amp; systemtcl start docker</code></p><p><code>systemctl enable kubelet &amp;&amp; systemtcl start kubelet</code></p></li><li><p>使用kubeadm config print init-defaults &gt; init-config.yaml 初始化一份配置文件，并且修改文件中配置为：imageRepository: registry.cn-hangzhou.aliyuncs.com/google_containers，因为默认的镜像地址在国内是会被墙的。（注意，如果advertiseAddress的值配置有问题，到加入节点kubeadm join的时候会出现卡住的情况，这时候检查advertiseAddress配置的ip是否有问题）</p></li><li><p><code>kubeadm config images pull --config=init-config.yaml</code> 拉取下载所需镜像。</p></li></ul><h2 id="三、master节点的安装"><a href="#三、master节点的安装" class="headerlink" title="三、master节点的安装"></a>三、master节点的安装</h2><ul><li><p>至此，准备工作已经完毕。运行<code>kubeadm init --config=init-config.yaml</code> 进行初始化，如运行结果提示kubelet没启动或者启动失败，可以重启kubelet。然后运行kubeadm rest重置，再进行kubeadm init操作</p></li><li><p>安装完毕后，按照提示命令，复制配置文件到普通用户的home目录下：</p><p><code>mkdir -p $HOME/.kube  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config  sudo chown $(id -u):$(id -g) $HOME/.kube/config</code></p><p>这样就在master安装了kubernetes，但是在集群内还没有任何的node和缺乏对容器网络的配置。其中值得注意的是，在kubeadm init完成后，最后几行提示信息包含了加入其他节点的指令和所要的token。如果遗忘。可用命令<code>sudo kubeadm token create --print-join-command</code>重新打印出来。</p></li></ul><h2 id="四、安装Node"><a href="#四、安装Node" class="headerlink" title="四、安装Node"></a>四、安装Node</h2><ul><li><p>新增一个节点，系统准备所需的yun源是一样的，安装的工具可以不装kubectl。安装完毕后，启动docker和kubelet服务。</p></li><li><p>为kubeadm命令生成配置文件，文件内容如下：</p><p>其中apiServerEndpoint的值是master的服务器地址，token和tlsBootstrapToken的值是master安装最后的一行信息。</p></li><li><p>kubeadm join大致的生命流程是：1、preflight checks；2、从集群中读取配置，也就是apiServerEndpoint中配置的地址中获取；也就是在master的这个配置，可以用命令<code>kubectl -n kube-system get cm kubeadm-config -oyaml</code>查看。3、下载这个配置，然后写入到/var/lib/kubelet/config.yaml；4、激活kubelet。如果在第二部中，读取配置出现问题，有可能出现卡住的情况，这时要检查maste的apiServerEndpoint和node的是否一致。</p></li><li><p>node join完毕后，可以在master节点<code>kubectl get nodes</code>查看节点列表和状态等</p></li></ul><h2 id="五、安装网络插件-一定要指定pod-network的配置，否则会出现网络插件的pod启动或者通信失败等问题"><a href="#五、安装网络插件-一定要指定pod-network的配置，否则会出现网络插件的pod启动或者通信失败等问题" class="headerlink" title="五、安装网络插件(一定要指定pod-network的配置，否则会出现网络插件的pod启动或者通信失败等问题)"></a>五、安装网络插件(一定要指定pod-network的配置，否则会出现网络插件的pod启动或者通信失败等问题)</h2><ol><li><p>执行kubectl get nodes 你会发现master和node节点都是NoReady状态，那是因为还没安装CNI网络插件</p></li><li><p>对于CNI网络插件，可有很多选择，可参考：&lt;<a href="https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#pod-network" target="_blank" rel="noopener">https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#pod-network</a></p></li><li><p>这里，我们选择weave插件，执行命令<code>kubectl apply -f &quot;https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d &#39;\n&#39;)&quot;</code>即可完成安装。</p></li><li><p>运行命令：</p><p><code>sudo kubeadm join 10.0.2.15:6443 --token 9le8zj.k1y8fvr09b4h4pww --discovery-token-ca-cert-hash sha256:10187a814644dab00611161c3079fdeeef579b999c6c506c33ff55dd9bb032fa --ignore-preflight-errors=Swap</code></p><p>把节点nodes加入，等nodes的机器拉取完镜像后，这个节点就加入完毕了。可以用这个命令查看更多pods的扩展信息：</p><p>kubectl get pods -n kube-system -o wide</p></li><li><p>我们在master节点上运行：kubectl get nodes ，可以看到节点已经成功加入</p><p><strong>至此，我们简单的k8s集群已经部署完毕。。。</strong></p></li></ol><h2 id="六、一些有用的命令"><a href="#六、一些有用的命令" class="headerlink" title="六、一些有用的命令"></a>六、一些有用的命令</h2><ul><li>sudo netstat -ntlp | grep LISTEN   查看监听的端口</li><li>kubectl get pods -n kube-system -o wide 查看pods的更多扩展信息</li><li>kubectl get ns 获取所有的命名空间</li><li>sudo yum list kubelet –showduplicates  //查看所有yum包的可用版本</li><li>kubectl get pods –all-namespaces 查看所有命名空间下的pods</li></ul><p>参考链接：</p><ul><li><a href="https://www.cnblogs.com/pekkle/p/10545145.html" target="_blank" rel="noopener">https://www.cnblogs.com/pekkle/p/10545145.html</a></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;h2 id=&quot;前言&quot;&gt;&lt;a href=&quot;#前言&quot; class=&quot;headerlink&quot; title=&quot;前言&quot;&gt;&lt;/a&gt;前言&lt;/h2&gt;&lt;/blockquote&gt;
+&lt;p&gt;k8s的部署方式：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;传统方式，从github上拉取对应的二进制安装包，解压安装各个组件和节点，过程步骤复杂，特别是各组件要通信，配置各种ca证书。&lt;a href=&quot;https://github.com/kubernetes/kubernetes&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;GitHub链接&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;由于传统方式安装比较麻烦，所以我们用kubeadm（k8s官方提供的集群部署工具）安装，只需按照以下基本步骤安装即可：&lt;ul&gt;
+&lt;li&gt;master,nodes机器上安装：kubelet、kubeadm和docker，其中node和master都要运行在kebulet和docker环境之上&lt;/li&gt;
+&lt;li&gt;Master：用kubeadm init 命令，拉取下载相关的组件镜像，并启动相关pods（静态pods，不受k8s自身管理），相关的pods组件有：etcd、api-server、controller-manager、scheduler&lt;/li&gt;
+&lt;li&gt;Nodes：用kubeadm join命令把nodes加入到k8s集群中&lt;/li&gt;
+&lt;li&gt;flannel组件，也是运行在pods的守护级进程，起到个nodes的通信作用。是一个额外的组件（adds on）。&lt;a href=&quot;https://github.com/coreos/flannel&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;GitHub链接&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/kubernetes/kubeadm/blob/master/docs/design/design_v1.10.md&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;kubeadm相关参考文档&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+    
+    </summary>
+    
+    
+      <category term="技术" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+      <category term="运维" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/%E8%BF%90%E7%BB%B4/"/>
+    
+    
+      <category term="devops" scheme="http://yoursite.com/tags/devops/"/>
+    
+      <category term="kubernetes" scheme="http://yoursite.com/tags/kubernetes/"/>
     
   </entry>
   
@@ -470,56 +558,6 @@
     
       &lt;blockquote&gt;
 &lt;p&gt;&lt;strong&gt;本章要点：&lt;/strong&gt;流程控制、数据定义和初始化、理解数组和多维数组实质等&lt;/p&gt;
-&lt;/blockquote&gt;
-    
-    </summary>
-    
-    
-      <category term="JAVA" scheme="http://yoursite.com/categories/JAVA/"/>
-    
-    
-      <category term="JAVA" scheme="http://yoursite.com/tags/JAVA/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>《疯狂JAVA》读书笔记-第三章数据类型和运算符</title>
-    <link href="http://yoursite.com/2019/05/01/%E7%96%AF%E7%8B%82JAVA%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%AC%AC%E4%B8%89%E7%AB%A0%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%92%8C%E8%BF%90%E7%AE%97%E7%AC%A6/"/>
-    <id>http://yoursite.com/2019/05/01/%E7%96%AF%E7%8B%82JAVA%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%AC%AC%E4%B8%89%E7%AB%A0%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%92%8C%E8%BF%90%E7%AE%97%E7%AC%A6/</id>
-    <published>2019-05-01T15:14:09.000Z</published>
-    <updated>2019-05-06T15:20:37.833Z</updated>
-    
-    <content type="html"><![CDATA[<blockquote><p><strong>本章要点：</strong>注释、8种基本类型、自动类型转换、强制类型转换等</p></blockquote><a id="more"></a><h6 id="1、注释"><a href="#1、注释" class="headerlink" title="1、注释"></a>1、注释</h6><ul><li>单行注释和多行注释</li><li>文档注释</li></ul><h6 id="2、标识和关键字"><a href="#2、标识和关键字" class="headerlink" title="2、标识和关键字"></a>2、标识和关键字</h6><ul><li>分隔符：分号（；），花括号（{}），方括号（[]）,圆括号（（）），空格和圆点（.）</li><li>标识符：用以给变量，方法和类命名，有以下规则<ol><li>可有字母，下划线，美元符（$），数字组成，但数字不能打头（首位）</li><li>不包含空格</li><li>区分大小写，ADC和adc是不同的符号</li><li>字母可以是中文，日文等</li><li>不能是java的关键字和保留字，但可包含关键字和保留字</li><li>不能是@#等其他特殊符号</li></ol></li></ul><h6 id="3、java关键字"><a href="#3、java关键字" class="headerlink" title="3、java关键字"></a>3、java关键字</h6><h6 id="4、数据类型分类"><a href="#4、数据类型分类" class="headerlink" title="4、数据类型分类"></a>4、数据类型分类</h6><p>java是强类型语言，变量必须先定义声明后使用，定义的类型变量必须与赋值类型匹配。java支持的类型分两类：</p><p>基本类型和引用类型。</p><ul><li><p>基本类型（8种）：boolean型和数值类型，数值类型又分整型（byte,int,short,long,char）和浮点型（float,double）</p><ul><li>char的赋值用单引号，String的赋值用双引号</li><li>char可以赋值给整型</li><li>正浮点数/0=Infinity（正无穷大），负浮点数/0=Infinity（负无穷大），整数/0报错，正无穷大都是相等的，负无穷大都是相等的</li><li>其他基本类型不能转换boolean型，布尔型和字符连接运行，会转为字符型</li></ul></li><li><p>引用类型：类、接口、数值和null类型。null不能转换成基本类型，所以不能把null赋值给基本类型变量</p></li><li><p>类型转换</p><ul><li><strong>自动转换</strong>：任何范围小的数据类型都可以向范围大的数据类型自动转换，反之报错。如int向float转，而byte不能向char转等。任何基本数据类型与字符转连接，都转转成字符串，所以如何想把基本类型数据变成字符输出，直接和空字符进行连接运算即可。</li><li><strong>强制转换</strong>：范围大的数据类型向范围小的数据类型转换，也叫缩小转换。因为有可能溢出造成数据丢失。</li><li><strong>表达式的自动提示：</strong>1、所有的byte、short和char类型都将向int；2、整个表达式的算术数据类型都将提高到最高等级操作数的数据类型。</li></ul></li><li><p>直接量</p><ul><li>通过源代码直接给定的值，能直接指定直接量的只有三种类型：基本类型，null和字符</li><li>null可以直接赋值给任何引用类型变量，包括String.</li><li>sting类型的直接量不能赋给其他类型变量，boolean类型的直接量只能赋值给Boolean类型变量，不能给其他任何类型变量</li><li>因为String是不可变类，当Java程序第一次使用字符串直接量是，会用常量池缓存改直接量，当后面再次使用该直接量时，会直接使用常量池中的直接量。</li></ul><p><strong><u>常量池：是指在程序编译期间就被确定下来的，并保存在.class文件中的一些数据。常包含类、方法和接口的常量，还有字符串直接量。</u></strong></p></li><li><p>运算符</p><ul><li><p>算术运算符：加减乘除和求余，求余：因为求余其实也是除法运算，所以如果两个操作数都是整数的话，不允许第二个操作数为0；相反如果两操作数有一个或者两个为浮点数，则允许第二操作数为0或者0.0，但是求余结果都是非数：NaN。0或者0.0求余任何非零数结果都是0。（正负看第一操作数）例子：</p><p>4 % 0 = 报错</p><p>5.0 % 0 = NaN</p><p>5 % 0.0 = NaN</p><p>0  % 0.0 = NaN</p><p>0.0 % 0 = NaN</p><p>0 % 5 = 0</p><p>0.0 % 5 = 0.0</p><p>-5 % 3 = -2</p><p>5 % -3 = 2</p><p>3 % -5 = 3</p><p>-3 % 5 = -3</p></li><li><p>赋值运算符</p></li><li><p>比较运算符：基本类型的变量和值不能和引用类型的比较，布尔类型不能与其他类型比较，没有父子关系的引用类型变量不能比较。一些== 的情况：97 == 97.0 ，‘a’ == 97等，引用变量要指向同一对象才是相等</p></li><li><p>逻辑运算符</p></li><li><p>位运算符</p></li><li><p>类型相关运算符</p></li></ul></li></ul>]]></content>
-    
-    <summary type="html">
-    
-      &lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;本章要点：&lt;/strong&gt;注释、8种基本类型、自动类型转换、强制类型转换等&lt;/p&gt;
-&lt;/blockquote&gt;
-    
-    </summary>
-    
-    
-      <category term="JAVA" scheme="http://yoursite.com/categories/JAVA/"/>
-    
-    
-      <category term="JAVA" scheme="http://yoursite.com/tags/JAVA/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>《疯狂JAVA》读书笔记-第二章理解面向对象</title>
-    <link href="http://yoursite.com/2019/04/30/%E7%96%AF%E7%8B%82JAVA%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E7%90%86%E8%A7%A3%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/"/>
-    <id>http://yoursite.com/2019/04/30/%E7%96%AF%E7%8B%82JAVA%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E7%90%86%E8%A7%A3%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/</id>
-    <published>2019-04-30T15:14:09.000Z</published>
-    <updated>2019-05-06T15:20:08.974Z</updated>
-    
-    <content type="html"><![CDATA[<blockquote><p><strong>本章要点：</strong>面向对象特征、结构化程序、UML统一建模语言</p></blockquote><a id="more"></a><p>1、结构化程序三种结构：顺序、选择和循环</p><p>2、面向对象基本特征：</p><ul><li>继承：子类继承父类，获取父类的属性和方法</li><li>封装：将对象的实现细节封装起来，通过公用的方法暴露出来</li><li>多态：子类对象可以直接赋值给父类变量，但是运行时表现出的是子类的特征。所以同一类型对象执行同一方法时，可以表现出不同行为特征</li></ul><p>3、UML统一建模语言（忽略不看）</p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;本章要点：&lt;/strong&gt;面向对象特征、结构化程序、UML统一建模语言&lt;/p&gt;
 &lt;/blockquote&gt;
     
     </summary>
