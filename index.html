@@ -204,11 +204,14 @@
       <blockquote>
 <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote>
 <ul>
-<li>安装docker和docker composer</li>
-<li>下载tar包：<a href="https://github.com/goharbor/harbor/releases" target="_blank" rel="noopener">https://github.com/goharbor/harbor/releases</a></li>
-<li>修改配置harbor.yaml中的hostname,把https的配置注释，修改admin的密码和db的密码等。若要配置https访问，参考：<a href="https://github.com/goharbor/harbor/blob/master/docs/1.10/install-config/configure-https.md" target="_blank" rel="noopener">https://github.com/goharbor/harbor/blob/master/docs/1.10/install-config/configure-https.md</a></li>
-<li>运行./install.sh</li>
-<li><a href="https://blog.csdn.net/jason9211/article/details/104464342/" target="_blank" rel="noopener">https://blog.csdn.net/jason9211/article/details/104464342/</a>
+<li>事先安装docker和docker composer</li>
+<li>下载tar包并解压：<a href="https://github.com/goharbor/harbor/releases" target="_blank" rel="noopener">https://github.com/goharbor/harbor/releases</a></li>
+<li>修改配置harbor.yaml中的hostname,如：harbor.cn（记得添加本地host指向：192.168.xx.xxx  harbor.cn）</li>
+<li>生产自签证书，配置https</li>
+</ul>
+<ol>
+<li>Step1 - 生成根证书私钥（无加密）： </li>
+<li>Step2 -生成自签名证书（使用已有私钥ca.key自行签发根证书）生成ca.crt：
       
       <a class="article-more-link" href="/2020/03/06/docker/harbor/harbor%E7%AE%80%E5%8D%95%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8/">阅读更多...</a>
       

@@ -138,11 +138,34 @@
     <content><![CDATA[<blockquote>
 <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote>
 <ul>
-<li>安装docker和docker composer</li>
-<li>下载tar包：<a href="https://github.com/goharbor/harbor/releases" target="_blank" rel="noopener">https://github.com/goharbor/harbor/releases</a></li>
-<li>修改配置harbor.yaml中的hostname,把https的配置注释，修改admin的密码和db的密码等。若要配置https访问，参考：<a href="https://github.com/goharbor/harbor/blob/master/docs/1.10/install-config/configure-https.md" target="_blank" rel="noopener">https://github.com/goharbor/harbor/blob/master/docs/1.10/install-config/configure-https.md</a></li>
-<li>运行./install.sh</li>
-<li><a href="https://blog.csdn.net/jason9211/article/details/104464342/" target="_blank" rel="noopener">https://blog.csdn.net/jason9211/article/details/104464342/</a><a id="more"></a></li>
+<li>事先安装docker和docker composer</li>
+<li>下载tar包并解压：<a href="https://github.com/goharbor/harbor/releases" target="_blank" rel="noopener">https://github.com/goharbor/harbor/releases</a></li>
+<li>修改配置harbor.yaml中的hostname,如：harbor.cn（记得添加本地host指向：192.168.xx.xxx  harbor.cn）</li>
+<li>生产自签证书，配置https</li>
+</ul>
+<ol>
+<li>Step1 - 生成根证书私钥（无加密）： </li>
+<li>Step2 -生成自签名证书（使用已有私钥ca.key自行签发根证书）生成ca.crt：<a id="more"></a><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">openssl req -x509 -new -nodes -sha512 -days 3650 \</span><br><span class="line">    -subj &quot;&#x2F;C&#x3D;CN&#x2F;ST&#x3D;Beijing&#x2F;L&#x3D;Beijing&#x2F;O&#x3D;ccx&#x2F;OU&#x3D;plat&#x2F;CN&#x3D;192.168.100.110&quot; \</span><br><span class="line">    -key ca.key \</span><br><span class="line">    -out ca.crt</span><br></pre></td></tr></table></figure></li>
+<li>生成服务器端自己域名的key：<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">openssl genrsa -out harbor.cn.key 4096</span><br></pre></td></tr></table></figure></li>
+<li>生成服务器端自己域名的CSR签名请求：<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">openssl req -sha512 -new \</span><br><span class="line">    -subj &quot;&#x2F;C&#x3D;CN&#x2F;ST&#x3D;Beijing&#x2F;L&#x3D;Beijing&#x2F;O&#x3D;ccx&#x2F;OU&#x3D;plat&#x2F;CN&#x3D;192.168.100.242&quot; \</span><br><span class="line">    -key harbor.cn.key \</span><br><span class="line">    -out harbor.cn.csr</span><br></pre></td></tr></table></figure></li>
+<li>生成一个 openssl 命令需要的外部配置文件 externalfile.ext。<br>这个文件可以随意命名，但是要记住，后面对的命令还要用到。、<br>文件内容中主要是subjectAltName这一项<br>如果配IP就写IP.1=192.168.xxx.xxx<br>如果配域名就写 DNS.1=xxx.xxx.cn<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cat &gt; vim externalfile.ext &lt;&lt;-EOF</span><br><span class="line">authorityKeyIdentifier&#x3D;keyid,issuer</span><br><span class="line">basicConstraints&#x3D;CA:FALSE</span><br><span class="line">keyUsage &#x3D; digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment</span><br><span class="line">extendedKeyUsage &#x3D; serverAuth </span><br><span class="line">subjectAltName &#x3D; @alt_names</span><br><span class="line">[alt_names]</span><br><span class="line">DNS.1&#x3D;harbor.cn</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure></li>
+<li>通过外部配置文件 externalfile.ext和 csr 生成 crt：<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">openssl x509 -req -sha512 -days 3650 -extfile externalfile.ext \</span><br><span class="line">    -CA ca.crt \</span><br><span class="line">    -CAkey ca.key \</span><br><span class="line">    -CAcreateserial \</span><br><span class="line">    -in harbor.cn.csr \</span><br><span class="line">    -out harbor.cn.crt</span><br></pre></td></tr></table></figure></li>
+<li>将服务端的 crt 转换成客户端用的 cert：<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">openssl x509 -inform PEM -in harbor.cn.crt -out harbor.cn.cert</span><br></pre></td></tr></table></figure>
+至此，所有证书文件就创建好了：<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[root@dev cert_harbor]# ll</span><br><span class="line">total 32</span><br><span class="line">-rw-r--r-- 1 root root 2017 Feb 23 13:44 ca.crt</span><br><span class="line">-rw-r--r-- 1 root root 3243 Feb 23 13:42 ca.key</span><br><span class="line">-rw-r--r-- 1 root root   17 Feb 23 13:53 ca.srl</span><br><span class="line">-rw-r--r-- 1 root root  232 Feb 23 13:52 externalfile.ext</span><br><span class="line">-rw-r--r-- 1 root root 2049 Feb 23 13:54 harbor.cn.cert</span><br><span class="line">-rw-r--r-- 1 root root 2049 Feb 23 13:53 harbor.cn.crt</span><br><span class="line">-rw-r--r-- 1 root root 1700 Feb 23 13:49 harbor.cn.csr</span><br><span class="line">-rw-r--r-- 1 root root 3247 Feb 23 13:47 harbor.cn.key</span><br></pre></td></tr></table></figure></li>
+</ol>
+<ul>
+<li>为各个docker客户端分发证书</li>
+</ul>
+<ol>
+<li>在Docker主机上执行:<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mkdir -p &#x2F;etc&#x2F;docker&#x2F;certs.d&#x2F;harbor.cn&#x2F;</span><br></pre></td></tr></table></figure></li>
+<li>在Harbor主机，执行：<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">scp .&#x2F;harbor.cn.cert .&#x2F;harbor.cn.key vagrant@192.168.xxx.xxx:&#x2F;etc&#x2F;docker&#x2F;certs.d&#x2F;harbor.cn&#x2F;</span><br></pre></td></tr></table></figure></li>
+<li>在Docker主机修改 /etc/docker/daemon.json，主要是增加”insecure-registries”:[“<a href="http://harbor.cn&quot;]">http://harbor.cn&quot;]</a> ：<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vim &#x2F;etc&#x2F;docker&#x2F;daemon.json</span><br><span class="line">&#123;</span><br><span class="line">  &quot;insecure-registries&quot;:[&quot;http:&#x2F;&#x2F;harbor.cn&quot;],</span><br><span class="line">&#125;</span><br><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl resatrt docker</span><br></pre></td></tr></table></figure></li>
+</ol>
+<ul>
+<li>修改harbor.yaml配置，主要休息admin登陆密码，hostname，https的证书认证路径和db等</li>
+<li>运行./prepare更新参数</li>
+<li>运行./install.sh安装</li>
+<li>安装和使用，来源简单参考：<a href="https://blog.csdn.net/jason9211/article/details/104464342/" target="_blank" rel="noopener">https://blog.csdn.net/jason9211/article/details/104464342/</a></li>
 </ul>
 ]]></content>
       <categories>
