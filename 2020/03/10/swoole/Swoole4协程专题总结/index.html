@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    Swoole4协程专题总结 |  欢迎阅读谭家俊的世界
+  </title>
+  <meta name="generator" content="hexo-theme-yilia-plus">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+  
+  
+
+  
+
+<link rel="alternate" href="/atom.xml" title="欢迎阅读谭家俊的世界" type="application/atom+xml">
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    <main class="content">
+      <section class="outer">
+  <article id="post-swoole/Swoole4协程专题总结" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Swoole4协程专题总结
+</h1>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/03/10/swoole/Swoole4%E5%8D%8F%E7%A8%8B%E4%B8%93%E9%A2%98%E6%80%BB%E7%BB%93/" class="article-date">
+  <time datetime="2020-03-10T02:14:09.000Z" itemprop="datePublished">2020-03-10</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/swore/">swore</a>
+  </div>
+
+      
+      
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">2k字</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">7分钟</span>
+        </span>
+    </span>
+</div>
+
+      
+    </div>
+    
+
+    
+    
+
+
+
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <p>swoole4出来了也好段时间了，很久之前也用swoole协程做过一些东西。最近由于公司在项目中想用swoole优化并行处理一些逻辑业务，于是重新看了协swoole4，发现这次版本对协程的支持更加完善了，于是有了整理此出此文章的想法，目的让大家比较清晰了解到swoole协程的一些例子或者使用，特别是没用过或者没接触过协程的朋友。想起当年自己了解协程是啥的时候，也是四处找不到什么好文章。在我看来，这样系统的总结起来，才是最快入坑的。</p>
+<blockquote>
+<p>什么是协程</p>
+</blockquote>
+<p>大家应该都知道线程是CPU的最小调度单元，而协程可以认为是用户状态下的线程，所以是依赖进程存在的。但是协程不能利用多核CPU,不能跨进程调度，但它的调度不需要系统参与，所以创建销毁和切换的成本很低，所以在swoole的文档也有写到，在协程中，1s内你可以读写1万次文件，睡眠1万次，用PDO和mysqli与数据库通信1万次等</p>
+<a id="more"></a>
+<blockquote>
+<p>协程环境（协程容器）</p>
+</blockquote>
+<p>在swoole的协程中，所有的协程必须在协程环境或者说协程容器内创建，才会发生协程调度。在swoole4中，大概有以下三种情况是创建协程容器环境的：</p>
+<ol>
+<li>异步风格的服务端程序start方法.详见官方文档<a href="https://wiki.swoole.com/#/server/co_init" target="_blank" rel="noopener">异步服务端程序</a>章节</li>
+<li>Process或者Proce\Pool的start方法。详见官方文档<a href="https://wiki.swoole.com/#/process" target="_blank" rel="noopener">进程管理</a>章节</li>
+<li>自主创建自定义协程容器：Co\run()方法。使用例子：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Co\run(function () &#123;</span><br><span class="line">	go(function () &#123;</span><br><span class="line">		Co::sleep(3);</span><br><span class="line">		echo &quot;c[1]\n&quot;;</span><br><span class="line">	&#125;);</span><br><span class="line">	go(function () &#123;</span><br><span class="line">		echo &quot;c[2]\n&quot;;</span><br><span class="line">	&#125;);</span><br><span class="line">&#125;);</span><br><span class="line">echo &quot;outside&quot;;</span><br><span class="line">&#x2F;*程序输出结果：</span><br><span class="line">c[2]</span><br><span class="line">c[1]</span><br><span class="line">outside*&#x2F;</span><br></pre></td></tr></table></figure>
+其实Co::run方法是对Swoole\Coroutine\Scheduler类的封装，了解更多，可见官方文档<a href="https://wiki.swoole.com/#/coroutine/scheduler" target="_blank" rel="noopener">协程容器</a>章节。关于scheduler的使用例子：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">$scheduler &#x3D; new Swoole\Coroutine\Scheduler();</span><br><span class="line">&#x2F;&#x2F;和go函数不同，add方法添加的协程，要等start调用后才一起并发执行，不调用不执行，其中a,b是传进来等参数</span><br><span class="line">$scheduler-&gt;add(function ($a, $b) &#123;</span><br><span class="line">	Co::sleep(2);</span><br><span class="line">	echo $a . PHP_EOL;</span><br><span class="line">	echo $b . PHP_EOL;</span><br><span class="line">&#125;, &quot;add1&quot;, 12345);</span><br><span class="line">$scheduler-&gt;add(function ($a, $b) &#123;</span><br><span class="line">	Co::sleep(1);</span><br><span class="line">	echo $a . PHP_EOL;</span><br><span class="line">	echo $b . PHP_EOL;</span><br><span class="line">&#125;, &quot;add2&quot;, 12345);</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;在 start 时会同时启动 $num 个 $fn 协程，并行地执行。</span><br><span class="line">$scheduler-&gt;parallel(10, function ($t) &#123;</span><br><span class="line">	Co:</span><br><span class="line">	sleep($t);</span><br><span class="line">	echo &quot;Co&quot; . Co::getCid() . PHP_EOL;</span><br><span class="line">&#125;, 0.05);</span><br><span class="line">$scheduler-&gt;start();</span><br><span class="line">&#x2F;*运行结果：</span><br><span class="line">Co3</span><br><span class="line">Co4</span><br><span class="line">Co5</span><br><span class="line">Co6</span><br><span class="line">Co7</span><br><span class="line">Co8</span><br><span class="line">Co9</span><br><span class="line">Co10</span><br><span class="line">Co11</span><br><span class="line">Co12</span><br><span class="line">add2</span><br><span class="line">12345</span><br><span class="line">add1</span><br><span class="line">12345*&#x2F;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>协程调度</p>
+</blockquote>
+<ul>
+<li><p>手动调度：yield让出执行权，然后resume这种方式。例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Co\run(function () &#123;</span><br><span class="line"></span><br><span class="line">	$cid &#x3D; go(function () &#123;</span><br><span class="line">		echo &quot;co[1] start\n&quot;;</span><br><span class="line">		co::yield();&#x2F;&#x2F;让出当前执行权，不基于io调度。且必须和resume成对使用，否则会发生协程泄漏</span><br><span class="line">		echo &quot;co[1] end\n&quot;;</span><br><span class="line">	&#125;);</span><br><span class="line"></span><br><span class="line">	go(function () use ($cid) &#123;</span><br><span class="line">		echo &quot;co[2] start\n&quot;;</span><br><span class="line">		co::resume($cid);&#x2F;&#x2F;恢复某个协程的执行权</span><br><span class="line">		echo &quot;co[2] end\n&quot;;</span><br><span class="line">	&#125;);</span><br><span class="line">&#125;);</span><br><span class="line">&#x2F;*运行结果：</span><br><span class="line">co[1] start</span><br><span class="line">co[2] start</span><br><span class="line">co[1] end</span><br><span class="line">co[2] end*&#x2F;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>基于IO调度：发生IO阻塞，自动让出执行权，等IO准备好再次自动恢复执行权。下面的一键协程化，就是把原有PHP的一些同步IO，使得在协程容器中进行的是协程方式的异步IO调度。</p>
+<blockquote>
+<p>一键协程化（同步IO变协程异步IO）</p>
+</blockquote>
+</li>
+</ul>
+<p>众所周知，在PHP中很多请求外部资源的操作都是同步IO的，如curl一个http请求，用pdo连接查询数据库，或者用file_get_contents()读写文件等等，在发生IO请求时，往往同步的代码会在请求第三方服务的时候，发生阻塞等待。为了让这些场景实现异步IO,swoole4底层扩展是采用了PHP HOOK的方式，hook掉大部署产生IO阻塞的function，让其在底层实现协程方式的IO调度。例如你想要在curl中发生协程调度，只要在协程环境前调用一行代码即可：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Co::set([&#39;hook_flags&#39; &#x3D;&gt; SWOOLE_HOOK_CURL])</span><br></pre></td></tr></table></figure>
+<p>应用例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">Co::set([&#39;hook_flags&#39; &#x3D;&gt; SWOOLE_HOOK_CURL]);</span><br><span class="line">Co\run(function () &#123;</span><br><span class="line">	go(function () &#123;</span><br><span class="line">		$ch &#x3D; curl_init();</span><br><span class="line">		curl_setopt($ch, CURLOPT_URL, &quot;http:&#x2F;&#x2F;www.baidu.com&#x2F;&quot;);</span><br><span class="line">		curl_setopt($ch, CURLOPT_HEADER, false);</span><br><span class="line">		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);</span><br><span class="line">		$result&#x3D;curl_exec($ch);</span><br><span class="line">		curl_close($ch);</span><br><span class="line">		echo &quot;curl finisned&quot; . PHP_EOL;</span><br><span class="line">		&#x2F;&#x2F;var_dump($result);</span><br><span class="line">	&#125;);</span><br><span class="line">	echo &quot;here&quot; . PHP_EOL;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">&#x2F;*运行结果：</span><br><span class="line">here</span><br><span class="line">curl finisned*&#x2F;</span><br><span class="line"></span><br><span class="line">&#x2F;*注视掉&#x2F;&#x2F;Co::set([&#39;hook_flags&#39; &#x3D;&gt; SWOOLE_HOOK_CURL]);，由于curl不会再发生协程调用，所有运行结果：</span><br><span class="line">curl finisned</span><br><span class="line">here</span><br><span class="line">*&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>了解更多能Hook的函数，参见章节<a href="https://wiki.swoole.com/#/runtime" target="_blank" rel="noopener">一键协程化</a></p>
+<blockquote>
+<p>协程API</p>
+</blockquote>
+<p>swoole4封装好的一些协程API,包括常用的：Swoole\Coroutine::getCid(),Swoole\Coroutine::yield()等，这里说一个有趣的api方法，就是Swoole\Coroutine::defer()方法，此方法作用是在协程关闭前调用，用于资源的释放，就算抛异常也会执行。例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Co\run(function () &#123;</span><br><span class="line">	go(function () &#123;</span><br><span class="line">		co::sleep(1.0);</span><br><span class="line">		echo &quot;co[1] end\n&quot;;</span><br><span class="line">	&#125;);</span><br><span class="line">	go(function () &#123;</span><br><span class="line">		Swoole\Coroutine::defer(function () &#123;</span><br><span class="line">			echo &quot;defer&quot; . PHP_EOL;</span><br><span class="line">		&#125;);&#x2F;&#x2F;协程关闭前调用，就行放在所有的逻辑前面，也总是在协程关闭前调用</span><br><span class="line">		echo &quot;co[2] end\n&quot;;</span><br><span class="line">		&#x2F;&#x2F;throw new Exception(&quot;co[2] exception&quot;);</span><br><span class="line">	&#125;);</span><br><span class="line">&#125;);</span><br><span class="line">&#x2F;*</span><br><span class="line">运行结果：</span><br><span class="line">co[2] end</span><br><span class="line">defer</span><br><span class="line">co[1] end</span><br><span class="line">*&#x2F;</span><br></pre></td></tr></table></figure>
+<p>更多API参见官方文档<a href="https://wiki.swoole.com/#/coroutine/coroutine" target="_blank" rel="noopener">协程API</a>章节</p>
+<blockquote>
+<p>协程进阶</p>
+</blockquote>
+<ul>
+<li>channel<br>channel类似于php的数组，仅仅使用内存，没其他资源申请，无IO消耗，而且是基于引用计数实现的，零内存拷贝，传递巨大字符或者数组都不会产生额外性能消耗。<ol>
+<li>channel主要用来协程间通信的，不能跨进程使用。</li>
+<li>channel重要特性是，当channel push满了，会阻塞当前协程，直到有其他协程pop出后恢复到当前程序执行处。相反，当channel pop空了，也会阻塞当前协程，直到有其他协程push数据进来才恢复执行。这种特性很像生产者和消费者之间的调度。</li>
+</ol>
+</li>
+<li>连接池：结和channel的pop和push之间的交互阻塞调用的特性，可以用channel来存新建的连接（也就是连接的存放池），每来一个请求pop出一个连接，当channel无连接可以pop时，会阻塞等待其他请求释放连接到channel中（也就是连接池中）。当然pop()方法是有超时参数设置的，超过等待时间没其他请求释放连接push进来，当前协程不再阻塞等待。具体详细实战，可参考本人很久之前分享的文章<a href="https://my.oschina.net/u/2394701/blog/2046414" target="_blank" rel="noopener">swoole自行打造mysql连接池</a>，当时官方对于连接池的文档是非常少，而且swoole没现成的封装，现在看到官方已经出了连接池的封装，可以直接参考使用<a href="https://wiki.swoole.com/#/coroutine/conn_pool" target="_blank" rel="noopener">连接池</a>章节</li>
+<li>并发调用：也利用channel的pop和push产生阻塞调用的特性，申请长度为N的channel,然后循环创建N个子协程去执行逻辑，每个子协程执行完毕后push数据进channel，然后主协程循环pop出来。因为初次channel为空，就达到了主协程阻塞等待子协程请求数据返回push进channel然后再恢复执行主协程的效果。官方已经针对这个特性专门封装了并发调用类WaitGroup。实战使用见本人另一文章<a href="https://note.youdao.com/" target="_blank" rel="noopener">实战协程并发和多进程任务处理</a>或者了解并发调用的可参考官方文档<a href="https://wiki.swoole.com/#/coroutine/wait_group" target="_blank" rel="noopener">WaitGroup</a>章节</li>
+</ul>
+<blockquote>
+<p>结束语</p>
+</blockquote>
+<p>至此，关于swoole4协程相关的一些东西基本总结完毕，可能没说到什么原理性的东西，这些有待大家日后一起学习探讨，主要还是应用和例子为主。感觉这次swoole的4版本已经升级支持协程的很多东西了，比起之前的版本，用起来实在爽了好多。</p>
+
+      
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        打赏
+      </div>
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+        <div class="declare">
+          <ul class="post-copyright">
+            <li>
+              <i class="ri-copyright-line"></i>
+              <strong>版权声明： </strong s>
+              本博客所有文章除特别声明外，均采用 <a href="https://www.apache.org/licenses/LICENSE-2.0.html" rel="external nofollow"
+                target="_blank">Apache License 2.0</a> 许可协议。转载请注明出处！
+            </li>
+          </ul>
+        </div>
+        
+    <footer class="article-footer">
+      
+          
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://yoursite.com/2020/03/10/swoole/Swoole4%E5%8D%8F%E7%A8%8B%E4%B8%93%E9%A2%98%E6%80%BB%E7%BB%93/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swoole/" rel="tag">swoole</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+  
+  <nav class="article-nav">
+    
+      <a href="/2020/03/10/kubernetes/kubernetes%E6%97%A0%E7%8A%B6%E6%80%81%E6%9C%8D%E5%8A%A1%E4%B9%8B%E6%90%AD%E5%BB%BAnginx-php%E7%8E%AF%E5%A2%83/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            kubernetes无状态服务之搭建nginx-php环境
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2020/03/06/docker/harbor/harbor%E7%AE%80%E5%8D%95%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">harbor安装和使用</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+  
+<!-- valine评论 -->
+<div id="vcomments-box">
+    <div id="vcomments">
+    </div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js'></script>
+<script>
+    new Valine({
+        el: '#vcomments',
+        app_id: '',
+        app_key: '',
+        path: window.location.pathname,
+        notify: 'false',
+        verify: 'false',
+        avatar: 'mp',
+        placeholder: '给我的文章加点评论吧~',
+        recordIP: true
+    });
+    const infoEle = document.querySelector('#vcomments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+        infoEle.childNodes.forEach(function (item) {
+            item.parentNode.removeChild(item);
+        });
+    }
+</script>
+<style>
+    #vcomments-box {
+        padding: 5px 30px;
+    }
+
+    @media screen and (max-width: 800px) {
+        #vcomments-box {
+            padding: 5px 0px;
+        }
+    }
+
+    #vcomments-box #vcomments {
+        background-color: #fff;
+    }
+
+    .v .vlist .vcard .vh {
+        padding-right: 20px;
+    }
+
+    .v .vlist .vcard {
+        padding-left: 10px;
+    }
+</style>
+
+  
+
+  
+  
+  
+
+</article>
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul class="list-inline">
+      <li>
+        &copy;
+        2015-2020
+        John Doe
+      </li>
+      <li>
+        
+        Powered by
+        
+        
+        <a href="https://hexo.io" target="_blank">Hexo</a> Theme <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul class="list-inline">
+      <li>
+        
+        
+        <span>
+  <i>PV:<span id="busuanzi_value_page_pv"></span></i>
+  <i>UV:<span id="busuanzi_value_site_uv"></span></i>
+</span>
+        
+      </li>
+      
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="to_top">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+      </div>
+    </main>
+    <aside class="sidebar">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/ayer-side.svg" alt="欢迎阅读谭家俊的世界"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/swoole/">Swoole</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories/JAVA">JAVA</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/docker">Docker</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/kubernetes">Kubernetes</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/devops">Devops</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories/midleware">中间件</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/travel/">旅行</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/alipay.jpg">
+      <span class="reward-type">支付宝</span>
+    </div>
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/wechat.jpg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/share.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script>
+  try {
+    var typed = new Typed("#subtitle", {
+      strings: ['面朝大海，春暖花开', '愿你一生努力，一生被爱', '想要的都拥有，得不到的都释怀'],
+      startDelay: 0,
+      typeSpeed: 200,
+      loop: true,
+      backSpeed: 100,
+      showCursor: true
+    });
+  } catch (err) {
+  }
+
+</script>
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+    onClick: (e) => {
+      $('.toc-link').removeClass('is-active-link');
+      $(`a[href=${e.target.hash}]`).addClass('is-active-link');
+      $(e.target.hash).scrollIntoView();
+      return false;
+    }
+  });
+</script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/js/ayer.js"></script>
+
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://js.users.51.la/20544303.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.2/dist/jquery.fancybox.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.2/dist/jquery.fancybox.min.js"></script>
+
+
+    
+  </div>
+</body>
+
+</html>

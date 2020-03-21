@@ -158,6 +158,85 @@
 
 </article>
     
+    <article id="post-swoole/Swoole4协程专题总结" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/03/10/swoole/Swoole4%E5%8D%8F%E7%A8%8B%E4%B8%93%E9%A2%98%E6%80%BB%E7%BB%93/"
+    >Swoole4协程专题总结</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/03/10/swoole/Swoole4%E5%8D%8F%E7%A8%8B%E4%B8%93%E9%A2%98%E6%80%BB%E7%BB%93/" class="article-date">
+  <time datetime="2020-03-10T02:14:09.000Z" itemprop="datePublished">2020-03-10</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/swore/">swore</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <p>swoole4出来了也好段时间了，很久之前也用swoole协程做过一些东西。最近由于公司在项目中想用swoole优化并行处理一些逻辑业务，于是重新看了协swoole4，发现这次版本对协程的支持更加完善了，于是有了整理此出此文章的想法，目的让大家比较清晰了解到swoole协程的一些例子或者使用，特别是没用过或者没接触过协程的朋友。想起当年自己了解协程是啥的时候，也是四处找不到什么好文章。在我看来，这样系统的总结起来，才是最快入坑的。</p>
+<blockquote>
+<p>什么是协程</p>
+</blockquote>
+<p>大家应该都知道线程是CPU的最小调度单元，而协程可以认为是用户状态下的线程，所以是依赖进程存在的。但是协程不能利用多核CPU,不能跨进程调度，但它的调度不需要系统参与，所以创建销毁和切换的成本很低，所以在swoole的文档也有写到，在协程中，1s内你可以读写1万次文件，睡眠1万次，用PDO和mysqli与数据库通信1万次等</p>
+      
+      <a class="article-more-link" href="/2020/03/10/swoole/Swoole4%E5%8D%8F%E7%A8%8B%E4%B8%93%E9%A2%98%E6%80%BB%E7%BB%93/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swoole/" rel="tag">swoole</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
     <article id="post-docker/harbor/harbor简单安装和使用" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
@@ -758,83 +837,6 @@
 </blockquote>
       
       <a class="article-more-link" href="/2019/05/18/JSP&Servlet/%E7%AC%AC%E4%B8%80%E7%AB%A0Web%E5%BA%94%E7%94%A8%E7%AE%80%E4%BB%8B/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/servlet/" rel="tag">servlet</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-JSP&amp;Servlet/第三章请求和响应" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2019/05/18/JSP&Servlet/%E7%AC%AC%E4%B8%89%E7%AB%A0%E8%AF%B7%E6%B1%82%E5%92%8C%E5%93%8D%E5%BA%94/"
-    >《JSP&amp;Servlet》读书笔记-第三章</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2019/05/18/JSP&Servlet/%E7%AC%AC%E4%B8%89%E7%AB%A0%E8%AF%B7%E6%B1%82%E5%92%8C%E5%93%8D%E5%BA%94/" class="article-date">
-  <time datetime="2019-05-18T06:14:09.000Z" itemprop="datePublished">2019-05-18</time>
-</a>
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/JAVA/">JAVA</a>
-  </div>
-
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <blockquote>
-<p><strong>本章要点：</strong>从容器到Sevelet等</p>
-</blockquote>
-      
-      <a class="article-more-link" href="/2019/05/18/JSP&Servlet/%E7%AC%AC%E4%B8%89%E7%AB%A0%E8%AF%B7%E6%B1%82%E5%92%8C%E5%93%8D%E5%BA%94/">阅读更多...</a>
       
       
       <!-- reward -->
