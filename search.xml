@@ -1,127 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>kubernetes无状态服务之搭建nginx-php环境</title>
-    <url>/2020/03/10/kubernetes/kubernetes%E6%97%A0%E7%8A%B6%E6%80%81%E6%9C%8D%E5%8A%A1%E4%B9%8B%E6%90%AD%E5%BB%BAnginx-php%E7%8E%AF%E5%A2%83/</url>
-    <content><![CDATA[<blockquote>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote>
-<p>k8s的部署方式：</p>
-<ol>
-<li>传统方式，从github上拉取对应的二进制安装包，解压安装各个组件和节点，过程步骤复杂，特别是各组件要通信，配置各种ca证书。<a href="https://github.com/kubernetes/kubernetes" target="_blank" rel="noopener">GitHub链接</a></li>
-<li>由于传统方式安装比较麻烦，所以我们用kubeadm（k8s官方提供的集群部署工具）安装，只需按照以下基本步骤安装即可：<ul>
-<li>master,nodes机器上安装：kubelet、kubeadm和docker，其中node和master都要运行在kebulet和docker环境之上</li>
-<li>Master：用kubeadm init 命令，拉取下载相关的组件镜像，并启动相关pods（静态pods，不受k8s自身管理），相关的pods组件有：etcd、api-server、controller-manager、scheduler</li>
-<li>Nodes：用kubeadm join命令把nodes加入到k8s集群中</li>
-<li>flannel组件，也是运行在pods的守护级进程，起到个nodes的通信作用。是一个额外的组件（adds on）。<a href="https://github.com/coreos/flannel" target="_blank" rel="noopener">GitHub链接</a></li>
-<li><a href="https://github.com/kubernetes/kubeadm/blob/master/docs/design/design_v1.10.md" target="_blank" rel="noopener">kubeadm相关参考文档</a></li>
-</ul>
-</li>
-</ol>
+    <title>kubernetes+harbor实践之搭建无状态服务nginx-php环境</title>
+    <url>/2020/03/10/kubernetes/kubernetes+harbor%E5%AE%9E%E8%B7%B5%E4%B9%8B%E6%90%AD%E5%BB%BA%E6%97%A0%E7%8A%B6%E6%80%81%E6%9C%8D%E5%8A%A1nginx-php%E7%8E%AF%E5%A2%83/</url>
+    <content><![CDATA[<p>看这个文章之前，如果没有接触过k8s的同学，建议先简单了解一些k8s的基本概念。<a href="https://kubernetes.io/zh/docs/tutorials/" target="_blank" rel="noopener">kubernetes官网</a>，开始之前，先列一下我自己本地搭建环境的一些清单吧，因为不是生产环境，只能用vagrant+vm创建虚拟机器，打造所需的集群环境，详见：</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>IP</th>
+<th>配置</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>k8s master节点</td>
+<td>192.168.1.103</td>
+<td>系统：centos、内存：2G、 CPU核数：2</td>
+<td>master节点至少需要的最低配置，不然运行会很卡，而且CPU低于2的话是启动不起来的</td>
+</tr>
+<tr>
+<td>k8s node节点</td>
+<td>192.168.1.104</td>
+<td>系统：centos、内存：512M、 CPU核数：1</td>
+<td></td>
+</tr>
+<tr>
+<td>harbor服务</td>
+<td>192.168.1.108</td>
+<td>系统：centos、内存：512M、 CPU核数：1</td>
+<td></td>
+</tr>
+</tbody></table>
 <a id="more"></a>
 
-<h2 id="一、准备工作"><a href="#一、准备工作" class="headerlink" title="一、准备工作"></a>一、准备工作</h2><ol>
-<li><p>kubernetes需要容器运行时的支持，目前官方支持的容器运行时包括：Docker、Containerd、CRI-O和frakti。本次以Docker作为容器运行环境，推荐版本为Docker CE 18.09。宿主机操作系统使用CentOs</p>
-</li>
-<li><p>由于Kubernetes的master和node之间会进行大量通信，安全做法是开放对应的通信端口，在安全的内网环境下可以关闭防火墙服务：</p>
-<p><code>sudo systemctl disable firewalld</code></p>
-<p><code>sudo systemctl stop firewalld</code></p>
-</li>
-<li><p>关闭swap：<code>swapoff -a</code></p>
-</li>
-<li><p>另外，建议在主机上禁用SELinux,让容器可以读取主机的文件系统</p>
-<p><code>sudo setenforce 0</code></p>
-</li>
-<li><p>解决路由异常：`</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">echo &quot;net.bridge.bridge-nf-call-ip6tables &#x3D; 1</span><br><span class="line">net.bridge.bridge-nf-call-iptables &#x3D; 1</span><br><span class="line">vm.swappiness&#x3D;0&quot; &gt;&gt; &#x2F;etc&#x2F;sysctl.d&#x2F;k8s.conf&#96;</span><br><span class="line">sudo sysctl -p &#x2F;etc&#x2F;sysctl.d&#x2F;k8s.conf</span><br><span class="line">若报不存在目录的错误，则运行：sudo modprobe br_netfilter</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>用docker创建nginx-php镜像</p>
+</blockquote>
+<p>请参考网上文章：<a href="https://www.cnblogs.com/tu6ge/p/8041437.html" target="_blank" rel="noopener">https://www.cnblogs.com/tu6ge/p/8041437.html</a></p>
+<blockquote>
+<p>安装harbor镜像仓库</p>
+</blockquote>
+<p>请参考往期教程<a href="https://asbectj.github.io/2020/03/06/docker/harbor/harbor%E7%AE%80%E5%8D%95%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8/" target="_blank" rel="noopener">【harbor的简单应用】</a>或其他网上教程</p>
+<blockquote>
+<p>安装kubeadm集群</p>
+</blockquote>
+<p>请参考往期教程<a href="https://asbectj.github.io/2019/05/06/kubernetes/%E5%88%A9%E7%94%A8kubeadm%E6%90%AD%E5%BB%BAkubernetes%E9%9B%86%E7%BE%A4/" target="_blank" rel="noopener">【利用kubeadm搭建kubernetes集群】</a>或其他网上教程</p>
+<blockquote>
+<p>在k8s node节点配置docker私有仓库，也就是我们部署的harbor服务地址。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">vim &#x2F;etc&#x2F;docker&#x2F;daemon.json</span><br><span class="line">&#123;</span><br><span class="line">  &quot;insecure-registries&quot;:[&quot;http:&#x2F;&#x2F;harbor.cn&quot;],</span><br><span class="line">&#125;</span><br><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl resatrt docker</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>准备好需要configMap.yaml文件,文件配置如下：</p>
+</blockquote>
+<ul>
+<li>nginx的配置文件nginx-php-nginxconfigmap.yaml（映射在pod容器中的/usr/local/nginx/conf/conf.d），如下</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: ConfigMap</span><br><span class="line">metadata:</span><br><span class="line">    name: nginx-php-nginxconfig</span><br><span class="line">data:</span><br><span class="line">    www.conf: |</span><br><span class="line">        server &#123;</span><br><span class="line">            listen       80;</span><br><span class="line">            server_name  nginx.test.com;</span><br><span class="line">            root   &#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html;</span><br><span class="line">            access_log  &#x2F;usr&#x2F;local&#x2F;nginx&#x2F;logs&#x2F;host_access.log;</span><br><span class="line">            error_log  &#x2F;usr&#x2F;local&#x2F;nginx&#x2F;logs&#x2F;host_error.log debug;</span><br><span class="line">            location &#x2F; &#123;</span><br><span class="line">            root   &#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html;</span><br><span class="line">            index  index.html index.htm index.php;</span><br><span class="line">            &#125;</span><br><span class="line">            error_page   500 502 503 504  &#x2F;50x.html;</span><br><span class="line">            location &#x3D; &#x2F;50x.html &#123;</span><br><span class="line">            root   &#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            location ~ \.php$ &#123;</span><br><span class="line">              fastcgi_pass   0.0.0.0:9000;</span><br><span class="line">              fastcgi_index  index.php;</span><br><span class="line">              fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;</span><br><span class="line">              include        fastcgi_params;</span><br><span class="line">             &#125;</span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>php-fpm的配置文件nginx-php-php-fpm-wwwconfig-configmap.yaml（映射在pod容器中的/usr/local/php/etc/php-fpm.d），如下：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: ConfigMap</span><br><span class="line">metadata:</span><br><span class="line">    name: nginx-php-php-fpm-wwwconfig</span><br><span class="line">data:</span><br><span class="line">    www.conf: |</span><br><span class="line">           [www]</span><br><span class="line">           user &#x3D; www</span><br><span class="line">           group &#x3D; www</span><br><span class="line">           listen &#x3D; 0.0.0.0:9000</span><br><span class="line">           pm &#x3D; dynamic</span><br><span class="line">           pm.max_children &#x3D; 30</span><br><span class="line">           pm.start_servers &#x3D; 2</span><br><span class="line">           pm.min_spare_servers &#x3D; 1</span><br><span class="line">           pm.max_spare_servers &#x3D; 20</span><br><span class="line">           ;access.log &#x3D; log&#x2F;$pool.access.log</span><br><span class="line">           ;slowlog &#x3D; log&#x2F;$pool.log.slow</span><br></pre></td></tr></table></figure>
+<p>创建configMap:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">kubectl apply -f nginx-php-nginxconfigmap.yaml</span><br><span class="line">kubectl apply -f nginx-php-php-fpm-wwwconfig-configmap.yaml</span><br></pre></td></tr></table></figure>
 
-</li>
-</ol>
-<h2 id="二、用kubeadm快速安装kubernetes集群"><a href="#二、用kubeadm快速安装kubernetes集群" class="headerlink" title="二、用kubeadm快速安装kubernetes集群"></a>二、用kubeadm快速安装kubernetes集群</h2><p>Kubernetes 从1.4版开始引入了命令行工具kubeadm，致力于简化集群安装的过程，并解决集群的高可用问题。</p>
-<ul>
-<li><p>下载yum-key.gpg和rpm-package-key.gpg</p>
-<p>sudo wget <a href="https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg" target="_blank" rel="noopener">https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg</a></p>
-<p>sudo wget <a href="https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg" target="_blank" rel="noopener">https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg</a></p>
-<p>导入：</p>
-<p>sudo rpm –import yum-key.gpg</p>
-<p>sudo rpm –import rpm-package-key.gpg </p>
-</li>
-<li><p>安装docker环境,docker运行时环境的配置：<a href="https://kubernetes.io/docs/setup/production-environment/container-runtimes/" target="_blank" rel="noopener">https://kubernetes.io/docs/setup/production-environment/container-runtimes/</a></p>
-<p><code>cd /etc/yum.repos.d/</code></p>
-<p><code>wget &lt;https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</code></p>
-<p><code>yum install -y docker-ce</code></p>
-<p>最后安装18.09版本，不然后面会出现各种问题。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yum list docker-ce --showduplicates|sort -r  </span><br><span class="line">yum install docker-ce-18.09.0 -y</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>安装kubeadm和相关工具</p>
-<ul>
-<li><p>配置yum源，yum源配置文件/etc/yum.repos.d/kubernetes.repo：</p>
-<p>[kubernetes]</p>
-<p>name=Kubernetes Repo</p>
-<p>baseurl=<a href="https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/" target="_blank" rel="noopener">https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/</a></p>
-<p>enabled=1</p>
-<p>gpgcheck=0</p>
-</li>
-<li><p>运行命令：<code>yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes</code></p>
-</li>
-</ul>
-</li>
-<li><p>启动kubelet和docker服务，并开启开机启动。但是现在启动kubelet是会失败的，可先忽略</p>
-<p><code>systemctl enable docker &amp;&amp; systemtcl start docker</code></p>
-<p><code>systemctl enable kubelet &amp;&amp; systemtcl start kubelet</code></p>
-</li>
-<li><p>使用kubeadm config print init-defaults &gt; init-config.yaml 初始化一份配置文件，并且修改文件中配置为：imageRepository: registry.cn-hangzhou.aliyuncs.com/google_containers，因为默认的镜像地址在国内是会被墙的。（注意，如果advertiseAddress的值配置有问题，到加入节点kubeadm join的时候会出现卡住的情况，这时候检查advertiseAddress配置的ip是否有问题）</p>
-</li>
-<li><p><code>kubeadm config images pull --config=init-config.yaml</code> 拉取下载所需镜像。</p>
-</li>
-</ul>
-<h2 id="三、master节点的安装"><a href="#三、master节点的安装" class="headerlink" title="三、master节点的安装"></a>三、master节点的安装</h2><ul>
-<li><p>至此，准备工作已经完毕。运行<code>kubeadm init --config=init-config.yaml</code> 进行初始化，如运行结果提示kubelet没启动或者启动失败，可以重启kubelet。然后运行kubeadm rest重置，再进行kubeadm init操作</p>
-</li>
-<li><p>安装完毕后，按照提示命令，复制配置文件到普通用户的home目录下：</p>
-<p><code>mkdir -p $HOME/.kube
-  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-  sudo chown $(id -u):$(id -g) $HOME/.kube/config</code></p>
-<p>这样就在master安装了kubernetes，但是在集群内还没有任何的node和缺乏对容器网络的配置。其中值得注意的是，在kubeadm init完成后，最后几行提示信息包含了加入其他节点的指令和所要的token。如果遗忘。可用命令<code>sudo kubeadm token create --print-join-command</code>重新打印出来。</p>
-</li>
-</ul>
-<h2 id="四、安装Node"><a href="#四、安装Node" class="headerlink" title="四、安装Node"></a>四、安装Node</h2><ul>
-<li><p>新增一个节点，系统准备所需的yun源是一样的，安装的工具可以不装kubectl。安装完毕后，启动docker和kubelet服务。</p>
-</li>
-<li><p>为kubeadm命令生成配置文件，文件内容如下：</p>
-<p>其中apiServerEndpoint的值是master的服务器地址，token和tlsBootstrapToken的值是master安装最后的一行信息。</p>
-</li>
-<li><p>kubeadm join大致的生命流程是：1、preflight checks；2、从集群中读取配置，也就是apiServerEndpoint中配置的地址中获取；也就是在master的这个配置，可以用命令<code>kubectl -n kube-system get cm kubeadm-config -oyaml</code>查看。3、下载这个配置，然后写入到/var/lib/kubelet/config.yaml；4、激活kubelet。如果在第二部中，读取配置出现问题，有可能出现卡住的情况，这时要检查maste的apiServerEndpoint和node的是否一致。</p>
-</li>
-<li><p>node join完毕后，可以在master节点<code>kubectl get nodes</code>查看节点列表和状态等</p>
-</li>
-</ul>
-<h2 id="五、安装网络插件-一定要指定pod-network的配置，否则会出现网络插件的pod启动或者通信失败等问题"><a href="#五、安装网络插件-一定要指定pod-network的配置，否则会出现网络插件的pod启动或者通信失败等问题" class="headerlink" title="五、安装网络插件(一定要指定pod-network的配置，否则会出现网络插件的pod启动或者通信失败等问题)"></a>五、安装网络插件(一定要指定pod-network的配置，否则会出现网络插件的pod启动或者通信失败等问题)</h2><ol>
-<li><p>执行kubectl get nodes 你会发现master和node节点都是NoReady状态，那是因为还没安装CNI网络插件</p>
-</li>
-<li><p>对于CNI网络插件，可有很多选择，可参考：&lt;<a href="https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#pod-network" target="_blank" rel="noopener">https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/#pod-network</a></p>
-</li>
-<li><p>这里，我们选择weave插件，执行命令<code>kubectl apply -f &quot;https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d &#39;\n&#39;)&quot;</code>即可完成安装。</p>
-</li>
-<li><p>运行命令：</p>
-<p><code>sudo kubeadm join 10.0.2.15:6443 --token 9le8zj.k1y8fvr09b4h4pww --discovery-token-ca-cert-hash sha256:10187a814644dab00611161c3079fdeeef579b999c6c506c33ff55dd9bb032fa --ignore-preflight-errors=Swap</code></p>
-<p>把节点nodes加入，等nodes的机器拉取完镜像后，这个节点就加入完毕了。可以用这个命令查看更多pods的扩展信息：</p>
-<p>kubectl get pods -n kube-system -o wide</p>
-</li>
-<li><p>我们在master节点上运行：kubectl get nodes ，可以看到节点已经成功加入</p>
-<p><strong>至此，我们简单的k8s集群已经部署完毕。。。</strong></p>
-</li>
-</ol>
-<h2 id="六、一些有用的命令"><a href="#六、一些有用的命令" class="headerlink" title="六、一些有用的命令"></a>六、一些有用的命令</h2><ul>
-<li>sudo netstat -ntlp | grep LISTEN   查看监听的端口</li>
-<li>kubectl get pods -n kube-system -o wide 查看pods的更多扩展信息</li>
-<li>kubectl get ns 获取所有的命名空间</li>
-<li>sudo yum list kubelet –showduplicates  //查看所有yum包的可用版本</li>
-<li>kubectl get pods –all-namespaces 查看所有命名空间下的pods</li>
-</ul>
-<p>参考链接：</p>
-<ul>
-<li><a href="https://www.cnblogs.com/pekkle/p/10545145.html" target="_blank" rel="noopener">https://www.cnblogs.com/pekkle/p/10545145.html</a></li>
-</ul>
+<blockquote>
+<p>准备好需要部署的deloyment.yaml文件配置nginx-php-deployment.yaml，如下：</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">apiVersion: apps&#x2F;v1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">    name: nginx-php-deployment</span><br><span class="line">spec:</span><br><span class="line">    selector:</span><br><span class="line">        matchLabels:</span><br><span class="line">            app: nginx-php</span><br><span class="line">    replicas: 1</span><br><span class="line">    template:</span><br><span class="line">        metadata:</span><br><span class="line">            labels:</span><br><span class="line">                app: nginx-php</span><br><span class="line">        spec:</span><br><span class="line">            containers:</span><br><span class="line">                - name: nginx-php</span><br><span class="line">                  image: tanjj.harbor.com&#x2F;nginx-php&#x2F;nginx-php-v1:v1</span><br><span class="line">                  ports:</span><br><span class="line">                      - containerPort: 80</span><br><span class="line">                      - containerPort: 9000</span><br><span class="line">                  volumeMounts:</span><br><span class="line">                      - name: nginx-php-nginxconfig</span><br><span class="line">                        mountPath: &#x2F;usr&#x2F;local&#x2F;nginx&#x2F;conf&#x2F;conf.d</span><br><span class="line">                      - name: web-root</span><br><span class="line">                        mountPath: &#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html</span><br><span class="line">                      - name: nginx-log</span><br><span class="line">                        mountPath: &#x2F;usr&#x2F;local&#x2F;nginx&#x2F;logs</span><br><span class="line">                      - name: nginx-php-php-fpm-wwwconfig</span><br><span class="line">                        mountPath: &#x2F;usr&#x2F;local&#x2F;php&#x2F;etc&#x2F;php-fpm.d</span><br><span class="line">            volumes:</span><br><span class="line">                - name: nginx-php-nginxconfig</span><br><span class="line">                  configMap:</span><br><span class="line">                      name: nginx-php-nginxconfig</span><br><span class="line">                - name: web-root</span><br><span class="line">                  hostPath:</span><br><span class="line">                      path: &#x2F;var&#x2F;data&#x2F;nginx-php</span><br><span class="line">                - name: nginx-log</span><br><span class="line">                  hostPath:</span><br><span class="line">                      path: &#x2F;var&#x2F;log&#x2F;nginx-php</span><br><span class="line">                - name: nginx-php-php-fpm-wwwconfig</span><br><span class="line">                  configMap:</span><br><span class="line">                      name: nginx-php-php-fpm-wwwconfig</span><br></pre></td></tr></table></figure>
+<p>启动deployment</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">kubectl apply -f nginx-php-deployment.yaml</span><br></pre></td></tr></table></figure>
+<p>查看是否启动成功：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">kubectl get pods</span><br><span class="line"></span><br><span class="line">NAME                                   READY   STATUS    RESTARTS   AGE</span><br><span class="line">nginx-php-deployment-f97dd787d-mdfr5   1&#x2F;1     Running   0          56m</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>准备好需要service.yaml文件nginx-php-service.yaml,如下：</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  labels:</span><br><span class="line">    app: nginx-php</span><br><span class="line">  name: nginx-php</span><br><span class="line">spec:</span><br><span class="line">  ports:</span><br><span class="line">  - name: 80-80</span><br><span class="line">    port: 80</span><br><span class="line">    protocol: TCP</span><br><span class="line">    targetPort: 80</span><br><span class="line">  selector:</span><br><span class="line">    app: nginx-php</span><br><span class="line">  type: NodePort</span><br><span class="line">status:</span><br><span class="line">  loadBalancer: &#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>启动nginx-php服务，这次我们是以NodePort类型的服务启动。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">kubectl apply -f nginx-php-service.yaml</span><br></pre></td></tr></table></figure>
+
+<p>查看服务是否启动成功：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">kubectl get svc</span><br><span class="line"></span><br><span class="line">NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE</span><br><span class="line">kubernetes   ClusterIP   10.96.0.1       &lt;none&gt;        443&#x2F;TCP        5h28m</span><br><span class="line">nginx-php    NodePort    10.96.101.213   &lt;none&gt;        80:31185&#x2F;TCP   148m</span><br></pre></td></tr></table></figure>
+<p>当服务启动成功后,我们可以用k8s node节点IP + 暴露服务的NodePort端口访问，这里的地址是：192.168.1.104:31185。访问结果如图：<br><img src="https://oscimg.oschina.net/oscnet/up-17bb3114a8059d18d4a7705004be11d923f.png" alt="image"></p>
 ]]></content>
       <categories>
         <category>技术</category>
@@ -130,6 +91,7 @@
       <tags>
         <tag>devops</tag>
         <tag>kubernetes</tag>
+        <tag>harbor</tag>
       </tags>
   </entry>
   <entry>
@@ -196,7 +158,44 @@
 <p>至此，关于swoole4协程相关的一些东西基本总结完毕，可能没说到什么原理性的东西，这些有待大家日后一起学习探讨，主要还是应用和例子为主。感觉这次swoole的4版本已经升级支持协程的很多东西了，比起之前的版本，用起来实在爽了好多。</p>
 ]]></content>
       <categories>
-        <category>swore</category>
+        <category>swoole</category>
+      </categories>
+      <tags>
+        <tag>swoole</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>swoole4应用之协程并发和多进程实践</title>
+    <url>/2020/03/08/swoole/swoole4%E5%BA%94%E7%94%A8%E4%B9%8B%E5%8D%8F%E7%A8%8B%E5%B9%B6%E5%8F%91%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E5%AE%9E%E8%B7%B5/</url>
+    <content><![CDATA[<blockquote>
+<p>背景</p>
+</blockquote>
+<p>某租车平台，在用户请求搜索车辆时，需要先去请求租车公司的接口，拿到对应的套餐报价回来，然后再进行统一的根据具体规则进行业务加装，例如加装一些优惠券，评分和芝麻标示等，然后返回结果给前端。</p>
+<blockquote>
+<p>分析</p>
+</blockquote>
+<ul>
+<li>上诉过程，由于考虑请求的供应商是大量的，假设一次二十个供应商，然后每个供应商有1千的报价返回，就有2万报价数据返回。然后在自身业务加装的时候，也不单单只有一两个业务，可能数十个。所以==每一次用户请求直接curl所有的供应商接口，拿到数据后遍厉加装，入库，返回。这样的方法是行不通的，不仅仅整个接口有可能被供应商的API超时拖垮，还可能打满整个机器的fpm进程，从而拖垮整站。==</li>
+<li>目前我们应用的方案是：<img src="https://oscimg.oschina.net/oscnet/up-4f8049558b6f34bbca5bb391031fe571288.png" alt="image"></li>
+<li>上面方案先撇开队列的相关的东西，就看数据入库后再读取这里分析如何优化：<ol>
+<li>每次读取都是一次性读取一次搜索产生的所有套餐</li>
+<li>所有业务逻辑加装都是串行，在一个进程处理。<blockquote>
+<p>优化</p>
+</blockquote>
+</li>
+</ol>
+</li>
+<li>协程或者多线程并发读取数据</li>
+<li>多进程或者线程加装独立的业务逻辑<a id="more"></a>
+若用多线程处理，需换语言，如Java，但需学习新语言，这样后期维护难，成本高。若直接全部用php的多进程，一个进程切换和销毁销耗大，且封装不好。所有决定用swoole扩展，用协程的并发请求去拉起数据，然后用进程池去加装套餐业务。进程间的数据共享通过共享内存解决。大致的流程代码如下（例子中协程拉取数据部分是用http方式，实际应为直接读取mongo）：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">use Swoole\Process;</span><br><span class="line"></span><br><span class="line">Co::set([&#39;hook_flags&#39; &#x3D;&gt; SWOOLE_HOOK_ALL]);&#x2F;&#x2F;使用php一些底层函数一键协程化，产生io调度，不包括CURL</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;协程并发，分页获取车型列表数据</span><br><span class="line">$carList &#x3D; [];</span><br><span class="line">Co\run(function () use (&amp;$carList) &#123;</span><br><span class="line"></span><br><span class="line">	$wg &#x3D; new \Swoole\Coroutine\WaitGroup();</span><br><span class="line">	$carList &#x3D; $result &#x3D; [];</span><br><span class="line"></span><br><span class="line">	$wg-&gt;add();</span><br><span class="line">	&#x2F;&#x2F;启动第一个协程</span><br><span class="line">	go(function () use ($wg, &amp;$result) &#123;</span><br><span class="line">		$result[0] &#x3D; getCarList(0, 1);</span><br><span class="line">		echo &#39;co[1] end&#39; . PHP_EOL;</span><br><span class="line">		$wg-&gt;done();</span><br><span class="line">	&#125;);</span><br><span class="line"></span><br><span class="line">	$wg-&gt;add();</span><br><span class="line">	go(function () use ($wg, &amp;$result) &#123;</span><br><span class="line">		$result[1] &#x3D; getCarList(2, 3);</span><br><span class="line">		echo &#39;co[2] end&#39; . PHP_EOL;</span><br><span class="line">		$wg-&gt;done();</span><br><span class="line">	&#125;);</span><br><span class="line"></span><br><span class="line">	$wg-&gt;add();</span><br><span class="line">	go(function () use ($wg, &amp;$result) &#123;</span><br><span class="line">		$result[2] &#x3D; getCarList(4, 5);</span><br><span class="line">		echo &#39;co[3] end&#39; . PHP_EOL;</span><br><span class="line">		$wg-&gt;done();</span><br><span class="line">	&#125;);</span><br><span class="line"></span><br><span class="line">	&#x2F;&#x2F;挂起当前协程，等待所有任务完成后恢复组装数据</span><br><span class="line">	$wg-&gt;wait();</span><br><span class="line">	foreach ($result as $item) &#123;</span><br><span class="line">		$carList &#x3D; array_merge($carList, $item);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;多进程处理获取后的车型列表数据</span><br><span class="line">$table &#x3D; new Swoole\Table(1024);</span><br><span class="line">$table-&gt;column(&#39;clid&#39;, Swoole\Table::TYPE_STRING, 16);</span><br><span class="line">$table-&gt;column(&#39;id&#39;, Swoole\Table::TYPE_STRING, 16);</span><br><span class="line">$table-&gt;column(&#39;sesame&#39;, Swoole\Table::TYPE_INT, 8);</span><br><span class="line">$table-&gt;column(&#39;easy&#39;, Swoole\Table::TYPE_INT, 8);</span><br><span class="line">$table-&gt;column(&#39;coupon&#39;, Swoole\Table::TYPE_INT, 8);</span><br><span class="line">$table-&gt;create();&#x2F;&#x2F;申请内存</span><br><span class="line"></span><br><span class="line">$startTime &#x3D; time();</span><br><span class="line">&#x2F;&#x2F;正常用process\Pool进程池替代</span><br><span class="line">for ($n &#x3D; 1; $n &lt;&#x3D; 3; $n++) &#123;</span><br><span class="line">	$process &#x3D; new Process(function () use ($n, $table, $carList) &#123;</span><br><span class="line">		switch ($n) &#123;</span><br><span class="line">			case 1:</span><br><span class="line">				handleSesame($carList, $table);</span><br><span class="line">				break;</span><br><span class="line">			case 2:</span><br><span class="line">				handleEasy($carList, $table);</span><br><span class="line">				break;</span><br><span class="line">			case 3:</span><br><span class="line">				handleCoupon($carList, $table);</span><br><span class="line">				break;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;);</span><br><span class="line">	$process-&gt;start();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">for ($n &#x3D; 3; $n--;) &#123;</span><br><span class="line">	$status &#x3D; Process::wait(true);</span><br><span class="line">	echo &quot;Recycled #&#123;$status[&#39;pid&#39;]&#125;, code&#x3D;&#123;$status[&#39;code&#39;]&#125;, signal&#x3D;&#123;$status[&#39;signal&#39;]&#125;&quot; . PHP_EOL;</span><br><span class="line">&#125;</span><br><span class="line">echo &quot;used time &quot; . (time() - $startTime) . &#39;S&#39; . PHP_EOL;</span><br><span class="line">foreach ($carList as $carDetail) &#123;</span><br><span class="line">	var_dump($table-&gt;get(getKey($carDetail)));</span><br><span class="line">	$table-&gt;del(getKey($carDetail));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">exit;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;处理芝麻业务</span><br><span class="line">function handleSesame($carList &#x3D; [], $table &#x3D; null)</span><br><span class="line">&#123;</span><br><span class="line">	echo &#39;Child #&#39; . getmypid() . &quot; start to handle Sesame&quot; . PHP_EOL;</span><br><span class="line">	foreach ($carList as $carDetail) &#123;</span><br><span class="line">		$carDetail[&#39;sesame&#39;] &#x3D; 1;</span><br><span class="line">		$table-&gt;set(getKey($carDetail), $carDetail);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;处理闪租业务</span><br><span class="line">function handleEasy($carList &#x3D; [], $table &#x3D; null)</span><br><span class="line">&#123;</span><br><span class="line">	echo &#39;Child #&#39; . getmypid() . &quot; start to handle Easy&quot; . PHP_EOL;</span><br><span class="line">	foreach ($carList as $carDetail) &#123;</span><br><span class="line">		&#x2F;&#x2F;sleep(1);</span><br><span class="line">		$carDetail[&#39;easy&#39;] &#x3D; 1;</span><br><span class="line">		$table-&gt;set(getKey($carDetail), $carDetail);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;处理优惠券业务</span><br><span class="line">function handleCoupon($carList &#x3D; [], $table &#x3D; null)</span><br><span class="line">&#123;</span><br><span class="line">	echo &#39;Child #&#39; . getmypid() . &quot; start to handle Coupon&quot; . PHP_EOL;</span><br><span class="line">	foreach ($carList as $carDetail) &#123;</span><br><span class="line">		$carDetail[&#39;coupon&#39;] &#x3D; 1;</span><br><span class="line">		$table-&gt;set(getKey($carDetail), $carDetail);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;唯一key</span><br><span class="line">function getKey($carDetail &#x3D; [])</span><br><span class="line">&#123;</span><br><span class="line">	return &quot;&#123;$carDetail[&#39;clid&#39;]&#125;-&#123;$carDetail[&#39;id&#39;]&#125;&quot;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function getCarList($start &#x3D; 0, $end &#x3D; 0)</span><br><span class="line">&#123;</span><br><span class="line">	if ($end &lt;&#x3D; $start) &#123;</span><br><span class="line">		return null;</span><br><span class="line">	&#125;</span><br><span class="line">	$data &#x3D; file_get_contents(&quot;http:&#x2F;&#x2F;127.0.0.1:8089&#x2F;getCarList.php?start&#x3D;&#123;$start&#125;&amp;end&#x3D;$end&quot;);</span><br><span class="line">	$data &#x3D; json_decode($data, true);</span><br><span class="line">	return $data[&#39;data&#39;];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+]]></content>
+      <categories>
+        <category>swoole</category>
       </categories>
       <tags>
         <tag>swoole</tag>
@@ -236,29 +235,6 @@
 <li>运行./prepare更新参数</li>
 <li>运行./install.sh安装</li>
 <li>安装和使用，来源简单参考：<a href="https://blog.csdn.net/jason9211/article/details/104464342/" target="_blank" rel="noopener">https://blog.csdn.net/jason9211/article/details/104464342/</a></li>
-</ul>
-]]></content>
-      <categories>
-        <category>技术</category>
-        <category>运维</category>
-      </categories>
-      <tags>
-        <tag>devops</tag>
-        <tag>kubernetes</tag>
-        <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>制作nginx-php镜像</title>
-    <url>/2020/03/05/docker/%E5%88%B6%E4%BD%9Cnginx-php%E9%95%9C%E5%83%8F/</url>
-    <content><![CDATA[<blockquote>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote>
-<ul>
-<li>安装docker和docker composer</li>
-<li>下载tar包：<a href="https://github.com/goharbor/harbor/releases" target="_blank" rel="noopener">https://github.com/goharbor/harbor/releases</a></li>
-<li>修改配置harbor.yaml中的hostname,把https的配置注释，修改admin的密码和db的密码等。若要配置https访问，参考：<a href="https://github.com/goharbor/harbor/blob/master/docs/1.10/install-config/configure-https.md" target="_blank" rel="noopener">https://github.com/goharbor/harbor/blob/master/docs/1.10/install-config/configure-https.md</a></li>
-<li>运行./install.sh</li>
-<li><a href="https://blog.csdn.net/jason9211/article/details/104464342/" target="_blank" rel="noopener">https://blog.csdn.net/jason9211/article/details/104464342/</a><a id="more"></a></li>
 </ul>
 ]]></content>
       <categories>

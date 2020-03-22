@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>
+    kubernetes+harbor实践之搭建无状态服务nginx-php环境 |  PHP是世界上最好的语言
+  </title>
+  <meta name="generator" content="hexo-theme-yilia-plus">
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
+  
+  
+<link rel="stylesheet" href="/css/main.css">
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+  
+  
+
+  
+
+<link rel="alternate" href="/atom.xml" title="PHP是世界上最好的语言" type="application/atom+xml">
+</head>
+
+</html>
+
+<body>
+  <div id="app">
+    <main class="content">
+      <section class="outer">
+  <article id="post-kubernetes/kubernetes+harbor实践之搭建无状态服务nginx-php环境" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  kubernetes+harbor实践之搭建无状态服务nginx-php环境
+</h1>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/03/10/kubernetes/kubernetes+harbor%E5%AE%9E%E8%B7%B5%E4%B9%8B%E6%90%AD%E5%BB%BA%E6%97%A0%E7%8A%B6%E6%80%81%E6%9C%8D%E5%8A%A1nginx-php%E7%8E%AF%E5%A2%83/" class="article-date">
+  <time datetime="2020-03-10T15:14:09.000Z" itemprop="datePublished">2020-03-10</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a> / <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/%E8%BF%90%E7%BB%B4/">运维</a>
+  </div>
+
+      
+      
+<div class="word_count">
+    <span class="post-time">
+        <span class="post-meta-item-icon">
+            <i class="ri-quill-pen-line"></i>
+            <span class="post-meta-item-text"> 字数统计:</span>
+            <span class="post-count">936字</span>
+        </span>
+    </span>
+
+    <span class="post-time">
+        &nbsp; | &nbsp;
+        <span class="post-meta-item-icon">
+            <i class="ri-book-open-line"></i>
+            <span class="post-meta-item-text"> 阅读时长≈</span>
+            <span class="post-count">4分钟</span>
+        </span>
+    </span>
+</div>
+
+      
+    </div>
+    
+
+    
+    
+
+
+
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <p>看这个文章之前，如果没有接触过k8s的同学，建议先简单了解一些k8s的基本概念。<a href="https://kubernetes.io/zh/docs/tutorials/" target="_blank" rel="noopener">kubernetes官网</a>，开始之前，先列一下我自己本地搭建环境的一些清单吧，因为不是生产环境，只能用vagrant+vm创建虚拟机器，打造所需的集群环境，详见：</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>IP</th>
+<th>配置</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>k8s master节点</td>
+<td>192.168.1.103</td>
+<td>系统：centos、内存：2G、 CPU核数：2</td>
+<td>master节点至少需要的最低配置，不然运行会很卡，而且CPU低于2的话是启动不起来的</td>
+</tr>
+<tr>
+<td>k8s node节点</td>
+<td>192.168.1.104</td>
+<td>系统：centos、内存：512M、 CPU核数：1</td>
+<td></td>
+</tr>
+<tr>
+<td>harbor服务</td>
+<td>192.168.1.108</td>
+<td>系统：centos、内存：512M、 CPU核数：1</td>
+<td></td>
+</tr>
+</tbody></table>
+<a id="more"></a>
+
+<blockquote>
+<p>用docker创建nginx-php镜像</p>
+</blockquote>
+<p>请参考网上文章：<a href="https://www.cnblogs.com/tu6ge/p/8041437.html" target="_blank" rel="noopener">https://www.cnblogs.com/tu6ge/p/8041437.html</a></p>
+<blockquote>
+<p>安装harbor镜像仓库</p>
+</blockquote>
+<p>请参考往期教程<a href="https://asbectj.github.io/2020/03/06/docker/harbor/harbor%E7%AE%80%E5%8D%95%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8/" target="_blank" rel="noopener">【harbor的简单应用】</a>或其他网上教程</p>
+<blockquote>
+<p>安装kubeadm集群</p>
+</blockquote>
+<p>请参考往期教程<a href="https://asbectj.github.io/2019/05/06/kubernetes/%E5%88%A9%E7%94%A8kubeadm%E6%90%AD%E5%BB%BAkubernetes%E9%9B%86%E7%BE%A4/" target="_blank" rel="noopener">【利用kubeadm搭建kubernetes集群】</a>或其他网上教程</p>
+<blockquote>
+<p>在k8s node节点配置docker私有仓库，也就是我们部署的harbor服务地址。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vim &#x2F;etc&#x2F;docker&#x2F;daemon.json</span><br><span class="line">&#123;</span><br><span class="line">  &quot;insecure-registries&quot;:[&quot;http:&#x2F;&#x2F;harbor.cn&quot;],</span><br><span class="line">&#125;</span><br><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl resatrt docker</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>准备好需要configMap.yaml文件,文件配置如下：</p>
+</blockquote>
+<ul>
+<li>nginx的配置文件nginx-php-nginxconfigmap.yaml（映射在pod容器中的/usr/local/nginx/conf/conf.d），如下</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: ConfigMap</span><br><span class="line">metadata:</span><br><span class="line">    name: nginx-php-nginxconfig</span><br><span class="line">data:</span><br><span class="line">    www.conf: |</span><br><span class="line">        server &#123;</span><br><span class="line">            listen       80;</span><br><span class="line">            server_name  nginx.test.com;</span><br><span class="line">            root   &#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html;</span><br><span class="line">            access_log  &#x2F;usr&#x2F;local&#x2F;nginx&#x2F;logs&#x2F;host_access.log;</span><br><span class="line">            error_log  &#x2F;usr&#x2F;local&#x2F;nginx&#x2F;logs&#x2F;host_error.log debug;</span><br><span class="line">            location &#x2F; &#123;</span><br><span class="line">            root   &#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html;</span><br><span class="line">            index  index.html index.htm index.php;</span><br><span class="line">            &#125;</span><br><span class="line">            error_page   500 502 503 504  &#x2F;50x.html;</span><br><span class="line">            location &#x3D; &#x2F;50x.html &#123;</span><br><span class="line">            root   &#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            location ~ \.php$ &#123;</span><br><span class="line">              fastcgi_pass   0.0.0.0:9000;</span><br><span class="line">              fastcgi_index  index.php;</span><br><span class="line">              fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;</span><br><span class="line">              include        fastcgi_params;</span><br><span class="line">             &#125;</span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>php-fpm的配置文件nginx-php-php-fpm-wwwconfig-configmap.yaml（映射在pod容器中的/usr/local/php/etc/php-fpm.d），如下：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: ConfigMap</span><br><span class="line">metadata:</span><br><span class="line">    name: nginx-php-php-fpm-wwwconfig</span><br><span class="line">data:</span><br><span class="line">    www.conf: |</span><br><span class="line">           [www]</span><br><span class="line">           user &#x3D; www</span><br><span class="line">           group &#x3D; www</span><br><span class="line">           listen &#x3D; 0.0.0.0:9000</span><br><span class="line">           pm &#x3D; dynamic</span><br><span class="line">           pm.max_children &#x3D; 30</span><br><span class="line">           pm.start_servers &#x3D; 2</span><br><span class="line">           pm.min_spare_servers &#x3D; 1</span><br><span class="line">           pm.max_spare_servers &#x3D; 20</span><br><span class="line">           ;access.log &#x3D; log&#x2F;$pool.access.log</span><br><span class="line">           ;slowlog &#x3D; log&#x2F;$pool.log.slow</span><br></pre></td></tr></table></figure>
+<p>创建configMap:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f nginx-php-nginxconfigmap.yaml</span><br><span class="line">kubectl apply -f nginx-php-php-fpm-wwwconfig-configmap.yaml</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>准备好需要部署的deloyment.yaml文件配置nginx-php-deployment.yaml，如下：</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: apps&#x2F;v1</span><br><span class="line">kind: Deployment</span><br><span class="line">metadata:</span><br><span class="line">    name: nginx-php-deployment</span><br><span class="line">spec:</span><br><span class="line">    selector:</span><br><span class="line">        matchLabels:</span><br><span class="line">            app: nginx-php</span><br><span class="line">    replicas: 1</span><br><span class="line">    template:</span><br><span class="line">        metadata:</span><br><span class="line">            labels:</span><br><span class="line">                app: nginx-php</span><br><span class="line">        spec:</span><br><span class="line">            containers:</span><br><span class="line">                - name: nginx-php</span><br><span class="line">                  image: tanjj.harbor.com&#x2F;nginx-php&#x2F;nginx-php-v1:v1</span><br><span class="line">                  ports:</span><br><span class="line">                      - containerPort: 80</span><br><span class="line">                      - containerPort: 9000</span><br><span class="line">                  volumeMounts:</span><br><span class="line">                      - name: nginx-php-nginxconfig</span><br><span class="line">                        mountPath: &#x2F;usr&#x2F;local&#x2F;nginx&#x2F;conf&#x2F;conf.d</span><br><span class="line">                      - name: web-root</span><br><span class="line">                        mountPath: &#x2F;usr&#x2F;share&#x2F;nginx&#x2F;html</span><br><span class="line">                      - name: nginx-log</span><br><span class="line">                        mountPath: &#x2F;usr&#x2F;local&#x2F;nginx&#x2F;logs</span><br><span class="line">                      - name: nginx-php-php-fpm-wwwconfig</span><br><span class="line">                        mountPath: &#x2F;usr&#x2F;local&#x2F;php&#x2F;etc&#x2F;php-fpm.d</span><br><span class="line">            volumes:</span><br><span class="line">                - name: nginx-php-nginxconfig</span><br><span class="line">                  configMap:</span><br><span class="line">                      name: nginx-php-nginxconfig</span><br><span class="line">                - name: web-root</span><br><span class="line">                  hostPath:</span><br><span class="line">                      path: &#x2F;var&#x2F;data&#x2F;nginx-php</span><br><span class="line">                - name: nginx-log</span><br><span class="line">                  hostPath:</span><br><span class="line">                      path: &#x2F;var&#x2F;log&#x2F;nginx-php</span><br><span class="line">                - name: nginx-php-php-fpm-wwwconfig</span><br><span class="line">                  configMap:</span><br><span class="line">                      name: nginx-php-php-fpm-wwwconfig</span><br></pre></td></tr></table></figure>
+<p>启动deployment</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f nginx-php-deployment.yaml</span><br></pre></td></tr></table></figure>
+<p>查看是否启动成功：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods</span><br><span class="line"></span><br><span class="line">NAME                                   READY   STATUS    RESTARTS   AGE</span><br><span class="line">nginx-php-deployment-f97dd787d-mdfr5   1&#x2F;1     Running   0          56m</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>准备好需要service.yaml文件nginx-php-service.yaml,如下：</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: v1</span><br><span class="line">kind: Service</span><br><span class="line">metadata:</span><br><span class="line">  labels:</span><br><span class="line">    app: nginx-php</span><br><span class="line">  name: nginx-php</span><br><span class="line">spec:</span><br><span class="line">  ports:</span><br><span class="line">  - name: 80-80</span><br><span class="line">    port: 80</span><br><span class="line">    protocol: TCP</span><br><span class="line">    targetPort: 80</span><br><span class="line">  selector:</span><br><span class="line">    app: nginx-php</span><br><span class="line">  type: NodePort</span><br><span class="line">status:</span><br><span class="line">  loadBalancer: &#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>启动nginx-php服务，这次我们是以NodePort类型的服务启动。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f nginx-php-service.yaml</span><br></pre></td></tr></table></figure>
+
+<p>查看服务是否启动成功：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kubectl get svc</span><br><span class="line"></span><br><span class="line">NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE</span><br><span class="line">kubernetes   ClusterIP   10.96.0.1       &lt;none&gt;        443&#x2F;TCP        5h28m</span><br><span class="line">nginx-php    NodePort    10.96.101.213   &lt;none&gt;        80:31185&#x2F;TCP   148m</span><br></pre></td></tr></table></figure>
+<p>当服务启动成功后,我们可以用k8s node节点IP + 暴露服务的NodePort端口访问，这里的地址是：192.168.1.104:31185。访问结果如图：<br><img src="https://oscimg.oschina.net/oscnet/up-17bb3114a8059d18d4a7705004be11d923f.png" alt="image"></p>
+
+      
+      <!-- reward -->
+      
+      <div id="reward-btn">
+        打赏
+      </div>
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+        <div class="declare">
+          <ul class="post-copyright">
+            <li>
+              <i class="ri-copyright-line"></i>
+              <strong>版权声明： </strong s>
+              本博客所有文章除特别声明外，均采用 <a href="https://www.apache.org/licenses/LICENSE-2.0.html" rel="external nofollow"
+                target="_blank">Apache License 2.0</a> 许可协议。转载请注明出处！
+            </li>
+          </ul>
+        </div>
+        
+    <footer class="article-footer">
+      
+          
+<div class="share-btn">
+      <span class="share-sns share-outer">
+        <i class="ri-share-forward-line"></i>
+        分享
+      </span>
+      <div class="share-wrap">
+        <i class="arrow"></i>
+        <div class="share-icons">
+          
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="ri-weibo-fill"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="ri-wechat-fill"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="ri-qq-fill"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="ri-douban-line"></i>
+          </a>
+          <!-- <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a> -->
+          
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="ri-facebook-circle-fill"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="ri-twitter-fill"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="ri-google-fill"></i>
+          </a>
+        </div>
+      </div>
+</div>
+
+<div class="wx-share-modal">
+    <a class="modal-close" href="javascript:;"><i class="ri-close-circle-line"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://asbectj.github.io/2020/03/10/kubernetes/kubernetes+harbor%E5%AE%9E%E8%B7%B5%E4%B9%8B%E6%90%AD%E5%BB%BA%E6%97%A0%E7%8A%B6%E6%80%81%E6%9C%8D%E5%8A%A1nginx-php%E7%8E%AF%E5%A2%83/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div id="share-mask"></div>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/devops/" rel="tag">devops</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/harbor/" rel="tag">harbor</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+  
+  <nav class="article-nav">
+    
+    
+      <a href="/2020/03/10/swoole/Swoole4%E5%8D%8F%E7%A8%8B%E4%B8%93%E9%A2%98%E6%80%BB%E7%BB%93/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">Swoole4协程专题总结</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+  
+<!-- valine评论 -->
+<div id="vcomments-box">
+    <div id="vcomments">
+    </div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js'></script>
+<script>
+    new Valine({
+        el: '#vcomments',
+        app_id: 'Dv76xrXWkRlyYdnQ5Dv6hF4i-gzGzoHsz',
+        app_key: 'n9aIN3ITfN6C6EP7qD7fwyE9',
+        path: window.location.pathname,
+        notify: 'false',
+        verify: 'false',
+        avatar: 'mp',
+        placeholder: '给我的文章加点评论吧~',
+        recordIP: true
+    });
+    const infoEle = document.querySelector('#vcomments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+        infoEle.childNodes.forEach(function (item) {
+            item.parentNode.removeChild(item);
+        });
+    }
+</script>
+<style>
+    #vcomments-box {
+        padding: 5px 30px;
+    }
+
+    @media screen and (max-width: 800px) {
+        #vcomments-box {
+            padding: 5px 0px;
+        }
+    }
+
+    #vcomments-box #vcomments {
+        background-color: #fff;
+    }
+
+    .v .vlist .vcard .vh {
+        padding-right: 20px;
+    }
+
+    .v .vlist .vcard {
+        padding-left: 10px;
+    }
+</style>
+
+  
+
+  
+  
+  
+
+</article>
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul class="list-inline">
+      <li>
+        &copy;
+        2015-2020
+        谭家俊
+      </li>
+      <li>
+        
+        Powered by
+        
+        
+        <a href="https://hexo.io" target="_blank">Hexo</a> Theme <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a>
+        
+      </li>
+    </ul>
+    <ul class="list-inline">
+      <li>
+        
+        
+        <span>
+  <i>PV:<span id="busuanzi_value_page_pv"></span></i>
+  <i>UV:<span id="busuanzi_value_site_uv"></span></i>
+</span>
+        
+      </li>
+      
+      <li>
+        <!-- cnzz统计 -->
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+      <div class="to_top">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+      </div>
+    </main>
+    <aside class="sidebar">
+      <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/k8s.jpeg" alt="PHP是世界上最好的语言"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">归档</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/swoole/">Swoole</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories/JAVA">JAVA</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/docker">Docker</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/kubernetes">Kubernetes</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags/devops">Devops</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories/midleware">中间件</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/categories">分类</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="https://my.oschina.net/u/2394701" target="_blank" rel="noopener">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+    </aside>
+    <div id="mask"></div>
+
+<!-- #reward -->
+<div id="reward">
+  <span class="close"><i class="ri-close-line"></i></span>
+  <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
+  <div class="reward-box">
+    
+    
+    <div class="reward-item">
+      <img class="reward-img" src="/images/WechatIMG1.jpeg">
+      <span class="reward-type">微信</span>
+    </div>
+    
+  </div>
+</div>
+    
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/share.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script>
+  try {
+    var typed = new Typed("#subtitle", {
+      strings: ['面朝大海，春暖花开', '愿你一生努力，一生被爱', '想要的都拥有，得不到的都释怀'],
+      startDelay: 0,
+      typeSpeed: 200,
+      loop: true,
+      backSpeed: 100,
+      showCursor: true
+    });
+  } catch (err) {
+  }
+
+</script>
+
+
+
+
+<script src="/js/tocbot.min.js"></script>
+
+<script>
+  // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+  tocbot.init({
+    tocSelector: '.tocbot',
+    contentSelector: '.article-entry',
+    headingSelector: 'h1, h2, h3, h4, h5, h6',
+    hasInnerContainers: true,
+    scrollSmooth: true,
+    scrollContainer: 'main',
+    positionFixedSelector: '.tocbot',
+    positionFixedClass: 'is-position-fixed',
+    fixedSidebarOffset: 'auto',
+    onClick: (e) => {
+      $('.toc-link').removeClass('is-active-link');
+      $(`a[href=${e.target.hash}]`).addClass('is-active-link');
+      $(e.target.hash).scrollIntoView();
+      return false;
+    }
+  });
+</script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery-modal@0.9.2/jquery.modal.min.css">
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js"></script>
+
+<script src="/js/ayer.js"></script>
+
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" style="display:none" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css">
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"></script>
+
+<script>
+    function viewer_init() {
+        let pswpElement = document.querySelectorAll('.pswp')[0];
+        let $imgArr = document.querySelectorAll(('.article-entry img:not(.reward-img)'))
+
+        $imgArr.forEach(($em, i) => {
+            $em.onclick = () => {
+                // slider展开状态
+                // todo: 这样不好，后面改成状态
+                if (document.querySelector('.left-col.show')) return
+                let items = []
+                $imgArr.forEach(($em2, i2) => {
+                    let img = $em2.getAttribute('data-idx', i2)
+                    let src = $em2.getAttribute('data-target') || $em2.getAttribute('src')
+                    let title = $em2.getAttribute('alt')
+                    // 获得原图尺寸
+                    const image = new Image()
+                    image.src = src
+                    items.push({
+                        src: src,
+                        w: image.width || $em2.width,
+                        h: image.height || $em2.height,
+                        title: title
+                    })
+                })
+                var gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, {
+                    index: parseInt(i)
+                });
+                gallery.init()
+            }
+        })
+    }
+    viewer_init()
+</script>
+
+
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+
+
+<script type="text/javascript" src="https://js.users.51.la/20544303.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.2/dist/jquery.fancybox.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.2/dist/jquery.fancybox.min.js"></script>
+
+
+    
+  </div>
+</body>
+
+</html>

@@ -6,7 +6,7 @@
     
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>
-     欢迎阅读谭家俊的世界
+     PHP是世界上最好的语言
   </title>
   <meta name="generator" content="hexo-theme-yilia-plus">
   
@@ -22,7 +22,7 @@
 
   
 
-<link rel="alternate" href="/atom.xml" title="欢迎阅读谭家俊的世界" type="application/atom+xml">
+<link rel="alternate" href="/atom.xml" title="PHP是世界上最好的语言" type="application/atom+xml">
 </head>
 
 </html>
@@ -33,17 +33,12 @@
       
 <section class="cover">
     
-      
-      <a class="forkMe" href="https://github.com/Shen-Yu/hexo-theme-ayer"
-        target="_blank"><img width="149" height="149" src="/images/forkme.png"
-          class="attachment-full size-full" alt="Fork me on GitHub" data-recalc-dims="1"></a>
-    
   <div class="cover-frame">
     <div class="bg-box">
       <img src="/images/cover1.jpg" alt="image frame" />
     </div>
     <div class="cover-inner text-center text-white">
-      <h1><a href="/">欢迎阅读谭家俊的世界</a></h1>
+      <h1><a href="/">PHP是世界上最好的语言</a></h1>
       <div id="subtitle-box">
         
         <span id="subtitle"></span>
@@ -70,7 +65,7 @@
     
     
     
-    <article id="post-kubernetes/kubernetes无状态服务之搭建nginx-php环境" class="article article-type-post" itemscope
+    <article id="post-kubernetes/kubernetes+harbor实践之搭建无状态服务nginx-php环境" class="article article-type-post" itemscope
   itemprop="blogPost" data-scroll-reveal>
 
   <div class="article-inner">
@@ -78,8 +73,8 @@
     <header class="article-header">
        
 <h2 itemprop="name">
-  <a class="article-title" href="/2020/03/10/kubernetes/kubernetes%E6%97%A0%E7%8A%B6%E6%80%81%E6%9C%8D%E5%8A%A1%E4%B9%8B%E6%90%AD%E5%BB%BAnginx-php%E7%8E%AF%E5%A2%83/"
-    >kubernetes无状态服务之搭建nginx-php环境</a
+  <a class="article-title" href="/2020/03/10/kubernetes/kubernetes+harbor%E5%AE%9E%E8%B7%B5%E4%B9%8B%E6%90%AD%E5%BB%BA%E6%97%A0%E7%8A%B6%E6%80%81%E6%9C%8D%E5%8A%A1nginx-php%E7%8E%AF%E5%A2%83/"
+    >kubernetes+harbor实践之搭建无状态服务nginx-php环境</a
   >
 </h2>
   
@@ -89,7 +84,7 @@
 
     
     <div class="article-meta">
-      <a href="/2020/03/10/kubernetes/kubernetes%E6%97%A0%E7%8A%B6%E6%80%81%E6%9C%8D%E5%8A%A1%E4%B9%8B%E6%90%AD%E5%BB%BAnginx-php%E7%8E%AF%E5%A2%83/" class="article-date">
+      <a href="/2020/03/10/kubernetes/kubernetes+harbor%E5%AE%9E%E8%B7%B5%E4%B9%8B%E6%90%AD%E5%BB%BA%E6%97%A0%E7%8A%B6%E6%80%81%E6%9C%8D%E5%8A%A1nginx-php%E7%8E%AF%E5%A2%83/" class="article-date">
   <time datetime="2020-03-10T15:14:09.000Z" itemprop="datePublished">2020-03-10</time>
 </a>
       
@@ -113,22 +108,37 @@
       
 
       
-      <blockquote>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote>
-<p>k8s的部署方式：</p>
-<ol>
-<li>传统方式，从github上拉取对应的二进制安装包，解压安装各个组件和节点，过程步骤复杂，特别是各组件要通信，配置各种ca证书。<a href="https://github.com/kubernetes/kubernetes" target="_blank" rel="noopener">GitHub链接</a></li>
-<li>由于传统方式安装比较麻烦，所以我们用kubeadm（k8s官方提供的集群部署工具）安装，只需按照以下基本步骤安装即可：<ul>
-<li>master,nodes机器上安装：kubelet、kubeadm和docker，其中node和master都要运行在kebulet和docker环境之上</li>
-<li>Master：用kubeadm init 命令，拉取下载相关的组件镜像，并启动相关pods（静态pods，不受k8s自身管理），相关的pods组件有：etcd、api-server、controller-manager、scheduler</li>
-<li>Nodes：用kubeadm join命令把nodes加入到k8s集群中</li>
-<li>flannel组件，也是运行在pods的守护级进程，起到个nodes的通信作用。是一个额外的组件（adds on）。<a href="https://github.com/coreos/flannel" target="_blank" rel="noopener">GitHub链接</a></li>
-<li><a href="https://github.com/kubernetes/kubeadm/blob/master/docs/design/design_v1.10.md" target="_blank" rel="noopener">kubeadm相关参考文档</a></li>
-</ul>
-</li>
-</ol>
+      <p>看这个文章之前，如果没有接触过k8s的同学，建议先简单了解一些k8s的基本概念。<a href="https://kubernetes.io/zh/docs/tutorials/" target="_blank" rel="noopener">kubernetes官网</a>，开始之前，先列一下我自己本地搭建环境的一些清单吧，因为不是生产环境，只能用vagrant+vm创建虚拟机器，打造所需的集群环境，详见：</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>IP</th>
+<th>配置</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>k8s master节点</td>
+<td>192.168.1.103</td>
+<td>系统：centos、内存：2G、 CPU核数：2</td>
+<td>master节点至少需要的最低配置，不然运行会很卡，而且CPU低于2的话是启动不起来的</td>
+</tr>
+<tr>
+<td>k8s node节点</td>
+<td>192.168.1.104</td>
+<td>系统：centos、内存：512M、 CPU核数：1</td>
+<td></td>
+</tr>
+<tr>
+<td>harbor服务</td>
+<td>192.168.1.108</td>
+<td>系统：centos、内存：512M、 CPU核数：1</td>
+<td></td>
+</tr>
+</tbody></table>
       
-      <a class="article-more-link" href="/2020/03/10/kubernetes/kubernetes%E6%97%A0%E7%8A%B6%E6%80%81%E6%9C%8D%E5%8A%A1%E4%B9%8B%E6%90%AD%E5%BB%BAnginx-php%E7%8E%AF%E5%A2%83/">阅读更多...</a>
+      <a class="article-more-link" href="/2020/03/10/kubernetes/kubernetes+harbor%E5%AE%9E%E8%B7%B5%E4%B9%8B%E6%90%AD%E5%BB%BA%E6%97%A0%E7%8A%B6%E6%80%81%E6%9C%8D%E5%8A%A1nginx-php%E7%8E%AF%E5%A2%83/">阅读更多...</a>
       
       
       <!-- reward -->
@@ -141,7 +151,7 @@
     <footer class="article-footer">
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/devops/" rel="tag">devops</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/devops/" rel="tag">devops</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/harbor/" rel="tag">harbor</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a></li></ul>
 
 
     </footer>
@@ -182,7 +192,7 @@
 </a>
       
   <div class="article-category">
-    <a class="article-category-link" href="/categories/swore/">swore</a>
+    <a class="article-category-link" href="/categories/swoole/">swoole</a>
   </div>
 
       
@@ -208,6 +218,100 @@
 <p>大家应该都知道线程是CPU的最小调度单元，而协程可以认为是用户状态下的线程，所以是依赖进程存在的。但是协程不能利用多核CPU,不能跨进程调度，但它的调度不需要系统参与，所以创建销毁和切换的成本很低，所以在swoole的文档也有写到，在协程中，1s内你可以读写1万次文件，睡眠1万次，用PDO和mysqli与数据库通信1万次等</p>
       
       <a class="article-more-link" href="/2020/03/10/swoole/Swoole4%E5%8D%8F%E7%A8%8B%E4%B8%93%E9%A2%98%E6%80%BB%E7%BB%93/">阅读更多...</a>
+      
+      
+      <!-- reward -->
+      
+    </div>
+    
+    
+      <!-- copyright -->
+      
+    <footer class="article-footer">
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/swoole/" rel="tag">swoole</a></li></ul>
+
+
+    </footer>
+
+  </div>
+
+  
+
+  
+  
+  
+
+  
+
+</article>
+    
+    <article id="post-swoole/swoole4应用之协程并发和多进程实践" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h2 itemprop="name">
+  <a class="article-title" href="/2020/03/08/swoole/swoole4%E5%BA%94%E7%94%A8%E4%B9%8B%E5%8D%8F%E7%A8%8B%E5%B9%B6%E5%8F%91%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E5%AE%9E%E8%B7%B5/"
+    >swoole4应用之协程并发和多进程实践</a
+  >
+</h2>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/2020/03/08/swoole/swoole4%E5%BA%94%E7%94%A8%E4%B9%8B%E5%8D%8F%E7%A8%8B%E5%B9%B6%E5%8F%91%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E5%AE%9E%E8%B7%B5/" class="article-date">
+  <time datetime="2020-03-08T02:14:09.000Z" itemprop="datePublished">2020-03-08</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/swoole/">swoole</a>
+  </div>
+
+      
+      
+      
+    </div>
+    
+
+    
+
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <blockquote>
+<p>背景</p>
+</blockquote>
+<p>某租车平台，在用户请求搜索车辆时，需要先去请求租车公司的接口，拿到对应的套餐报价回来，然后再进行统一的根据具体规则进行业务加装，例如加装一些优惠券，评分和芝麻标示等，然后返回结果给前端。</p>
+<blockquote>
+<p>分析</p>
+</blockquote>
+<ul>
+<li>上诉过程，由于考虑请求的供应商是大量的，假设一次二十个供应商，然后每个供应商有1千的报价返回，就有2万报价数据返回。然后在自身业务加装的时候，也不单单只有一两个业务，可能数十个。所以==每一次用户请求直接curl所有的供应商接口，拿到数据后遍厉加装，入库，返回。这样的方法是行不通的，不仅仅整个接口有可能被供应商的API超时拖垮，还可能打满整个机器的fpm进程，从而拖垮整站。==</li>
+<li>目前我们应用的方案是：<img src="https://oscimg.oschina.net/oscnet/up-4f8049558b6f34bbca5bb391031fe571288.png" alt="image"></li>
+<li>上面方案先撇开队列的相关的东西，就看数据入库后再读取这里分析如何优化：<ol>
+<li>每次读取都是一次性读取一次搜索产生的所有套餐</li>
+<li>所有业务逻辑加装都是串行，在一个进程处理。<blockquote>
+<p>优化</p>
+</blockquote>
+</li>
+</ol>
+</li>
+<li>协程或者多线程并发读取数据</li>
+<li>多进程或者线程加装独立的业务逻辑
+      
+      <a class="article-more-link" href="/2020/03/08/swoole/swoole4%E5%BA%94%E7%94%A8%E4%B9%8B%E5%8D%8F%E7%A8%8B%E5%B9%B6%E5%8F%91%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E5%AE%9E%E8%B7%B5/">阅读更多...</a>
       
       
       <!-- reward -->
@@ -293,88 +397,6 @@
 <li>Step2 -生成自签名证书（使用已有私钥ca.key自行签发根证书）生成ca.crt：
       
       <a class="article-more-link" href="/2020/03/06/docker/harbor/harbor%E7%AE%80%E5%8D%95%E5%AE%89%E8%A3%85%E5%92%8C%E4%BD%BF%E7%94%A8/">阅读更多...</a>
-      
-      
-      <!-- reward -->
-      
-    </div>
-    
-    
-      <!-- copyright -->
-      
-    <footer class="article-footer">
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/devops/" rel="tag">devops</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/" rel="tag">docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kubernetes/" rel="tag">kubernetes</a></li></ul>
-
-
-    </footer>
-
-  </div>
-
-  
-
-  
-  
-  
-
-  
-
-</article>
-    
-    <article id="post-docker/制作nginx-php镜像" class="article article-type-post" itemscope
-  itemprop="blogPost" data-scroll-reveal>
-
-  <div class="article-inner">
-    
-    <header class="article-header">
-       
-<h2 itemprop="name">
-  <a class="article-title" href="/2020/03/05/docker/%E5%88%B6%E4%BD%9Cnginx-php%E9%95%9C%E5%83%8F/"
-    >制作nginx-php镜像</a
-  >
-</h2>
-  
-
-    </header>
-    
-
-    
-    <div class="article-meta">
-      <a href="/2020/03/05/docker/%E5%88%B6%E4%BD%9Cnginx-php%E9%95%9C%E5%83%8F/" class="article-date">
-  <time datetime="2020-03-05T15:14:09.000Z" itemprop="datePublished">2020-03-05</time>
-</a>
-      
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/">技术</a> / <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF/%E8%BF%90%E7%BB%B4/">运维</a>
-  </div>
-
-      
-      
-      
-    </div>
-    
-
-    
-
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-
-
-      
-
-      
-      <blockquote>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2></blockquote>
-<ul>
-<li>安装docker和docker composer</li>
-<li>下载tar包：<a href="https://github.com/goharbor/harbor/releases" target="_blank" rel="noopener">https://github.com/goharbor/harbor/releases</a></li>
-<li>修改配置harbor.yaml中的hostname,把https的配置注释，修改admin的密码和db的密码等。若要配置https访问，参考：<a href="https://github.com/goharbor/harbor/blob/master/docs/1.10/install-config/configure-https.md" target="_blank" rel="noopener">https://github.com/goharbor/harbor/blob/master/docs/1.10/install-config/configure-https.md</a></li>
-<li>运行./install.sh</li>
-<li><a href="https://blog.csdn.net/jason9211/article/details/104464342/" target="_blank" rel="noopener">https://blog.csdn.net/jason9211/article/details/104464342/</a>
-      
-      <a class="article-more-link" href="/2020/03/05/docker/%E5%88%B6%E4%BD%9Cnginx-php%E9%95%9C%E5%83%8F/">阅读更多...</a>
       
       
       <!-- reward -->
@@ -884,7 +906,7 @@
       <li>
         &copy;
         2015-2020
-        John Doe
+        谭家俊
       </li>
       <li>
         
@@ -909,8 +931,6 @@
       <li>
         <!-- cnzz统计 -->
         
-        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
-        
       </li>
     </ul>
   </div>
@@ -926,7 +946,7 @@
 <nav class="navbar">
   
   <div class="logo">
-    <a href="/"><img src="/images/ayer-side.svg" alt="欢迎阅读谭家俊的世界"></a>
+    <a href="/"><img src="/images/k8s.jpeg" alt="PHP是世界上最好的语言"></a>
   </div>
   
   <ul class="nav nav-main">
@@ -964,15 +984,15 @@
     </li>
     
     <li class="nav-item">
-      <a class="nav-item-link" href="/tags/travel/">旅行</a>
-    </li>
-    
-    <li class="nav-item">
       <a class="nav-item-link" href="/categories">分类</a>
     </li>
     
     <li class="nav-item">
       <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="https://my.oschina.net/u/2394701" target="_blank" rel="noopener">关于我</a>
     </li>
     
   </ul>
@@ -985,10 +1005,6 @@
         <i class="ri-search-line"></i>
       </a>
       
-      
-      <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
-        <i class="ri-rss-line"></i>
-      </a>
       
     </li>
   </ul>
@@ -1008,14 +1024,9 @@
   <p class="reward-p"><i class="ri-cup-line"></i>请我喝杯咖啡吧~</p>
   <div class="reward-box">
     
-    <div class="reward-item">
-      <img class="reward-img" src="/images/alipay.jpg">
-      <span class="reward-type">支付宝</span>
-    </div>
-    
     
     <div class="reward-item">
-      <img class="reward-img" src="/images/wechat.jpg">
+      <img class="reward-img" src="/images/WechatIMG1.jpeg">
       <span class="reward-type">微信</span>
     </div>
     
