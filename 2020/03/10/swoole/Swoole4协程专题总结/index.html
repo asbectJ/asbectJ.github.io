@@ -150,7 +150,7 @@
 </ol>
 </li>
 <li>连接池：结和channel的pop和push之间的交互阻塞调用的特性，可以用channel来存新建的连接（也就是连接的存放池），每来一个请求pop出一个连接，当channel无连接可以pop时，会阻塞等待其他请求释放连接到channel中（也就是连接池中）。当然pop()方法是有超时参数设置的，超过等待时间没其他请求释放连接push进来，当前协程不再阻塞等待。具体详细实战，可参考本人很久之前分享的文章<a href="https://my.oschina.net/u/2394701/blog/2046414" target="_blank" rel="noopener">swoole自行打造mysql连接池</a>，当时官方对于连接池的文档是非常少，而且swoole没现成的封装，现在看到官方已经出了连接池的封装，可以直接参考使用<a href="https://wiki.swoole.com/#/coroutine/conn_pool" target="_blank" rel="noopener">连接池</a>章节</li>
-<li>并发调用：也利用channel的pop和push产生阻塞调用的特性，申请长度为N的channel,然后循环创建N个子协程去执行逻辑，每个子协程执行完毕后push数据进channel，然后主协程循环pop出来。因为初次channel为空，就达到了主协程阻塞等待子协程请求数据返回push进channel然后再恢复执行主协程的效果。官方已经针对这个特性专门封装了并发调用类WaitGroup。实战使用见本人另一文章<a href="https://note.youdao.com/" target="_blank" rel="noopener">实战协程并发和多进程任务处理</a>或者了解并发调用的可参考官方文档<a href="https://wiki.swoole.com/#/coroutine/wait_group" target="_blank" rel="noopener">WaitGroup</a>章节</li>
+<li>并发调用：也利用channel的pop和push产生阻塞调用的特性，申请长度为N的channel,然后循环创建N个子协程去执行逻辑，每个子协程执行完毕后push数据进channel，然后主协程循环pop出来。因为初次channel为空，就达到了主协程阻塞等待子协程请求数据返回push进channel然后再恢复执行主协程的效果。官方已经针对这个特性专门封装了并发调用类WaitGroup。实战使用见本人另一文章<a href="https://asbectj.github.io/2020/03/08/swoole/swoole4%E5%BA%94%E7%94%A8%E4%B9%8B%E5%8D%8F%E7%A8%8B%E5%B9%B6%E5%8F%91%E5%92%8C%E5%A4%9A%E8%BF%9B%E7%A8%8B%E5%AE%9E%E8%B7%B5/">实战协程并发和多进程任务处理</a>或者了解并发调用的可参考官方文档<a href="https://wiki.swoole.com/#/coroutine/wait_group" target="_blank" rel="noopener">WaitGroup</a>章节</li>
 </ul>
 <blockquote>
 <p>结束语</p>
